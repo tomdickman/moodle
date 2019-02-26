@@ -1449,4 +1449,8 @@ class search_manager_testcase extends advanced_testcase {
         }
     }
 
+    public function test_get_analytics_classes() {
+
+    }
+
 }
