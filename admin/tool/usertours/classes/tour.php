@@ -36,31 +36,48 @@ class tour {
 
     /**
      * The tour is currently disabled
-     *
-     * @var DISABLED
      */
     const DISABLED = 0;
 
     /**
      * The tour is currently disabled
-     *
-     * @var DISABLED
      */
     const ENABLED = 1;
 
     /**
      * The user preference value to indicate the time of completion of the tour for a user.
-     *
-     * @var TOUR_LAST_COMPLETED_BY_USER
      */
     const TOUR_LAST_COMPLETED_BY_USER   = 'tool_usertours_tour_completion_time_';
 
     /**
      * The user preference value to indicate the time that a user last requested to see the tour.
-     *
-     * @var TOUR_REQUESTED_BY_USER
      */
     const TOUR_REQUESTED_BY_USER        = 'tool_usertours_tour_reset_time_';
+
+    /**
+     * Tour filtering constant for setting base date as last update date.
+     */
+    const FILTER_LAST_UPDATE = 1;
+
+    /**
+     * Tour filtering constant for setting base date as account creation date.
+     */
+    const FILTER_ACCOUNT_CREATION = 2;
+
+    /**
+     * Tour filtering constant for setting base date as account first login date.
+     */
+    const FILTER_FIRST_LOGIN = 3;
+
+    /**
+     * Tour filtering constant for setting base date as account last login date.
+     */
+    const FILTER_LAST_LOGIN = 4;
+
+    /**
+     * Tour filtering constant for setting default range as 90 days in seconds.
+     */
+    const FILTER_DEFAULT_RANGE_SECONDS = 7776000;
 
     /**
      * @var $id The tour ID.
@@ -582,6 +599,8 @@ class tour {
      * @return  boolean
      */
     public function should_show_for_user() {
+        global $USER;
+
         if (!$this->is_enabled()) {
             // The tour is disabled - it should not be shown.
             return false;
@@ -593,11 +612,41 @@ class tour {
                     return true;
                 }
             }
-            $lastmajorupdate = $this->get_config('majorupdatetime', time());
-            if ($tourcompletiondate > $lastmajorupdate) {
-                // The user has completed the tour since the last major update.
-                return false;
-            }
+        }
+
+        $filterbasedate = self::get_filter_values('shown');
+        if (!empty($filterbasedate)) {
+            $filterbasedate = (int) reset($filterbasedate);
+        }
+        switch ($filterbasedate) {
+            case (self::FILTER_LAST_UPDATE):
+                $basedate = $this->get_config('majorupdatetime', time());
+                break;
+            case (self::FILTER_ACCOUNT_CREATION):
+                $basedate = (int) $USER->timecreated;
+                break;
+            case (self::FILTER_FIRST_LOGIN):
+                $basedate = (int) $USER->firstaccess;
+                break;
+            case (self::FILTER_LAST_LOGIN):
+                $basedate = (int) $USER->lastlogin;
+                break;
+            default:
+                $basedate = $this->get_config('majorupdatetime', time());
+                break;
+        }
+
+        $range = self::get_filter_values('showntime');
+        if (!empty($range)) {
+            $range = (int) reset($range);
+        } else {
+            $range = self::FILTER_DEFAULT_RANGE_SECONDS;
+        }
+
+        if (($tourcompletiondate > $basedate) || time() > ($basedate + $range)) {
+            // The user has completed the tour since the base date.
+            // Or currently outside range from base date within which tour should be displayed.
+            return false;
         }
 
         return true;

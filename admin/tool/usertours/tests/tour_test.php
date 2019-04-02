@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/admin/tool/usertours/lib.php');
 
 use tool_usertours\tour;
 
@@ -630,61 +631,87 @@ class tour_testcase extends advanced_testcase {
     public function should_show_for_user_provider() {
         $time = time();
         return [
-                'Not seen by user at all' => [
-                        null,
-                        null,
-                        null,
-                        true,
-                    ],
-                'Completed by user before majorupdatetime' => [
-                        $time - DAYSECS,
-                        null,
-                        $time,
-                        true,
-                    ],
-                'Completed by user since majorupdatetime' => [
-                        $time,
-                        null,
-                        $time - DAYSECS,
-                        false,
-                    ],
-                'Requested by user before current completion' => [
-                        $time,
-                        $time - DAYSECS,
-                        null,
-                        false,
-                    ],
-                'Requested by user since completion' => [
-                        $time - DAYSECS,
-                        $time,
-                        null,
-                        true,
-                    ],
-            ];
+            'Not seen by user at all and account was created within last 90 days (tour has not been updated)' => [
+                null, null, $time, null, $time, null, null, null, true,
+            ],
+            'Not seen by user and outside of default 90 day filter (tour has not been updated)' => [
+                null, null, $time - 91 * DAYSECS, null, $time - 91 * DAYSECS, null, null, null, false,
+            ],
+            'Not seen by user but outside of admin set range from first login' => [
+                null, null, null, $time - 2 * DAYSECS, null, null, tour::FILTER_FIRST_LOGIN, DAYSECS, false,
+            ],
+            'Not seen by user and inside of admin set range from first login' => [
+                null, null, null, $time - DAYSECS, null, null, tour::FILTER_FIRST_LOGIN, 2 * DAYSECS, true,
+            ],
+            'Not seen by user and outside of admin set range from account creation' => [
+                null, null, null, null, $time - 2 * DAYSECS, null, tour::FILTER_ACCOUNT_CREATION, DAYSECS, false,
+            ],
+            'Not seen by user and inside of admin set range from account creation' => [
+                null, null, null, null, $time - DAYSECS, null, tour::FILTER_ACCOUNT_CREATION, 2 * DAYSECS, true,
+            ],
+            'Not seen by user and outside of admin set range from last login' => [
+                null, null, null, null, null, $time - 2 * DAYSECS, tour::FILTER_LAST_LOGIN, DAYSECS, false,
+            ],
+            'Not seen by user and inside of admin set range from last login' => [
+                null, null, null, null, null, $time - DAYSECS, tour::FILTER_LAST_LOGIN, 2 * DAYSECS, true,
+            ],
+            'Completed by user before majorupdatetime' => [
+                $time - DAYSECS, null, $time, null, null, null, null, null, true,
+            ],
+            'Completed by user since majorupdatetime' => [
+                $time, null, $time - DAYSECS, null, null, null, null, null, false,
+            ],
+            'Requested by user before current completion (and after last update)' => [
+                $time, $time - DAYSECS, $time - 2 * DAYSECS, null, null, null, null, null, false,
+            ],
+            'Requested by user since completion' => [
+                $time - DAYSECS, $time, null, null, null, null, null, null, true,
+            ],
+        ];
     }
 
     /**
      * Test that a disabled tour should never be shown to users.
      *
      * @dataProvider should_show_for_user_provider
-     * @param   mixed   $completiondate The user's completion date for this tour
-     * @param   mixed   $requesteddate  The user's last requested date for this tour
-     * @param   mixed   $updateddate    The date this tour was last updated
-     * @param   string  $expectation    The expected tour key
+     *
+     * @param mixed $completiondate The user's completion date for this tour
+     * @param mixed $requesteddate The user's last requested date for this tour
+     * @param mixed $updateddate The date this tour was last updated
+     * @param mixed $firstaccess The date of users first login
+     * @param mixed $timecreated The date of account creation
+     * @param mixed $lastlogin The date of users last login
+     * @param mixed $basedate The admin setting for base date
+     * @param mixed $range The admin setting for range from base date to show tour
+     * @param boolean $expectation The expected tour key
+     *
+     * @throws \coding_exception
      */
-    public function test_should_show_for_user($completiondate, $requesteddate, $updateddate, $expectation) {
-        // Uses user preferences so we must be in a user context.
+    public function test_should_show_for_user($completiondate, $requesteddate, $updateddate, $firstaccess,
+            $timecreated, $lastlogin, $basedate, $range, $expectation) {
+
         $this->resetAfterTest();
-        $this->setAdminUser();
+
+        // Uses user preferences and login details so we must be in a user context.
+        $user = $this->getDataGenerator()->create_user(array(
+            'firstaccess' => isset($firstaccess) ? $firstaccess : 0,
+            'timecreated' => isset($timecreated) ? $timecreated : 0,
+            'lastlogin' => isset($lastlogin) ? $lastlogin : 0));
+
+        $this->setUser($user);
 
         $tour = $this->getMockBuilder(tour::class)
             ->setMethods([
                     'get_id',
-                    'get_config',
                     'is_enabled',
                 ])
             ->getMock()
             ;
+
+        // Set the filter values based on the provider.
+        $tour->set_filter_values('shown', isset($basedate) ? array($basedate) : array());
+        $tour->set_filter_values('showntime', isset($range) ? array($range) : array());
+        $tour->set_config('majorupdatetime', (isset($updateddate)) ? $updateddate : time());
 
         $tour->method('is_enabled')
             ->willReturn(true)
@@ -701,13 +728,6 @@ class tour_testcase extends advanced_testcase {
 
         if ($requesteddate !== null) {
             set_user_preference(\tool_usertours\tour::TOUR_REQUESTED_BY_USER . $id, $requesteddate);
-        }
-
-        if ($updateddate !== null) {
-            $tour->expects($this->once())
-                ->method('get_config')
-                ->willReturn($updateddate)
-                ;
         }
 
         $this->assertEquals($expectation, $tour->should_show_for_user());

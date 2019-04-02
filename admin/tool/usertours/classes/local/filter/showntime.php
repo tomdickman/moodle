@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Filter base.
+ * Time filter for showing tours.
  *
  * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,16 +30,12 @@ use tool_usertours\tour;
 use context;
 
 /**
- * Filter base.
+ * Time filter for showing tours.
  *
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class base {
-    /**
-     * Any Value.
-     */
-    const ANYVALUE = '__ANYVALUE__';
+class showntime extends base {
 
     /**
      * The name of the filter.
@@ -47,48 +43,28 @@ abstract class base {
      * @return  string
      */
     public static function get_filter_name() {
-        throw new \coding_exception('get_filter_name() must be defined');
-    }
-
-    /**
-     * Retrieve the list of available filter options.
-     *
-     * @return  array                   An array whose keys are the valid options
-     */
-    public static function get_filter_options() {
-        return [];
-    }
-
-    /**
-     * Check whether the filter matches the specified tour and/or context.
-     *
-     * @param   tour        $tour       The tour to check
-     * @param   context     $context    The context to check
-     * @return  boolean
-     */
-    public static function filter_matches(tour $tour, context $context) {
-        return true;
+        return 'showntime';
     }
 
     /**
      * Add the form elements for the filter to the supplied form.
+     * Overrides the base method to ommit the 'All' option.
      *
-     * @param   MoodleQuickForm $mform      The form to add filter settings to.
+     * @param MoodleQuickForm $mform The form to add filter settings to.
+     *
+     * @throws \coding_exception
      */
     public static function add_filter_to_form(\MoodleQuickForm &$mform) {
-        $options = [
-            static::ANYVALUE   => get_string('all'),
-        ];
-        $options += static::get_filter_options();
 
         $filtername = static::get_filter_name();
         $key = "filter_{$filtername}";
 
-        $mform->addElement('select', $key, get_string($key, 'tool_usertours'), $options, [
-                'multiple' => true,
-            ]);
-        $mform->setDefault($key, static::ANYVALUE);
+        $mform->addElement('duration', $key, get_string($key, 'tool_usertours'),
+            array('optional' => false, 'defaultunit' => DAYSECS));
+
+        $mform->setDefault($key, tour::FILTER_DEFAULT_RANGE_SECONDS);
         $mform->addHelpButton($key, $key, 'tool_usertours');
+
     }
 
     /**
@@ -104,9 +80,11 @@ abstract class base {
         $key = "filter_{$filtername}";
         $values = $tour->get_filter_values($filtername);
         if (empty($values)) {
-            $values = static::ANYVALUE;
+            $data->$key = tour::FILTER_DEFAULT_RANGE_SECONDS;
+        } else {
+            // Single value field only, assume zeroth array element.
+            $data->$key = reset($values);
         }
-        $data->$key = $values;
 
         return $data;
     }
@@ -122,18 +100,7 @@ abstract class base {
 
         $key = "filter_{$filtername}";
 
-        $newvalue = $data->$key;
-
-        if (is_array($newvalue)) {
-            foreach ($data->$key as $value) {
-                if ($value === static::ANYVALUE) {
-                    $newvalue = [];
-                    break;
-                }
-            }
-        } else {
-            $newvalue = array($newvalue);
-        }
+        $newvalue = array($data->$key);
 
         $tour->set_filter_values($filtername, $newvalue);
     }

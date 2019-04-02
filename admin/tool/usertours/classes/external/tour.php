@@ -62,12 +62,8 @@ class tour extends external_api {
         self::validate_context($context);
 
         $tour = tourinstance::instance($params['tourid']);
-        if (!$tour->should_show_for_user()) {
-            return [];
-        }
 
         $touroutput = new \tool_usertours\output\tour($tour);
-
         \tool_usertours\event\tour_started::create([
             'contextid' => $context->id,
             'objectid'  => $tourid,
