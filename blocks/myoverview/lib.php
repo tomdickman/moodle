@@ -58,6 +58,12 @@ define('BLOCK_MYOVERVIEW_PAGING_96', 96);
 define('BLOCK_MYOVERVIEW_PAGING_ALL', 0);
 
 /**
+ * Constants for the admin category display setting
+ */
+define('BLOCK_MYOVERVIEW_DISPLAY_CATEGORIES_ON', 'on');
+define('BLOCK_MYOVERVIEW_DISPLAY_CATEGORIES_OFF', 'off');
+
+/**
  * Get the current user preferences that are available
  *
  * @return mixed Array representing current options along with defaults

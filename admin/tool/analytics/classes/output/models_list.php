@@ -62,8 +62,33 @@ class models_list implements \renderable, \templatable {
         global $PAGE;
 
         $data = new \stdClass();
-        $data->importmodelurl = new \moodle_url('/admin/tool/analytics/importmodel.php');
-        $data->createmodelurl = new \moodle_url('/admin/tool/analytics/createmodel.php');
+
+        $newmodelmenu = new \action_menu();
+        $newmodelmenu->set_menu_trigger(get_string('newmodel', 'tool_analytics'), 'btn btn-default');
+        $newmodelmenu->set_alignment(\action_menu::TL, \action_menu::BL);
+
+        $newmodelmenu->add(new \action_menu_link(
+            new \moodle_url('/admin/tool/analytics/createmodel.php'),
+            new \pix_icon('i/edit', ''),
+            get_string('createmodel', 'tool_analytics'),
+            false
+        ));
+
+        $newmodelmenu->add(new \action_menu_link(
+            new \moodle_url('/admin/tool/analytics/importmodel.php'),
+            new \pix_icon('i/import', ''),
+            get_string('importmodel', 'tool_analytics'),
+            false
+        ));
+
+        $newmodelmenu->add(new \action_menu_link(
+            new \moodle_url('/admin/tool/analytics/restoredefault.php'),
+            new \pix_icon('i/reload', ''),
+            get_string('restoredefault', 'tool_analytics'),
+            false
+        ));
+
+        $data->newmodelmenu = $newmodelmenu->export_for_template($output);
 
         $onlycli = get_config('analytics', 'onlycli');
         if ($onlycli === false) {
@@ -84,7 +109,7 @@ class models_list implements \renderable, \templatable {
 
         $data->models = array();
         foreach ($this->models as $model) {
-            $modeldata = $model->export();
+            $modeldata = $model->export($output);
 
             // Check if there is a help icon for the target to show.
             $identifier = $modeldata->target->get_identifier();
@@ -119,6 +144,8 @@ class models_list implements \renderable, \templatable {
                 }
                 $modeldata->indicators = $indicators;
             }
+
+            $modeldata->indicatorsnum = count($modeldata->indicators);
 
             // Check if there is a help icon for the time splitting method.
             if (!empty($modeldata->timesplitting)) {
@@ -299,16 +326,14 @@ class models_list implements \renderable, \templatable {
             }
 
             // Delete model.
-            if (!$model->is_static()) {
-                $actionid = 'delete-' . $model->get_id();
-                $PAGE->requires->js_call_amd('tool_analytics/model', 'confirmAction', [$actionid, 'delete']);
-                $urlparams['action'] = 'delete';
-                $url = new \moodle_url('model.php', $urlparams);
-                $icon = new \action_menu_link_secondary($url, new \pix_icon('t/delete',
-                    get_string('delete', 'tool_analytics')), get_string('delete', 'tool_analytics'),
-                    ['data-action-id' => $actionid]);
-                $actionsmenu->add($icon);
-            }
+            $actionid = 'delete-' . $model->get_id();
+            $PAGE->requires->js_call_amd('tool_analytics/model', 'confirmAction', [$actionid, 'delete']);
+            $urlparams['action'] = 'delete';
+            $url = new \moodle_url('model.php', $urlparams);
+            $icon = new \action_menu_link_secondary($url, new \pix_icon('t/delete',
+                get_string('delete', 'tool_analytics')), get_string('delete', 'tool_analytics'),
+                ['data-action-id' => $actionid]);
+            $actionsmenu->add($icon);
 
             $modeldata->actions = $actionsmenu->export_for_template($output);
 

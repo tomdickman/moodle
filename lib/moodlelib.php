@@ -2764,6 +2764,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         $CFG->forceclean = true;
     }
 
+    $afterlogins = get_plugins_with_function('after_require_login', 'lib.php');
+
     // Do not bother admins with any formalities, except for activities pending deletion.
     if (is_siteadmin() && !($cm && $cm->deletioninprogress)) {
         // Set the global $COURSE.
@@ -2777,6 +2779,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         // Do not update access time for webservice or ajax requests.
         if (!WS_SERVER && !AJAX_SCRIPT) {
             user_accesstime_log($course->id);
+        }
+
+        foreach ($afterlogins as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+            }
         }
         return;
     }
@@ -2993,6 +3001,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         $PAGE->set_pagelayout('incourse');
     } else if (!empty($courseorid)) {
         $PAGE->set_course($course);
+    }
+
+    foreach ($afterlogins as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+        }
     }
 
     // Finally access granted, update lastaccess times.
@@ -4777,9 +4791,11 @@ function update_internal_user_password($user, $password, $fasthash = false) {
  * @param string $field The user field to be checked for a given value.
  * @param string $value The value to match for $field.
  * @param int $mnethostid
+ * @param bool $throwexception If true, it will throw an exception when there's no record found or when there are multiple records
+ *                              found. Otherwise, it will just return false.
  * @return mixed False, or A {@link $USER} object.
  */
-function get_complete_user_data($field, $value, $mnethostid = null) {
+function get_complete_user_data($field, $value, $mnethostid = null, $throwexception = false) {
     global $CFG, $DB;
 
     if (!$field || !$value) {
@@ -4790,7 +4806,7 @@ function get_complete_user_data($field, $value, $mnethostid = null) {
     $field = core_text::strtolower($field);
 
     // List of case insensitive fields.
-    $caseinsensitivefields = ['username'];
+    $caseinsensitivefields = ['username', 'email'];
 
     // Build the WHERE clause for an SQL query.
     $params = array('fieldval' => $value);
@@ -4817,8 +4833,18 @@ function get_complete_user_data($field, $value, $mnethostid = null) {
     }
 
     // Get all the basic user data.
-    if (! $user = $DB->get_record_select('user', $constraints, $params)) {
-        return false;
+    try {
+        // Make sure that there's only a single record that matches our query.
+        // For example, when fetching by email, multiple records might match the query as there's no guarantee that email addresses
+        // are unique. Therefore we can't reliably tell whether the user profile data that we're fetching is the correct one.
+        $user = $DB->get_record_select('user', $constraints, $params, '*', MUST_EXIST);
+    } catch (dml_exception $exception) {
+        if ($throwexception) {
+            throw $exception;
+        } else {
+            // Return false when no records or multiple records were found.
+            return false;
+        }
     }
 
     // Get various settings and preferences.
@@ -6417,17 +6443,14 @@ function send_password_change_confirmation_email($user, $resetrecord) {
 }
 
 /**
- * Sends an email containinginformation on how to change your password.
+ * Sends an email containing information on how to change your password.
  *
  * @param stdClass $user A {@link $USER} object
  * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function send_password_change_info($user) {
-    global $CFG;
-
     $site = get_site();
     $supportuser = core_user::get_support_user();
-    $systemcontext = context_system::instance();
 
     $data = new stdClass();
     $data->firstname = $user->firstname;
@@ -6436,35 +6459,18 @@ function send_password_change_info($user) {
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();
 
-    $userauth = get_auth_plugin($user->auth);
-
-    if (!is_enabled_auth($user->auth) or $user->auth == 'nologin') {
+    if (!is_enabled_auth($user->auth)) {
         $message = get_string('emailpasswordchangeinfodisabled', '', $data);
         $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
         // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
         return email_to_user($user, $supportuser, $subject, $message);
     }
 
-    if ($userauth->can_change_password() and $userauth->change_password_url()) {
-        // We have some external url for password changing.
-        $data->link .= $userauth->change_password_url();
-
-    } else {
-        // No way to change password, sorry.
-        $data->link = '';
-    }
-
-    if (!empty($data->link) and has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
-        $message = get_string('emailpasswordchangeinfo', '', $data);
-        $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
-    } else {
-        $message = get_string('emailpasswordchangeinfofail', '', $data);
-        $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
-    }
+    $userauth = get_auth_plugin($user->auth);
+    ['subject' => $subject, 'message' => $message] = $userauth->get_password_change_info($user);
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
     return email_to_user($user, $supportuser, $subject, $message);
-
 }
 
 /**

@@ -40,7 +40,7 @@ $url = new \moodle_url('/admin/tool/analytics/model.php', $params);
 switch ($action) {
 
     case 'edit':
-        $title = get_string('editmodel', 'tool_analytics', $model->get_target()->get_name());
+        $title = get_string('editmodel', 'tool_analytics', $model->get_name());
         break;
     case 'evaluate':
         $title = get_string('evaluatemodel', 'tool_analytics');
@@ -103,9 +103,7 @@ switch ($action) {
     case 'delete':
         confirm_sesskey();
 
-        if (!$model->is_static()) {
-            $model->delete();
-        }
+        $model->delete();
         redirect($returnurl);
         break;
 
