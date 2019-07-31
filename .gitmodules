@@ -1,0 +1,6 @@
+[submodule "local/smartmedia"]
+	path = local/smartmedia
+	url = git@github.com:catalyst/moodle-local_smartmedia.git
+[submodule "local/aws"]
+	path = local/aws
+	url = git@github.com:catalyst/moodle-local_aws.git
