@@ -397,6 +397,7 @@ $string['create'] = 'Create';
 $string['createaccount'] = 'Create my new account';
 $string['createcategory'] = 'Create category';
 $string['createfolder'] = 'Create a folder in {$a}';
+$string['createlicense'] = 'Create a new license';
 $string['createnew'] = 'Create new';
 $string['createnewcategory'] = 'Create new category';
 $string['createnewcourse'] = 'Create new course';
