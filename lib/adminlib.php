@@ -7271,7 +7271,7 @@ class admin_setting_managelicenses extends admin_setting {
         $url = "licenses.php?sesskey=" . sesskey();
 
         // display strings
-        $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'disable', 'none'));
+        $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'edit', 'editlock', 'disable', 'none'));
         $licenses = license_manager::get_licenses();
 
         $return = $OUTPUT->heading(get_string('availablelicenses', 'admin'), 3, 'main', true);
@@ -7279,7 +7279,7 @@ class admin_setting_managelicenses extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox editorsui');
 
         $table = new html_table();
-        $table->head  = array($txt->name, $txt->enable);
+        $table->head  = array($txt->name, $txt->enable, $txt->edit);
         $table->colclasses = array('leftalign', 'centeralign');
         $table->id = 'availablelicenses';
         $table->attributes['class'] = 'admintable generaltable';
@@ -7296,14 +7296,20 @@ class admin_setting_managelicenses extends admin_setting {
                     $OUTPUT->pix_icon('t/show', get_string('enable')));
             }
 
+            if ($value->custom == 1) {
+                $editlicense = html_writer::link($url.'&action=update$license='.$value->shortname,
+                    $OUTPUT->pix_icon('t/editinline', $txt->edit));
+            } else {
+                $editlicense = $OUTPUT->pix_icon('t/block', $txt->editlock);
+            }
+
             if ($value->shortname == $CFG->sitedefaultlicense) {
                 $displayname .= ' '.$OUTPUT->pix_icon('t/locked', get_string('default'));
                 $hideshow = '';
+                $editlicense = '';
             }
 
-            $enabled = true;
-
-            $table->data[] =array($displayname, $hideshow);
+            $table->data[] =array($displayname, $hideshow, $editlicense);
         }
         $return .= html_writer::table($table);
         $return .= $OUTPUT->box_end();
