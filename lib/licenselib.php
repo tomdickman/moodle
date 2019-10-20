@@ -29,6 +29,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 class license_manager {
+
+    /**
+     * License is a core license and can not be updated or deleted.
+     */
+    const CORE_LICENSE = 0;
+
+    /**
+     * License is a custom license and can be updated and/or deleted.
+     */
+    const CUSTOM_LICENSE = 1;
+
     /**
      * Adding a new license type
      * @param object $license {
@@ -147,6 +158,7 @@ class license_manager {
         $license->source = '';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -155,6 +167,7 @@ class license_manager {
         $license->source = 'http://en.wikipedia.org/wiki/All_rights_reserved';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -163,6 +176,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/publicdomain/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -171,6 +185,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -179,6 +194,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nd/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -187,6 +203,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nc-nd/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -195,6 +212,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nc/3.0/';
         $license->enabled = 1;
         $license->version = '2013051500';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -203,6 +221,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-nc-sa/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
@@ -211,6 +230,7 @@ class license_manager {
         $license->source = 'http://creativecommons.org/licenses/by-sa/3.0/';
         $license->enabled = 1;
         $license->version = '2010033100';
+        $license->custom = self::CORE_LICENSE;
         $active_licenses[] = $license->shortname;
         self::add($license);
 
