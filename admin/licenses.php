@@ -47,6 +47,10 @@ switch ($action) {
         license_manager::enable($license);
         break;
 
+    case 'delete':
+        license_manager::delete($license);
+        break;
+
     default:
         break;
 }

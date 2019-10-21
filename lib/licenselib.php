@@ -133,6 +133,27 @@ class license_manager {
     }
 
     /**
+     * @param string $licenseshortname the shortname of license.
+     *
+     * @throws \dml_exception
+     */
+    public static function delete($licenseshortname) {
+        global $DB;
+
+        $link = new moodle_url('/admin/settings.php', ['section' => 'managelicenses']);
+
+        if ($license = self::get_license_by_shortname($licenseshortname)) {
+            if ($license->custom == self::CUSTOM_LICENSE) {
+                $DB->delete_records('license', ['id' => $license->id]);
+            } else {
+                print_error('licensecantdeletecore', 'error', $link);
+            }
+        } else {
+            print_error('licensenotfoundshortname', 'error', $link, $licenseshortname);
+        }
+    }
+
+    /**
      * Store active licenses in global $CFG
      */
     static private function set_active_licenses() {
