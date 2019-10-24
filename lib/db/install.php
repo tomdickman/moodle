@@ -292,10 +292,6 @@ function xmldb_main_install() {
     // No admin setting for this any more, GD is now required, remove in Moodle 2.6.
     set_config('gdversion', 2);
 
-    // Install licenses
-    require_once($CFG->libdir . '/licenselib.php');
-    license_manager::install_licenses();
-
     // Init profile pages defaults
     if ($DB->record_exists('my_pages', array())) {
         throw new moodle_exception('generalexceptionmessage', 'error', '', 'Can not create default profile pages, records already exist.');
