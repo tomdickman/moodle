@@ -24,23 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$ADMIN->add('modules', new admin_category('licensesettings', new lang_string('licenses')));
 
-$settings = new admin_externalpage(
-    'tool_licensemanager/manager',
-    get_string('manager', 'tool_licensemanager'),
-    new moodle_url('/admin/tool/managelicenses/manager.php')
-);
+if ($hassiteconfig) {
 
-// Add all active license to the site default license selector.
-$licenses = array();
-$array = explode(',', $CFG->licenses);
-foreach ($array as $value) {
-    $licenses[$value] = new lang_string($value, 'license');
+    $licensesettings = new admin_externalpage(
+        'tool_licensemanager/manager',
+        get_string('manager', 'tool_licensemanager'),
+        new moodle_url('/admin/tool/licensemanager/manager.php')
+    );
+
+    $ADMIN->add('tools', $licensesettings);
 }
-$settings->add(new admin_setting_configselect('sitedefaultlicense', new lang_string('configsitedefaultlicense','admin'), new lang_string('configsitedefaultlicensehelp','admin'), 'allrightsreserved', $licenses));
-
-$ADMIN->add(
-    'licensesettings',
-    $settings
-);

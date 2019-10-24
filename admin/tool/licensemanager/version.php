@@ -15,12 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_licensemanager', language 'en'
+ * Version details for the license manager.
  *
- * @package   tool_licensemanager
- * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_licensemanager
+ * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['licenses'] = 'Licenses';
-$string['manager'] = 'License Manager';
-$string['pluginname'] = 'License Manager';
+
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version   = 2019102400;
+$plugin->requires  = 2019101600;         // Requires this Moodle version.
+$plugin->component = 'tool_licensemanager';
