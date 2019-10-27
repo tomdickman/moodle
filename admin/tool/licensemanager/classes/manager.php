@@ -24,8 +24,13 @@
 
 namespace tool_licensemanager;
 
+use html_table;
+use html_writer;
 use moodle_url;
 use stdClass;
+use tool_licensemanager\forms\select_site_default;
+use tool_licensemanager\output\license_table;
+use tool_licensemanager\output\renderer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -72,9 +77,14 @@ class manager {
     const ACTION_ENABLE = 'enable';
 
     /**
+     * Action for setting the site default license.
+     */
+    const ACTION_SET_SITE_DEFAULT = 'setsitedefault';
+
+    /**
      * Action for displaying the license list view.
      */
-    const ACTION_VIEW_LICENSE_LIST = 'viewlicenselist';
+    const ACTION_VIEW_LICENSE_MANAGER = 'viewlicensemanager';
 
     /**
      * Entry point for internal license manager api.
@@ -85,55 +95,58 @@ class manager {
     public function execute($action, $license = null) {
         admin_externalpage_setup('tool_licensemanager/manager');
 
-        // Convert the license to an object if it isn't already.
-        if (!is_object($license) && !empty($license) && !is_string($license)) {
-            $licenseobject = new stdClass();
-            $licenseobject->shortname = $license;
-        }
-
-        if (empty($action)) {
-            $action = self::ACTION_VIEW_LICENSE_LIST;
+        // Allow us to handle object or string parameters for license and convert to object.
+        if (!empty($license) && is_string($license)) {
+            $license = new stdClass();
+            $license->shortname = $license;
         }
 
         $return = true;
 
         switch ($action) {
-            case self::ACTION_VIEW_LICENSE_LIST:
-                $this->view_license_list();
-                $return = false;
+            case self::ACTION_SET_SITE_DEFAULT:
+                $this->set_site_default();
                 break;
 
             case self::ACTION_DISABLE:
-                $this->disable($licenseobject->shortname);
+                $this->disable($license->shortname);
                 break;
 
             case self::ACTION_ENABLE:
-                $this->enable($licenseobject->shortname);
+                $this->enable($license->shortname);
                 break;
 
             case self::ACTION_DELETE:
-                $this->delete($licenseobject->shortname);
+                $this->delete($license->shortname);
                 break;
 
             case self::ACTION_CREATE:
-                $this->create($licenseobject);
-                // If there is no license object, display create license form and don't return.
-                if (empty($licenseobject)) {
+                $this->create($license);
+                // If there is no license object, display create license form.
+                if (empty($license)) {
                     $return = false;
                 }
                 break;
 
+            case self::ACTION_UPDATE:
+                $this->view_edit_license_form($license);
+                $return = false;
+                break;
+
+            case self::ACTION_VIEW_LICENSE_MANAGER:
             default:
+                $this->view_license_manager();
+                $return = false;
                 break;
         }
 
         if ($return) {
-            redirect(new moodle_url('/admin/tool/managelicenses/manager.php'));
+            redirect(new moodle_url('/admin/tool/licensemanager/manager.php'));
         }
     }
 
     /**
-     * Adding a new license type
+     * Adding a new license type.
      *
      * @param object $license {
      *            shortname => string a shortname of license, will be refered by files table[required]
@@ -159,11 +172,15 @@ class manager {
         return true;
     }
 
+    /**
+     * @param $license
+     */
     private function create($license) {
         if (!empty($license)) {
-            self::add($license);
+            $this->add($license);
         } else {
             // Display the form to create a new license.
+            $this->view_edit_license_form();
         }
     }
 
@@ -174,7 +191,7 @@ class manager {
      *
      * @return array
      */
-    private function get_licenses($param = null) {
+    public function get_licenses($param = null) {
         global $DB;
         if (empty($param) || !is_array($param)) {
             $param = array();
@@ -212,11 +229,11 @@ class manager {
      */
     private function enable($licenseshortname) {
         global $DB;
-        if ($license = self::get_license_by_shortname($licenseshortname)) {
+        if ($license = $this->get_license_by_shortname($licenseshortname)) {
             $license->enabled = 1;
             $DB->update_record('license', $license);
         }
-        self::set_active_licenses();
+        $this->set_active_licenses();
         return true;
     }
 
@@ -233,11 +250,11 @@ class manager {
         if ($license == $CFG->sitedefaultlicense) {
             print_error('error');
         }
-        if ($license = self::get_license_by_shortname($license)) {
+        if ($license = $this->get_license_by_shortname($license)) {
             $license->enabled = 0;
             $DB->update_record('license', $license);
         }
-        self::set_active_licenses();
+        $this->set_active_licenses();
         return true;
     }
 
@@ -249,10 +266,11 @@ class manager {
     private function delete($licenseshortname) {
         global $DB;
 
-        $link = new moodle_url('/admin/settings.php', ['section' => 'managelicenses']);
+        // Return to manager page if displaying an error message.
+        $link = new moodle_url('/admin/tool/licensemanager/manager.php', ['action' => $this->ACTION_VIEW_LICENSE_MANAGER]);
 
-        if ($license = self::get_license_by_shortname($licenseshortname)) {
-            if ($license->custom == self::CUSTOM_LICENSE) {
+        if ($license = $this->get_license_by_shortname($licenseshortname)) {
+            if ($license->custom == $this->CUSTOM_LICENSE) {
                 $DB->delete_records('license', ['id' => $license->id]);
             } else {
                 print_error('licensecantdeletecore', 'error', $link);
@@ -262,8 +280,87 @@ class manager {
         }
     }
 
-    private function view_license_list() {
+    private function view_license_manager($licenseshortname = null) {
+        global $PAGE, $CFG;
 
+        // Add the settings form for setting site default license.
+        $form = new forms\select_site_default($this);
+
+        if ($form->is_cancelled()) {
+            // We shouldn't get here as there is no cancel button, but just in case.
+            redirect(helper::get_view_license_manager_url());
+        } else if ($data = $form->get_data()) {
+            set_config('sitedefaultlicense', $data->sitedefaultlicense);
+            redirect(helper::get_view_license_manager_url());
+        } else {
+            $form->set_data(['sitedefaultlicense' => $CFG->sitedefaultlicense]);
+
+            // Display the table of all licenses within this Moodle instance and their statuses.
+            $licenses = $this->get_licenses();
+            $renderer = $PAGE->get_renderer('tool_licensemanager');
+            $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'edit', 'editlock', 'disable', 'none'));
+
+            $return = $renderer->header();
+            $return .= $renderer->heading(get_string('availablelicenses', 'admin'), 3, 'main', true);
+            $return .= $form->render();
+
+            $return .= $renderer->box_start('generalbox editorsui');
+
+            $table = new html_table();
+            $table->head  = array($txt->name, $txt->enable, $txt->edit);
+            $table->colclasses = array('leftalign', 'centeralign');
+            $table->id = 'availablelicenses';
+            $table->attributes['class'] = 'admintable generaltable';
+            $table->data  = array();
+
+            foreach ($licenses as $value) {
+                if ($value->custom == 0){
+                    $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'), array('target'=>'_blank'));
+                } else {
+                    $displayname = html_writer::link($value->source, $value->fullname, array('target'=>'_blank'));
+                }
+
+                if ($value->enabled == 1) {
+                    $hideshow = html_writer::link(helper::get_enable_license_url($value->shortname),
+                        $renderer->pix_icon('t/hide', get_string('disable')));
+                } else {
+                    $hideshow = html_writer::link(helper::get_disable_license_url($value->shortname),
+                        $renderer->pix_icon('t/show', get_string('enable')));
+                }
+
+                if ($value->custom == 1) {
+                    $editlicense = html_writer::link(helper::get_update_license_url($value->shortname),
+                        $renderer->pix_icon('t/editinline', $txt->edit));
+                } else {
+                    $editlicense = $renderer->pix_icon('t/block', $txt->editlock);
+                }
+
+                if ($value->shortname == $CFG->sitedefaultlicense) {
+                    $displayname .= ' '.$renderer->pix_icon('t/locked', get_string('default'));
+                    $hideshow = '';
+                    $editlicense = '';
+                }
+
+                $table->data[] = array($displayname, $hideshow, $editlicense);
+            }
+            $return .= html_writer::table($table);
+            $return .= $renderer->box_end();
+            $return .= $renderer->footer();
+            echo $return;
+        }
+
+    }
+
+    public function view_edit_license_form($license) {
+
+    }
+
+    public function set_site_default() {
+        $form = new forms\select_site_default($this);
+        if ($data = $form->get_data()) {
+            set_config('sitedefaultlicense', $data->sitedefaultlicense);
+        }
+        redirect(helper::get_view_license_manager_url());
     }
 
     /**
@@ -271,7 +368,7 @@ class manager {
      */
     private function set_active_licenses() {
         // set to global $CFG
-        $licenses = self::get_licenses(array('enabled' => 1));
+        $licenses = $this->get_licenses(array('enabled' => 1));
         $result = array();
         foreach ($licenses as $l) {
             $result[] = $l->shortname;

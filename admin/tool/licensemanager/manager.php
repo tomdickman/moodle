@@ -28,9 +28,9 @@ require_once($CFG->libdir . '/adminlib.php');
 require_admin();
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
-$license = optional_param('license', '', PARAM_SAFEDIR);
+$license = optional_param('license', null, PARAM_SAFEDIR);
 
 $licensemanager = new \tool_licensemanager\manager();
 $PAGE->set_context(context_system::instance());
 
-$licensemanager->execute($action);
+$licensemanager->execute($action, $license);

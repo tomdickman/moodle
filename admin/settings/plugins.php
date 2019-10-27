@@ -181,7 +181,6 @@ if ($hassiteconfig) {
     foreach ($plugins as $plugin) {
         $plugin->load_settings($ADMIN, 'mlbackendsettings', $hassiteconfig);
     }
-
 /// Filter plugins
     $ADMIN->add('modules', new admin_category('filtersettings', new lang_string('managefilters')));
 

@@ -21,6 +21,15 @@
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$string['fullname'] = 'License full name';
 $string['licenses'] = 'Licenses';
-$string['manager'] = 'License Manager';
-$string['pluginname'] = 'License Manager';
+$string['manager'] = 'License manager';
+$string['pluginname'] = 'License manager';
+$string['shortname'] = 'License short name';
+$string['sitedefaultlicense'] = 'Site default license';
+$string['sitedefaultlicense_help'] = 'Site default license';
+$string['source'] = 'License source';
+$string['source_help'] = 'URL where the license terms and conditions can be found.';
+$string['version'] = 'License version';
+$string['version_help'] = 'Publication date of the license version being utilised.';
+
