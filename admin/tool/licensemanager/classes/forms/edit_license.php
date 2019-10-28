@@ -24,30 +24,62 @@
 
 namespace tool_licensemanager\forms;
 
+use tool_licensemanager\helper;
+use tool_licensemanager\manager;
+
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 class edit_license extends \moodleform {
 
+    private $manager;
+
+    public function __construct(string $action, $licenseshortname, manager $manager) {
+        $this->manager = $manager;
+        if ($action == manager::ACTION_CREATE) {
+            parent::__construct(helper::get_create_license_url());
+        } else {
+            parent::__construct(helper::get_update_license_url($licenseshortname));
+        }
+    }
+
     /**
      * Form definition. Abstract method - always override!
      */
-    protected function definition() {
+    public function definition() {
         global $CFG;
 
         $mform = $this->_form;
 
-        $mform->addElement('hidden', 'action', 'update');
-
         $mform->addElement('text', 'shortname', get_string('shortname', 'tool_licensemanager'));
         $mform->setType('shortname', PARAM_ALPHANUMEXT);
+        $mform->addRule('shortname', get_string('shortname_empty', 'tool_licensemanager'), 'required', null, 'client');
 
         $mform->addElement('text', 'fullname', get_string('fullname', 'tool_licensemanager'));
-        $mform->setType('shortname', PARAM_ALPHANUMEXT);
+        $mform->setType('fullname', PARAM_ALPHANUMEXT);
+        $mform->addRule('fullname', get_string('fullname_empty', 'tool_licensemanager'), 'required', null, 'client');
 
+        $mform->addElement('text', 'source', get_string('source', 'tool_licensemanager'));
+        $mform->setType('source', PARAM_URL);
+        $mform->addRule('source', get_string('source_empty', 'tool_licensemanager'), 'required', null, 'client');
+
+        $mform->addElement('date_selector', 'version', get_string('version', 'tool_licensemanager'), get_string('from'));
+        $mform->addRule('version', get_string('version_empty', 'tool_licensemanager'), 'required', null, 'client');
+
+        $this->add_action_buttons();
     }
 
-    protected function validatation() {
-        // Don't allow custom licenses to use existing shortname as this is the natural language unique key.
-    }
+//    public function validation($data, $files) {
+//        $errors = parent::validation($data, $files);
+//
+//        // Don't allow custom licenses to use existing shortname as this is the natural language unique key.
+//        if ($data['action'] == manager::ACTION_CREATE) {
+//            $existing = $this->manager->get_licenses(['shortname' => $data['shortname']]);
+//            if (!empty($existing)) {
+//                $errors['licensealreadyexists'] =
+//            }
+//        }
+//
+//        return $errors;
+//    }
 }
 

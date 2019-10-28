@@ -2537,8 +2537,8 @@ function glossary_xml_import_files($xmlparent, $tag, $contextid, $filearea, $ite
             }
             if (array_key_exists('FILELICENSE', $file['#'])) {
                 $license = $file['#']['FILELICENSE'][0]['#'];
-                require_once($CFG->libdir . "/licenselib.php");
-                if (license_manager::get_license_by_shortname($license)) {
+                $licensemanager = new tool_licensemanager\manager();
+                if ($licensemanager->get_license_by_shortname($license)) {
                     $filerecord['license'] = $license;
                 }
             }

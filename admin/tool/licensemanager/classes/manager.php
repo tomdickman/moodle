@@ -97,8 +97,9 @@ class manager {
 
         // Allow us to handle object or string parameters for license and convert to object.
         if (!empty($license) && is_string($license)) {
+            $shortname = $license;
             $license = new stdClass();
-            $license->shortname = $license;
+            $license->shortname = $shortname;
         }
 
         $return = true;
@@ -121,15 +122,8 @@ class manager {
                 break;
 
             case self::ACTION_CREATE:
-                $this->create($license);
-                // If there is no license object, display create license form.
-                if (empty($license)) {
-                    $return = false;
-                }
-                break;
-
             case self::ACTION_UPDATE:
-                $this->view_edit_license_form($license);
+                $this->edit($action, $license);
                 $return = false;
                 break;
 
@@ -153,19 +147,17 @@ class manager {
      *            fullname  => string the fullname of the license [required]
      *            source => string the homepage of the license type[required]
      *            enabled => int is it enabled?
-     *            version  => int a version number used by moodle [required]
+     *            version  => int a version number (epoch date) used by moodle [required]
+     *            custom => int is this a custom license?
      * }
      */
     private function add($license) {
         global $DB;
         if ($record = $DB->get_record('license', array('shortname' => $license->shortname))) {
             // record exists
-            if ($record->version < $license->version) {
-                // update license record
-                $license->enabled = $record->enabled;
-                $license->id = $record->id;
-                $DB->update_record('license', $license);
-            }
+            $license->enabled = $record->enabled;
+            $license->id = $record->id;
+            $DB->update_record('license', $license);
         } else {
             $DB->insert_record('license', $license);
         }
@@ -175,12 +167,41 @@ class manager {
     /**
      * @param $license
      */
-    private function create($license) {
-        if (!empty($license)) {
+    private function edit($action, $license) {
+        global $PAGE;
+
+        $form = new forms\edit_license($action, $license->shortname, $this);
+
+        if ($form->is_cancelled()) {
+            redirect(helper::get_view_license_manager_url());
+        } elseif ($data = $form->get_data()) {
+            $license = new stdClass();
+            $license->shortname = $data->shortname;
+            $license->fullname = $data->fullname;
+            $license->source = $data->source;
+            $license->version = $data->version;
+            $license->custom = self::CUSTOM_LICENSE;
+            $license->enabled = 1;  // Default to enabled.
             $this->add($license);
+            redirect(helper::get_view_license_manager_url());
         } else {
-            // Display the form to create a new license.
-            $this->view_edit_license_form();
+            $renderer = $PAGE->get_renderer('tool_licensemanager');
+            $return = $renderer->header();
+            if ($action == self::ACTION_CREATE) {
+                $return .= $renderer->heading(get_string('createlicense', 'tool_licensemanager'));
+            } elseif ($action == self::ACTION_UPDATE) {
+                $return .= $renderer->heading(get_string('editlicense', 'tool_licensemanager'));
+
+                $license = $this->get_license_by_shortname($license->shortname);
+                $form->set_data(['shortname' => $license->shortname]);
+                $form->set_data(['fullname' => $license->fullname]);
+                $form->set_data(['source' => $license->source]);
+                $form->set_data(['version' => $license->version]);
+            }
+            $return .= $form->render();
+            $return .= $renderer->footer();
+
+            echo $return;
         }
     }
 
@@ -211,7 +232,7 @@ class manager {
      *
      * @return object
      */
-    private function get_license_by_shortname($name) {
+    public function get_license_by_shortname($name) {
         global $DB;
         if ($record = $DB->get_record('license', array('shortname' => $name))) {
             return $record;
@@ -280,7 +301,7 @@ class manager {
         }
     }
 
-    private function view_license_manager($licenseshortname = null) {
+    private function view_license_manager() {
         global $PAGE, $CFG;
 
         // Add the settings form for setting site default license.
@@ -321,10 +342,10 @@ class manager {
                 }
 
                 if ($value->enabled == 1) {
-                    $hideshow = html_writer::link(helper::get_enable_license_url($value->shortname),
+                    $hideshow = html_writer::link(helper::get_disable_license_url($value->shortname),
                         $renderer->pix_icon('t/hide', get_string('disable')));
                 } else {
-                    $hideshow = html_writer::link(helper::get_disable_license_url($value->shortname),
+                    $hideshow = html_writer::link(helper::get_enable_license_url($value->shortname),
                         $renderer->pix_icon('t/show', get_string('enable')));
                 }
 
@@ -348,10 +369,6 @@ class manager {
             $return .= $renderer->footer();
             echo $return;
         }
-
-    }
-
-    public function view_edit_license_form($license) {
 
     }
 

@@ -43,7 +43,6 @@ class helper {
     public static function get_view_license_manager_url() {
         $url = new moodle_url('/admin/tool/licensemanager/manager.php',
             ['action' => manager::ACTION_VIEW_LICENSE_MANAGER]);
-
         return $url;
     }
 

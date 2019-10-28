@@ -3613,18 +3613,15 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2019101600.01) {
 
-        // Define field custom to be added to license.
+        // Define table config to be dropped.
         $table = new xmldb_table('license');
-        $field = new xmldb_field('custom', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'version');
 
-        // Conditionally launch add field custom.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        // Conditionally launch drop table for config.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
         }
 
-        // Main savepoint reached.
         upgrade_main_savepoint(true, 2019101600.01);
     }
-
     return true;
 }

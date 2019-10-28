@@ -2840,21 +2840,6 @@
       <INDEXES>
         <INDEX NAME="uniqueuserrating" UNIQUE="false" FIELDS="component, ratingarea, contextid, itemid" COMMENT="These fields define a unique user rating of an item"/>
       </INDEXES>
-    </TABLE>
-    <TABLE NAME="license" COMMENT="store licenses used by moodle">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="fullname" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="custom" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this flag is set, license is custom and can be updated or deleted, otherwise license is a core license and cannot be edited."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE>
     <TABLE NAME="registration_hubs" COMMENT="hub where the site is registered on with their associated token">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
