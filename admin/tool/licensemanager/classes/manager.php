@@ -285,17 +285,14 @@ class manager {
     private function delete($licenseshortname) {
         global $DB;
 
-        // Return to manager page if displaying an error message.
-        $link = new moodle_url('/admin/tool/licensemanager/manager.php', ['action' => $this->ACTION_VIEW_LICENSE_MANAGER]);
-
         if ($license = $this->get_license_by_shortname($licenseshortname)) {
-            if ($license->custom == $this->CUSTOM_LICENSE) {
+            if ($license->custom == self::CUSTOM_LICENSE) {
                 $DB->delete_records('license', ['id' => $license->id]);
             } else {
-                print_error('licensecantdeletecore', 'error', $link);
+                print_error('licensecantdeletecore', 'error', helper::get_view_license_manager_url());
             }
         } else {
-            print_error('licensenotfoundshortname', 'error', $link, $licenseshortname);
+            print_error('licensenotfoundshortname', 'error', helper::get_view_license_manager_url(), $licenseshortname);
         }
     }
 
@@ -317,7 +314,7 @@ class manager {
             // Display the table of all licenses within this Moodle instance and their statuses.
             $licenses = $this->get_licenses();
             $renderer = $PAGE->get_renderer('tool_licensemanager');
-            $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'edit', 'editlock', 'disable', 'none'));
+            $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'edit', 'editlock', 'disable', 'none', 'delete'));
 
             $return = $renderer->header();
             $return .= $renderer->heading(get_string('availablelicenses', 'admin'), 3, 'main', true);
@@ -326,41 +323,51 @@ class manager {
             $return .= $renderer->box_start('generalbox editorsui');
 
             $table = new html_table();
-            $table->head  = array($txt->name, $txt->enable, $txt->edit);
-            $table->colclasses = array('leftalign', 'centeralign');
+            $table->head  = array($txt->name, $txt->enable, $txt->edit, $txt->delete);
+            $table->colclasses = array('text-left', 'text-center', 'text-center', 'text-center');
             $table->id = 'availablelicenses';
             $table->attributes['class'] = 'admintable generaltable';
             $table->data  = array();
 
             foreach ($licenses as $value) {
-                if ($value->custom == 0){
-                    $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'), array('target'=>'_blank'));
-                } else {
-                    $displayname = html_writer::link($value->source, $value->fullname, array('target'=>'_blank'));
-                }
 
-                if ($value->enabled == 1) {
-                    $hideshow = html_writer::link(helper::get_disable_license_url($value->shortname),
-                        $renderer->pix_icon('t/hide', get_string('disable')));
+                if ($value->custom == 0) {
+                    $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'),
+                        array('target' => '_blank'));
                 } else {
-                    $hideshow = html_writer::link(helper::get_enable_license_url($value->shortname),
-                        $renderer->pix_icon('t/show', get_string('enable')));
-                }
-
-                if ($value->custom == 1) {
-                    $editlicense = html_writer::link(helper::get_update_license_url($value->shortname),
-                        $renderer->pix_icon('t/editinline', $txt->edit));
-                } else {
-                    $editlicense = $renderer->pix_icon('t/block', $txt->editlock);
+                    $displayname = html_writer::link($value->source, $value->fullname, array('target' => '_blank'));
                 }
 
                 if ($value->shortname == $CFG->sitedefaultlicense) {
                     $displayname .= ' '.$renderer->pix_icon('t/locked', get_string('default'));
-                    $hideshow = '';
-                    $editlicense = '';
+                    $hideshow = $renderer->pix_icon('t/locked', get_string('default'));
+                    $editlicense = $renderer->pix_icon('t/locked', get_string('default'));
+                    $deletelicense = $renderer->pix_icon('t/locked', get_string('default'));
+                } else {
+                    if ($value->enabled == 1) {
+                        $hideshow = html_writer::link(helper::get_disable_license_url($value->shortname),
+                            $renderer->pix_icon('t/hide', get_string('disable')));
+                    } else {
+                        $hideshow = html_writer::link(helper::get_enable_license_url($value->shortname),
+                            $renderer->pix_icon('t/show', get_string('enable')));
+                    }
+
+                    if ($value->custom == 1) {
+                        $editlicense = html_writer::link(helper::get_update_license_url($value->shortname),
+                            $renderer->pix_icon('t/editinline', $txt->edit));
+                    } else {
+                        $editlicense = $renderer->pix_icon('t/block', $txt->editlock);
+                    }
+
+                    if ($value->custom == 1) {
+                        $deletelicense = html_writer::link(helper::get_delete_license_url($value->shortname),
+                            $renderer->pix_icon('i/trash', $txt->delete));
+                    } else {
+                        $deletelicense = $renderer->pix_icon('t/block', $txt->editlock);
+                    }
                 }
 
-                $table->data[] = array($displayname, $hideshow, $editlicense);
+                $table->data[] = array($displayname, $hideshow, $editlicense, $deletelicense);
             }
             $return .= html_writer::table($table);
             $return .= $renderer->box_end();

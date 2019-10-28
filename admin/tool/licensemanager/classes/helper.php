@@ -74,4 +74,11 @@ class helper {
         return $url;
     }
 
+    public static function get_delete_license_url(string $licenseshortname) {
+        $url = new moodle_url('/admin/tool/licensemanager/manager.php',
+            ['action' => manager::ACTION_DELETE, 'license' => $licenseshortname]);
+
+        return $url;
+    }
+
 }
