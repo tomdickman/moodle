@@ -61,9 +61,11 @@ class edit_license extends \moodleform {
         $mform->addElement('text', 'source', get_string('source', 'tool_licensemanager'));
         $mform->setType('source', PARAM_URL);
         $mform->addRule('source', get_string('source_empty', 'tool_licensemanager'), 'required', null, 'client');
+        $mform->addHelpButton('source', 'source', 'tool_licensemanager');
 
         $mform->addElement('date_selector', 'version', get_string('version', 'tool_licensemanager'), get_string('from'));
         $mform->addRule('version', get_string('version_empty', 'tool_licensemanager'), 'required', null, 'client');
+        $mform->addHelpButton('version', 'version', 'tool_licensemanager');
 
         $this->add_action_buttons();
     }

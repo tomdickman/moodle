@@ -60,9 +60,9 @@ class helper {
         return $url;
     }
 
-    public static function get_create_license_url(string $licenseshortname) {
+    public static function get_create_license_url() {
         $url = new moodle_url('/admin/tool/licensemanager/manager.php',
-            ['action' => manager::ACTION_CREATE, 'license' => $licenseshortname]);
+            ['action' => manager::ACTION_CREATE]);
 
         return $url;
     }

@@ -95,11 +95,9 @@ class manager {
     public function execute($action, $license = null) {
         admin_externalpage_setup('tool_licensemanager/manager');
 
-        // Allow us to handle object or string parameters for license and convert to object.
-        if (!empty($license) && is_string($license)) {
-            $shortname = $license;
-            $license = new stdClass();
-            $license->shortname = $shortname;
+        // Allow us to handle object and string parameters for license.
+        if (is_object($license)) {
+            $license = $license->shortname;
         }
 
         $return = true;
@@ -110,15 +108,15 @@ class manager {
                 break;
 
             case self::ACTION_DISABLE:
-                $this->disable($license->shortname);
+                $this->disable($license);
                 break;
 
             case self::ACTION_ENABLE:
-                $this->enable($license->shortname);
+                $this->enable($license);
                 break;
 
             case self::ACTION_DELETE:
-                $this->delete($license->shortname);
+                $this->delete($license);
                 break;
 
             case self::ACTION_CREATE:
@@ -167,10 +165,10 @@ class manager {
     /**
      * @param $license
      */
-    private function edit($action, $license) {
+    private function edit($action, $licenseshortname) {
         global $PAGE;
 
-        $form = new forms\edit_license($action, $license->shortname, $this);
+        $form = new forms\edit_license($action, $licenseshortname, $this);
 
         if ($form->is_cancelled()) {
             redirect(helper::get_view_license_manager_url());
@@ -192,7 +190,7 @@ class manager {
             } elseif ($action == self::ACTION_UPDATE) {
                 $return .= $renderer->heading(get_string('editlicense', 'tool_licensemanager'));
 
-                $license = $this->get_license_by_shortname($license->shortname);
+                $license = $this->get_license_by_shortname($licenseshortname);
                 $form->set_data(['shortname' => $license->shortname]);
                 $form->set_data(['fullname' => $license->fullname]);
                 $form->set_data(['source' => $license->source]);
@@ -366,6 +364,7 @@ class manager {
             }
             $return .= html_writer::table($table);
             $return .= $renderer->box_end();
+            $return .= $renderer->single_button(helper::get_create_license_url(), get_string('create', 'tool_licensemanager'));
             $return .= $renderer->footer();
             echo $return;
         }
