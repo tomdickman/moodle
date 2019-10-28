@@ -43,7 +43,7 @@ class edit_license extends \moodleform {
     }
 
     /**
-     * Form definition. Abstract method - always override!
+     * Form definition for creation and editing of licenses.
      */
     public function definition() {
         global $CFG;

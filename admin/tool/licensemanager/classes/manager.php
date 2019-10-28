@@ -84,6 +84,16 @@ class manager {
     const ACTION_VIEW_LICENSE_MANAGER = 'viewlicensemanager';
 
     /**
+     * Integer representation of boolean for a license that is enabled.
+     */
+    const LICENSE_ENABLED = 1;
+
+    /**
+     * Integer representation of boolean for a license that is disabled.
+     */
+    const LICENSE_DISABLED = 0;
+
+    /**
      * Entry point for internal license manager api.
      *
      * @param $action
@@ -176,24 +186,35 @@ class manager {
         if ($form->is_cancelled()) {
             redirect(helper::get_view_license_manager_url());
         } elseif ($data = $form->get_data()) {
+
+            $existing = $this->get_license_by_shortname($data->shortname);
+
+            // Check that license shortname is not already is use to avoid overriding licenses when creating.
+            if (!empty($existing) && $action == self::ACTION_CREATE) {
+                print_error('duplicatelicenseshortname', 'error', helper::get_view_license_manager_url(), $data->shortname);
+            }
+
             $license = new stdClass();
             $license->shortname = $data->shortname;
             $license->fullname = $data->fullname;
             $license->source = $data->source;
             $license->version = $data->version;
             $license->custom = self::CUSTOM_LICENSE;
-            $license->enabled = 1;  // Default to enabled.
+            $license->enabled = ($existing) ? $existing->enabled : self::LICENSE_ENABLED;  // Default to enabled.
             $this->add($license);
+
             redirect(helper::get_view_license_manager_url());
         } else {
             $renderer = $PAGE->get_renderer('tool_licensemanager');
             $return = $renderer->header();
+
             if ($action == self::ACTION_CREATE) {
                 $return .= $renderer->heading(get_string('createlicense', 'tool_licensemanager'));
             } elseif ($action == self::ACTION_UPDATE) {
                 $return .= $renderer->heading(get_string('editlicense', 'tool_licensemanager'));
 
                 $license = $this->get_license_by_shortname($licenseshortname);
+
                 if (!is_null($license)) {
                     $form->set_data(['shortname' => $license->shortname]);
                     $form->set_data(['fullname' => $license->fullname]);
@@ -257,7 +278,7 @@ class manager {
     private function enable($licenseshortname) {
         global $DB;
         if ($license = $this->get_license_by_shortname($licenseshortname)) {
-            $license->enabled = 1;
+            $license->enabled = self::LICENSE_ENABLED;
             $DB->update_record('license', $license);
         }
         $this->set_active_licenses();
@@ -278,7 +299,7 @@ class manager {
             print_error('Site default license cannot be disabled.');
         }
         if ($license = $this->get_license_by_shortname($licenseshortname)) {
-            $license->enabled = 0;
+            $license->enabled = self::LICENSE_DISABLED;
             $DB->update_record('license', $license);
         }
         $this->set_active_licenses();
@@ -347,7 +368,7 @@ class manager {
 
             foreach ($licenses as $value) {
 
-                if ($value->custom == 0) {
+                if ($value->custom == self::CORE_LICENSE) {
                     $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'),
                         array('target' => '_blank'));
                 } else {
@@ -360,7 +381,7 @@ class manager {
                     $editlicense = $renderer->pix_icon('t/locked', get_string('default'));
                     $deletelicense = $renderer->pix_icon('t/locked', get_string('default'));
                 } else {
-                    if ($value->enabled == 1) {
+                    if ($value->enabled == self::LICENSE_ENABLED) {
                         $hideshow = html_writer::link(helper::get_disable_license_url($value->shortname),
                             $renderer->pix_icon('t/hide', get_string('disable')));
                     } else {
@@ -368,14 +389,14 @@ class manager {
                             $renderer->pix_icon('t/show', get_string('enable')));
                     }
 
-                    if ($value->custom == 1) {
+                    if ($value->custom == self::CUSTOM_LICENSE) {
                         $editlicense = html_writer::link(helper::get_update_license_url($value->shortname),
                             $renderer->pix_icon('t/editinline', $txt->edit));
                     } else {
                         $editlicense = $renderer->pix_icon('t/block', $txt->editlock);
                     }
 
-                    if ($value->custom == 1) {
+                    if ($value->custom == self::CUSTOM_LICENSE) {
                         $deletelicense = html_writer::link(helper::get_delete_license_url($value->shortname),
                             $renderer->pix_icon('i/trash', $txt->delete));
                     } else {
@@ -411,7 +432,7 @@ class manager {
      * Store active licenses in global $CFG.
      */
     private function set_active_licenses() {
-        $licenses = $this->get_licenses(array('enabled' => 1));
+        $licenses = $this->get_licenses(array('enabled' => self::LICENSE_ENABLED));
         $result = array();
         foreach ($licenses as $license) {
             $result[] = $license->shortname;

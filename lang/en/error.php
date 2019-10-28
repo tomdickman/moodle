@@ -230,6 +230,7 @@ $string['duplicatenosupport'] = '\'{$a->modname}\' activity could not be duplica
 $string['duplicateparaminsql'] = 'ERROR: duplicate parameter name in query';
 $string['duplicaterolename'] = 'There is already a role with this name!';
 $string['duplicateroleshortname'] = 'There is already a role with this short name!';
+$string['duplicatelicenseshortname'] = 'There is already a role with this short name!';
 $string['duplicateusername'] = 'Duplicate username - skipping record';
 $string['emailfail'] = 'Emailing failed';
 $string['enddatebeforestartdate'] = 'The course end date must be after the start date.';
