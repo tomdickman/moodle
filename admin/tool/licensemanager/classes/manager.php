@@ -164,7 +164,7 @@ class manager {
      *            custom => int is this a custom license?
      * }
      */
-    private function add($license) {
+    public function add($license) {
         global $DB;
         if ($record = $DB->get_record('license', array('shortname' => $license->shortname))) {
             $license->enabled = $record->enabled;

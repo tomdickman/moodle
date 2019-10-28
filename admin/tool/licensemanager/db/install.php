@@ -40,7 +40,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'allrightsreserved';
     $license->fullname = 'All rights reserved';
@@ -49,7 +49,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'public';
     $license->fullname = 'Public Domain';
@@ -58,7 +58,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'cc';
     $license->fullname = 'Creative Commons';
@@ -67,7 +67,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'cc-nd';
     $license->fullname = 'Creative Commons - NoDerivs';
@@ -76,7 +76,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'cc-nc-nd';
     $license->fullname = 'Creative Commons - No Commercial NoDerivs';
@@ -85,7 +85,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'cc-nc';
     $license->fullname = 'Creative Commons - No Commercial';
@@ -94,7 +94,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'cc-nc-sa';
     $license->fullname = 'Creative Commons - No Commercial ShareAlike';
@@ -103,7 +103,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     $license->shortname = 'cc-sa';
     $license->fullname = 'Creative Commons - ShareAlike';
@@ -112,7 +112,7 @@ function xmldb_tool_licensemanager_install() {
     $license->version = '1269993600';
     $license->custom = $manager::CORE_LICENSE;
     $active_licenses[] = $license->shortname;
-    $manager->execute('create', $license);
+    $manager->add($license);
 
     set_config('licenses', implode(',', $active_licenses));
 }
