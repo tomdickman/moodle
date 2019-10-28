@@ -17,8 +17,8 @@
 /**
  * Renderer.
  *
- * @package    tool_analytics
- * @copyright  2016 David Monllao {@link http://www.davidmonllao.com}
+ * @package    tool_licensemanager
+ * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,13 +37,4 @@ use plugin_renderer_base;
  */
 class renderer extends plugin_renderer_base {
 
-    /**
-     * Return the license table for the license manager.
-     *
-     * @param \tool_licensemanager\output\license_table the license table renderable
-     * @return string HTML
-     */
-    protected function render_license_table(license_table $licensetable) {
-        return $this->render_from_template('tool_licensemanager/license_table', $licensetable->export_for_template($this));
-    }
 }
