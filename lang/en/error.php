@@ -73,6 +73,7 @@ $string['cannotdeletefile'] = 'Cannot delete this file';
 $string['cannotdeleterole'] = 'It cannot be deleted, because {$a}';
 $string['cannotdeleterolewithid'] = 'Could not delete role with ID {$a}';
 $string['cannotdeletethisrole'] = 'You cannot delete this role because it is used by the system, or because it is the last role with administrator capabilities.';
+$string['cannotdisabledefaultlicense'] = 'Site default license cannot be disabled.';
 $string['cannotdisableformat'] = 'You can not disable the default format';
 $string['cannotdownloadcomponents'] = 'Cannot download components';
 $string['cannotdownloadlanguageupdatelist'] = 'Cannot download list of language updates from download.moodle.org';

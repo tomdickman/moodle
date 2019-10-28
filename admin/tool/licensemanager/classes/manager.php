@@ -104,8 +104,8 @@ class manager {
     /**
      * Entry point for internal license manager api.
      *
-     * @param $action
-     * @param string|object|null $license
+     * @param string $action the api action to carry out.
+     * @param string|object $license the license object or shortname of license to carry action out on.
      */
     public function execute($action, $license) {
         admin_externalpage_setup('tool_licensemanager/manager');
@@ -148,7 +148,7 @@ class manager {
         }
 
         if ($return) {
-            redirect(new moodle_url('/admin/tool/licensemanager/manager.php'));
+            redirect(helper::get_view_license_manager_url());
         }
     }
 
@@ -167,7 +167,6 @@ class manager {
     private function add($license) {
         global $DB;
         if ($record = $DB->get_record('license', array('shortname' => $license->shortname))) {
-            // record exists
             $license->enabled = $record->enabled;
             $license->id = $record->id;
             $DB->update_record('license', $license);
@@ -196,9 +195,9 @@ class manager {
             // Process the form data and create or update a license record.
             $existing = $this->get_license_by_shortname($data->shortname);
 
-            // Check that license shortname is not already if creating, to avoid overriding existing licenses.
             if (!empty($existing) && $action == self::ACTION_CREATE) {
-                print_error('duplicatelicenseshortname', 'error', helper::get_view_license_manager_url(), $data->shortname);
+                print_error('duplicatelicenseshortname', 'error', helper::get_view_license_manager_url(),
+                    $data->shortname);
             }
 
             $license = new stdClass();
@@ -220,7 +219,7 @@ class manager {
      *
      * @param array|null $param array of filters to apply to results.
      *
-     * @return array
+     * @return array of license records.
      */
     public function get_licenses($param = null) {
         global $DB;
@@ -277,9 +276,9 @@ class manager {
      */
     private function disable($licenseshortname) {
         global $DB, $CFG;
-        // Site default license cannot be disabled!
+        // Site default license cannot be disabled.
         if ($licenseshortname == $CFG->sitedefaultlicense) {
-            print_error('Site default license cannot be disabled.');
+            print_error('cannotdisabledefaultlicense', 'error', helper::get_view_license_manager_url());
         }
         if ($license = $this->get_license_by_shortname($licenseshortname)) {
             $license->enabled = self::LICENSE_DISABLED;
@@ -446,7 +445,6 @@ class manager {
         if ($data = $form->get_data()) {
             set_config('sitedefaultlicense', $data->sitedefaultlicense);
         }
-        redirect(helper::get_view_license_manager_url());
     }
 
     /**
