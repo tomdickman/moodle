@@ -35,10 +35,10 @@ class edit_license extends \moodleform {
 
     public function __construct(string $action, $licenseshortname, manager $manager) {
         $this->manager = $manager;
-        if ($action == manager::ACTION_CREATE) {
-            parent::__construct(helper::get_create_license_url());
-        } else {
+        if ($action == manager::ACTION_UPDATE && !empty($licenseshortname)) {
             parent::__construct(helper::get_update_license_url($licenseshortname));
+        } else {
+            parent::__construct(helper::get_create_license_url());
         }
     }
 
