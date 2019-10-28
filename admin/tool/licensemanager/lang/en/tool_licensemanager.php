@@ -21,7 +21,7 @@
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['createlicense'] = 'Create license';
+$string['createlicense'] = 'Create custom license';
 $string['editlicense'] = 'Edit license';
 $string['fullname'] = 'License full name';
 $string['fullname_empty'] = 'You must specify a full name for this license.';

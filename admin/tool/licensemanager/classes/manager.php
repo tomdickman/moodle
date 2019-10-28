@@ -364,7 +364,7 @@ class manager {
             }
             $return .= html_writer::table($table);
             $return .= $renderer->box_end();
-            $return .= $renderer->single_button(helper::get_create_license_url(), get_string('create', 'tool_licensemanager'));
+            $return .= $renderer->single_button(helper::get_create_license_url(), get_string('createlicense', 'tool_licensemanager'));
             $return .= $renderer->footer();
             echo $return;
         }
