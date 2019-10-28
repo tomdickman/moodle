@@ -75,6 +75,6 @@ class select_site_default extends \moodleform {
         $mform->addElement('select', 'sitedefaultlicense', get_string('sitedefaultlicense', 'tool_licensemanager'), $options);
 
         // Add save button only, nowhere to go if we cancel this.
-        $this->add_action_buttons('false');
+        $this->add_action_buttons(false);
     }
 }
