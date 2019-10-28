@@ -69,19 +69,4 @@ class edit_license extends \moodleform {
 
         $this->add_action_buttons();
     }
-
-//    public function validation($data, $files) {
-//        $errors = parent::validation($data, $files);
-//
-//        // Don't allow custom licenses to use existing shortname as this is the natural language unique key.
-//        if ($data['action'] == manager::ACTION_CREATE) {
-//            $existing = $this->manager->get_licenses(['shortname' => $data['shortname']]);
-//            if (!empty($existing)) {
-//                $errors['licensealreadyexists'] =
-//            }
-//        }
-//
-//        return $errors;
-//    }
 }
-
