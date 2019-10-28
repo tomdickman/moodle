@@ -65,7 +65,7 @@ class select_site_default extends \moodleform {
         $licenses = $this->manager->get_licenses();
         foreach ($licenses as $license) {
             if (!$license->custom) {
-                // Core licenses have hard coded strings in Moodle core.
+                // Core licenses have language strings in Moodle core for internationalisation.
                 $options[$license->shortname] = new lang_string($license->shortname, 'license');
             } else {
                 $options[$license->shortname] = $license->fullname;
