@@ -28,9 +28,17 @@ use html_table;
 use html_writer;
 use moodle_url;
 use stdClass;
+use tool_licensemanager\forms\edit_license;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * License manager, main controller for tool_licensemanager.
+ *
+ * @package    tool_licensemanager
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class manager {
 
     /**
@@ -179,17 +187,16 @@ class manager {
      * @throws \moodle_exception
      */
     private function edit(string $action, string $licenseshortname) {
-        global $PAGE;
 
         $form = new forms\edit_license($action, $licenseshortname, $this);
 
         if ($form->is_cancelled()) {
             redirect(helper::get_view_license_manager_url());
         } elseif ($data = $form->get_data()) {
-
+            // Process the form data and create or update a license record.
             $existing = $this->get_license_by_shortname($data->shortname);
 
-            // Check that license shortname is not already is use to avoid overriding licenses when creating.
+            // Check that license shortname is not already if creating, to avoid overriding existing licenses.
             if (!empty($existing) && $action == self::ACTION_CREATE) {
                 print_error('duplicatelicenseshortname', 'error', helper::get_view_license_manager_url(), $data->shortname);
             }
@@ -200,35 +207,11 @@ class manager {
             $license->source = $data->source;
             $license->version = $data->version;
             $license->custom = self::CUSTOM_LICENSE;
-            $license->enabled = ($existing) ? $existing->enabled : self::LICENSE_ENABLED;  // Default to enabled.
             $this->add($license);
 
             redirect(helper::get_view_license_manager_url());
         } else {
-            $renderer = $PAGE->get_renderer('tool_licensemanager');
-            $return = $renderer->header();
-
-            if ($action == self::ACTION_CREATE) {
-                $return .= $renderer->heading(get_string('createlicense', 'tool_licensemanager'));
-            } elseif ($action == self::ACTION_UPDATE) {
-                $return .= $renderer->heading(get_string('editlicense', 'tool_licensemanager'));
-
-                $license = $this->get_license_by_shortname($licenseshortname);
-
-                if (!is_null($license)) {
-                    $form->set_data(['shortname' => $license->shortname]);
-                    $form->set_data(['fullname' => $license->fullname]);
-                    $form->set_data(['source' => $license->source]);
-                    $form->set_data(['version' => $license->version]);
-                } else {
-                    // There is no license to update, so redirect to creation url.
-                    redirect(helper::get_create_license_url());
-                }
-            }
-            $return .= $form->render();
-            $return .= $renderer->footer();
-
-            echo $return;
+            $this->view_license_editor($action, $licenseshortname, $form);
         }
     }
 
@@ -412,7 +395,45 @@ class manager {
             $return .= $renderer->footer();
             echo $return;
         }
+    }
 
+    /**
+     * View the license editor to create or edit a license.
+     *
+     * @param string $action
+     * @param string $licenseshortname the shortname of the license to create/edit.
+     * @param \tool_licensemanager\forms\edit_license $form the form for submitting edit data.
+     *
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function view_license_editor(string $action, string $licenseshortname, edit_license $form) {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('tool_licensemanager');
+        $return = $renderer->header();
+
+        if ($action == self::ACTION_CREATE) {
+            $return .= $renderer->heading(get_string('createlicense', 'tool_licensemanager'));
+        } elseif ($action == self::ACTION_UPDATE) {
+            $return .= $renderer->heading(get_string('editlicense', 'tool_licensemanager'));
+
+            $license = $this->get_license_by_shortname($licenseshortname);
+
+            if (!empty($license)) {
+                $form->set_data(['shortname' => $license->shortname]);
+                $form->set_data(['fullname' => $license->fullname]);
+                $form->set_data(['source' => $license->source]);
+                $form->set_data(['version' => $license->version]);
+            } else {
+                // There is no license to update, so redirect to creation url.
+                redirect(helper::get_create_license_url());
+            }
+        }
+        $return .= $form->render();
+        $return .= $renderer->footer();
+
+        echo $return;
     }
 
     /**

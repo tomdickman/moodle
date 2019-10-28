@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * License manager.
+ * License manager helper class.
  *
  * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
@@ -25,11 +25,16 @@
 namespace tool_licensemanager;
 
 use moodle_url;
-use stdClass;
-use tool_licensemanager\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * License manager helper class.
+ *
+ * @package    tool_licensemanager
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class helper {
 
     public static function get_select_site_default_url() {
