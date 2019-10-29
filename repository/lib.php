@@ -3117,22 +3117,10 @@ final class repository_type_form extends moodleform {
 function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
     static $templatesinitialized = array();
-    require_once($CFG->libdir . '/licenselib.php');
 
     $return = new stdClass();
-    $licenses = array();
-    if (!empty($CFG->licenses)) {
-        $array = explode(',', $CFG->licenses);
-        foreach ($array as $license) {
-            $l = new stdClass();
-            $l->shortname = $license;
-            $l->fullname = get_string($license, 'license');
-            $licenses[] = $l;
-        }
-    }
-    if (!empty($CFG->sitedefaultlicense)) {
-        $return->defaultlicense = $CFG->sitedefaultlicense;
-    }
+    $licensemanager = new tool_licensemanager\manager();
+    $licenses = $licensemanager->get_active_licenses();
 
     $return->licenses = $licenses;
 

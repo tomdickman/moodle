@@ -409,15 +409,10 @@ class form_filemanager implements renderable {
             'author'=>fullname($USER),
             'licenses'=>array()
             );
-        if (!empty($CFG->licenses)) {
-            $array = explode(',', $CFG->licenses);
-            foreach ($array as $license) {
-                $l = new stdClass();
-                $l->shortname = $license;
-                $l->fullname = get_string($license, 'license');
-                $defaults['licenses'][] = $l;
-            }
-        }
+
+        $licensemanager = new \tool_licensemanager\manager();
+        $defaults['licenses'] = $licensemanager->get_active_licenses();
+
         if (!empty($CFG->sitedefaultlicense)) {
             $defaults['defaultlicense'] = $CFG->sitedefaultlicense;
         }

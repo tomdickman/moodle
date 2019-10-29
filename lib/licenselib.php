@@ -44,7 +44,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'allrightsreserved';
@@ -53,7 +53,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'public';
@@ -62,7 +62,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'cc';
@@ -71,7 +71,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'cc-nd';
@@ -80,7 +80,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'cc-nc-nd';
@@ -89,7 +89,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'cc-nc';
@@ -98,7 +98,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'cc-nc-sa';
@@ -107,7 +107,7 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         $license->shortname = 'cc-sa';
@@ -116,9 +116,10 @@ class license_manager {
         $license->enabled = 1;
         $license->version = '1269993600';
         $license->custom = \tool_licensemanager\manager::CORE_LICENSE;
-        $active_licenses[] = $license->shortname;
+        $active_licenses[$license->shortname] = $license->fullname;
         $licensemanager->add($license);
 
         set_config('licenses', implode(',', $active_licenses));
+        set_config('sitedefaultlicense', reset($active_licenses));
     }
 }

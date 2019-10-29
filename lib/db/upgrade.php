@@ -3611,7 +3611,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2019100900.00);
     }
 
-    if ($oldversion < 2019101600.01) {
+    if ($oldversion < 2019102900.01) {
 
         // Define field custom to be added to course.
         $table = new xmldb_table('license');
