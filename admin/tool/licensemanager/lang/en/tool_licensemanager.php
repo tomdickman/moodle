@@ -28,6 +28,7 @@ $string['fullname_empty'] = 'You must specify a full name for this license.';
 $string['licenses'] = 'Licenses';
 $string['manager'] = 'License manager';
 $string['pluginname'] = 'License manager';
+$string['privacy:metadata'] = 'The tool_licensemanager plugin stores no personal data.';
 $string['shortname'] = 'License short name';
 $string['shortname_empty'] = 'You must specify a short name for this license.';
 $string['sitedefaultlicense'] = 'Site default license';
