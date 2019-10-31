@@ -2094,11 +2094,6 @@ function xmldb_main_upgrade($oldversion) {
         $field = new xmldb_field('coreminor', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'coremajor');
 
         // Conditionally launch add field coreminor.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Main savepoint reached.
         upgrade_main_savepoint(true, 2019111300.00);
     }
 
@@ -2314,5 +2309,24 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint(true, 2020042800.01);
     }
+
+    if ($oldversion < 2020050200.01) {
+
+        // Define field custom to be added to course.
+        $table = new xmldb_table('license');
+        $field = new xmldb_field('custom', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Conditionally launch add field custom.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Upgrade the core license details.
+        upgrade_core_licenses();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2020050200.01);
+    }
+
     return true;
 }
