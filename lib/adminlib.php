@@ -7281,6 +7281,88 @@ class admin_setting_managelicenses extends admin_setting {
     }
 
     /**
+     * Get table row data for a license.
+     *
+     * @param object $license the license to populate row data for.
+     * @param bool $canmoveup can this row move up.
+     * @param bool $canmovedown can this row move down.
+     *
+     * @return \html_table_row of columns values for row.
+     */
+    private function get_license_table_row_data(object $license, bool $canmoveup, bool $canmovedown) {
+        global $CFG, $OUTPUT;
+
+        $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
+
+        $summary = $license->fullname . ' ('. $license->shortname . ')<br>' . $source;
+        $summarycell = new html_table_cell($summary);
+        $summarycell->attributes['class'] = 'license-summary';
+        $versioncell = new html_table_cell($license->version);
+        $versioncell->attributes['class'] = 'license-version';
+
+        if ($license->shortname == $CFG->sitedefaultlicense) {
+            $hideshow = $OUTPUT->pix_icon('t/locked', get_string('default'));
+            $deletelicense = $OUTPUT->pix_icon('t/locked', get_string('default'));
+        } else {
+            if ($license->enabled == license_manager::LICENSE_ENABLED) {
+                $hideshow = html_writer::link(\tool_license\helper::get_disable_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/hide', get_string('disable')));
+            } else {
+                $hideshow = html_writer::link(\tool_license\helper::get_enable_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/show', get_string('enable')));
+            }
+
+            if ($license->custom == license_manager::CUSTOM_LICENSE) {
+                // Link url is added by the JS `delete_license` modal used for confirmation of deletion, to avoid
+                // link being usable before JavaScript loads on page.
+                $deletelicense = html_writer::link('#',
+                    $OUTPUT->pix_icon('i/trash', get_string('delete')),
+                    ['class' => 'delete-license', 'data-license' => $license->shortname]);
+            } else {
+                $deletelicense = '';
+            }
+        }
+        $hideshowcell = new html_table_cell($hideshow);
+        $hideshowcell->attributes['class'] = 'license-status';
+
+        if ($license->custom == license_manager::CUSTOM_LICENSE) {
+            $editlicense = html_writer::link(\tool_license\helper::get_update_license_url($license->shortname),
+                $OUTPUT->pix_icon('t/editinline', get_string('edit')),
+                ['class' => 'edit-license']);
+        } else {
+            $editlicense = '';
+        }
+        $editlicensecell = new html_table_cell($editlicense);
+        $editlicensecell->attributes['class'] = 'edit-license';
+
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', ['class' => 'iconsmall']);
+        $updown = '';
+        if ($canmoveup) {
+            $updown .= html_writer::link(\tool_license\helper::get_moveup_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/up', get_string('up'), 'moodle', ['class' => 'iconsmall']),
+                    ['class' => 'move-up']). '';
+        } else {
+            $updown .= $spacer;
+        }
+
+        if ($canmovedown) {
+            $updown .= '&nbsp;'.html_writer::link(\tool_license\helper::get_movedown_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/down', get_string('down'), 'moodle', ['class' => 'iconsmall']),
+                    ['class' => 'move-down']);
+        } else {
+            $updown .= $spacer;
+        }
+        $updowncell = new html_table_cell($updown);
+        $updowncell->attributes['class'] = 'license-order';
+
+        $row = new html_table_row([$hideshowcell, $summarycell, $versioncell, $updowncell, $editlicensecell, $deletelicense]);
+        $row->attributes['data-license'] = $license->shortname;
+        $row->attributes['class'] = strtolower(get_string('license', 'tool_license'));
+
+        return $row;
+    }
+
+    /**
      * Builds the XHTML to display the control
      *
      * @param string $data Unused
@@ -7288,47 +7370,55 @@ class admin_setting_managelicenses extends admin_setting {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
+
         require_once($CFG->libdir . '/licenselib.php');
-        $url = "licenses.php?sesskey=" . sesskey();
+        $PAGE->requires->js_call_amd('tool_license/delete_license');
 
-        // display strings
-        $txt = get_strings(array('administration', 'settings', 'name', 'enable', 'disable', 'none'));
-        $licenses = license_manager::get_licenses();
+        $licenses = license_manager::get_licenses_in_order();
 
-        $return = $OUTPUT->heading(get_string('availablelicenses', 'admin'), 3, 'main', true);
+        // Add the create license button.
+        $return = html_writer::link(\tool_license\helper::get_create_license_url(),
+            get_string('createlicensebuttontext', 'tool_license'),
+            ['class' => 'btn btn-secondary mb-3']);
 
+        // Add the table containing licenses for management.
         $return .= $OUTPUT->box_start('generalbox editorsui');
 
         $table = new html_table();
-        $table->head  = array($txt->name, $txt->enable);
-        $table->colclasses = array('leftalign', 'centeralign');
-        $table->id = 'availablelicenses';
+        $table->head  = [
+            get_string('enable'),
+            get_string('license', 'tool_license'),
+            get_string('version'),
+            get_string('order'),
+            get_string('edit'),
+            get_string('delete'),
+        ];
+        $table->colclasses = [
+            'text-center',
+            'text-left',
+            'text-left',
+            'text-center',
+            'text-center',
+            'text-center',
+        ];
+        $table->id = 'manage-licenses';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
+        $table->data  = [];
 
-        foreach ($licenses as $value) {
-            $displayname = html_writer::link($value->source, get_string($value->shortname, 'license'), array('target'=>'_blank'));
+        $rownumber = 0;
+        $rowcount = count($licenses);
 
-            if ($value->enabled == 1) {
-                $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname,
-                    $OUTPUT->pix_icon('t/hide', get_string('disable')));
-            } else {
-                $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname,
-                    $OUTPUT->pix_icon('t/show', get_string('enable')));
-            }
-
-            if ($value->shortname == $CFG->sitedefaultlicense) {
-                $displayname .= ' '.$OUTPUT->pix_icon('t/locked', get_string('default'));
-                $hideshow = '';
-            }
-
-            $enabled = true;
-
-            $table->data[] =array($displayname, $hideshow);
+        foreach ($licenses as $key => $value) {
+            $canmoveup = $rownumber > 0;
+            $canmovedown = $rownumber < $rowcount - 1;
+            $table->data[] = $this->get_license_table_row_data($value, $canmoveup, $canmovedown);
+            $rownumber++;
         }
+
         $return .= html_writer::table($table);
         $return .= $OUTPUT->box_end();
+
         return highlight($query, $return);
     }
 }

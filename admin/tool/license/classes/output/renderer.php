@@ -1,0 +1,76 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Renderer for 'tool_license' component.
+ *
+ * @package    tool_license
+ * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace tool_license\output;
+
+defined('MOODLE_INTERNAL') || die();
+
+use plugin_renderer_base;
+use tool_license\helper;
+
+/**
+ * Renderer class for 'tool_license' component.
+ *
+ * @package    tool_license
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class renderer extends plugin_renderer_base {
+
+    /**
+     * Render the headers for create license form.
+     *
+     * @return string html fragment for display.
+     */
+    public function render_create_licence_headers() : string {
+        global $PAGE;
+
+        $PAGE->navbar->add(get_string('createlicense', 'tool_license'),
+            helper::get_create_license_url());
+
+        $return = $this->header();
+        $return .= $this->heading(get_string('createlicense', 'tool_license'));
+
+        return $return;
+    }
+
+    /**
+     * Render the headers for edit license form.
+     *
+     * @param string $licenseshortname the shortname of license to edit.
+     *
+     * @return string html fragment for display.
+     */
+    public function render_edit_licence_headers(string $licenseshortname) : string {
+        global $PAGE;
+
+        $PAGE->navbar->add(get_string('editlicense', 'tool_license'),
+            helper::get_update_license_url($licenseshortname));
+
+        $return = $this->header();
+        $return .= $this->heading(get_string('editlicense', 'tool_license'));
+
+        return $return;
+    }
+}

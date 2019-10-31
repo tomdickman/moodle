@@ -30,4 +30,4 @@ $string['cc-nc-sa'] = 'Creative Commons - No Commercial ShareAlike';
 $string['cc-nd'] = 'Creative Commons - NoDerivs';
 $string['cc-sa'] = 'Creative Commons - ShareAlike';
 $string['public'] = 'Public domain';
-$string['unknown'] = 'Other';
+$string['unknown'] = 'Licence not specified';
