@@ -3127,5 +3127,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2018120306.06);
     }
 
+    if ($oldversion < 2018120307.01) {
+
+        // Define field custom to be added to course.
+        $table = new xmldb_table('license');
+        $field = new xmldb_field('custom', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Conditionally launch add field custom.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2018120307.01);
+    }
+
     return true;
 }
