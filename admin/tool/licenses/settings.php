@@ -27,13 +27,11 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
 
-    $ADMIN->add('root', new admin_category('licenses', new lang_string('pluginname', 'tool_licenses')));
-
-    $licensesettings = new admin_externalpage(
+    $licensemanager = new admin_externalpage(
         'tool_licenses/manager',
         get_string('managelicenses', 'tool_licenses'),
         new moodle_url('/admin/tool/licenses/manager.php')
     );
 
-    $ADMIN->add('licenses', $licensesettings);
+    $ADMIN->add('licensesettings', $licensemanager);
 }
