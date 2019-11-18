@@ -260,12 +260,7 @@ class manager {
     private function get_license_table_row_data($license, $renderer) {
         global $CFG;
 
-        if ($license->custom == license_manager::CORE_LICENSE) {
-            $source = html_writer::link($license->source, $license->source,
-                array('target' => '_blank'));
-        } else {
-            $source = html_writer::link($license->source, $license->fullname, array('target' => '_blank'));
-        }
+        $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
 
         if ($license->shortname == $CFG->sitedefaultlicense) {
             $source .= ' ' . $renderer->pix_icon('t/locked', get_string('default'));
