@@ -239,9 +239,6 @@ class manager {
                 redirect(helper::get_create_license_url());
             }
         }
-        if (!$form->is_validated()) {
-            $return .= $renderer->notification(get_string('invalidurl', 'tool_licenses'), notification::NOTIFY_ERROR);
-        }
         $return .= $form->render();
         $return .= $renderer->footer();
 

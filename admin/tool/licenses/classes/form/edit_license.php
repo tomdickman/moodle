@@ -84,8 +84,8 @@ class edit_license extends \moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if (!filter_var($data['source'], FILTER_VALIDATE_URL)) {
-            $errors['invalidurl'] = get_string('invalidurl', 'tool_licenses');
+        if (array_key_exists('source', $data)  && !filter_var($data['source'], FILTER_VALIDATE_URL)) {
+            $errors['source'] = get_string('invalidurl', 'tool_licenses');
         }
 
         return $errors;
