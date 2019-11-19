@@ -24,11 +24,10 @@
 
 namespace tool_licenses;
 
-use core\output\notification;
 use html_table;
 use html_writer;
-use license_manager;
 use stdClass;
+use license_manager;
 use tool_licenses\form\edit_license;
 
 defined('MOODLE_INTERNAL') || die();
@@ -78,17 +77,17 @@ class manager {
     const ACTION_VIEW_LICENSE_MANAGER = 'viewlicensemanager';
 
     /**
-     * Action for deleting a custom license.
+     * Action for moving a license up priority order.
      */
     const ACTION_MOVE_UP = 'moveup';
 
     /**
-     * Action for deleting a custom license.
+     * Action for deleting a license down priority order.
      */
     const ACTION_MOVE_DOWN = 'movedown';
 
     /**
-     * Entry point for internal license manager api.
+     * Entry point for internal license manager.
      *
      * @param string $action the api action to carry out.
      * @param string|object $license the license object or shortname of license to carry action out on.
@@ -211,7 +210,6 @@ class manager {
     private function view_license_manager() {
         global $PAGE;
 
-        // Display the table of all licenses within this Moodle instance and their statuses.
         $licenses = license_manager::get_licenses_in_priority_order();
         $renderer = $PAGE->get_renderer('tool_licenses');
 
@@ -304,7 +302,7 @@ class manager {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    private function get_license_table_row_data($license, $renderer, $canmoveup, $canmovedown) {
+    private function get_license_table_row_data($license, $renderer, bool $canmoveup, bool $canmovedown) {
         global $CFG;
 
         $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);

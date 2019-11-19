@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderer.
+ * Renderer for 'tool_licenses' component.
  *
  * @package    tool_licenses
  * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use plugin_renderer_base;
 
 /**
- * Renderer class.
+ * Renderer class for 'tool_licenses' component.
  *
  * @package    tool_licenses
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>

@@ -71,7 +71,7 @@ class license_manager {
         } else {
             $DB->insert_record('license', $license);
         }
-        // Add the new license to the end of the licensepriority config.
+        // Add the new license to the end of priority order for licenses.
         $licensepriority = explode(',', get_config('', 'licensepriority'));
         $licensepriority[] = $license->shortname;
         set_config('licensepriority', implode(',', $licensepriority));

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings page for 'tool_licenses' component.
+ * Settings for 'tool_licenses' component.
  *
  * @package   tool_licenses
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>

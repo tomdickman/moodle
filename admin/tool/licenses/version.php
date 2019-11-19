@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the license manager.
+ * Version details for component 'tool_licenses'.
  *
  * @package    tool_licenses
  * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
