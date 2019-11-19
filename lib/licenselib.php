@@ -263,8 +263,6 @@ class license_manager {
 
     /**
      * Install moodle built-in licenses.
-     *
-     * NOTE: this function is called from lib/db/upgrade.php
      */
     static public function install_licenses() {
         $activelicenses = array();
