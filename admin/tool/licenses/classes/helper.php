@@ -46,7 +46,6 @@ class helper {
      * Get the URL for viewing the license manager interface.
      *
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public static function get_view_license_manager_url() {
         $url = new moodle_url(self::MANAGER_PATH,
@@ -60,7 +59,6 @@ class helper {
      * @param string $licenseshortname the shortname of license to enable.
      *
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public static function get_enable_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
@@ -75,7 +73,6 @@ class helper {
      * @param string $licenseshortname the shortname of license to disable.
      *
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public static function get_disable_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
@@ -88,7 +85,6 @@ class helper {
      * Get the URL endpoint to create a new license.
      *
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public static function get_create_license_url() {
         $url = new moodle_url(self::MANAGER_PATH,
@@ -103,7 +99,6 @@ class helper {
      * @param string $licenseshortname the shortname of license to update.
      *
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public static function get_update_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
@@ -118,11 +113,38 @@ class helper {
      * @param string $licenseshortname the shortname of license to delete.
      *
      * @return \moodle_url
-     * @throws \moodle_exception
      */
     public static function get_delete_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
             ['action' => manager::ACTION_DELETE, 'license' => $licenseshortname]);
+
+        return $url;
+    }
+
+    /**
+     * Get the URL endpoint to move a license priority up order.
+     *
+     * @param string $licenseshortname the shortname of license to move up.
+     *
+     * @return \moodle_url
+     */
+    public static function get_moveup_license_url(string $licenseshortname) {
+        $url = new moodle_url(self::MANAGER_PATH,
+            ['action' => manager::ACTION_MOVE_UP, 'license' => $licenseshortname]);
+
+        return $url;
+    }
+
+    /**
+     * Get the URL endpoint to move a license priority down order.
+     *
+     * @param string $licenseshortname the shortname of license to move down.
+     *
+     * @return \moodle_url
+     */
+    public static function get_movedown_license_url(string $licenseshortname) {
+        $url = new moodle_url(self::MANAGER_PATH,
+            ['action' => manager::ACTION_MOVE_DOWN, 'license' => $licenseshortname]);
 
         return $url;
     }

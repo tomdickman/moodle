@@ -71,6 +71,11 @@ class license_manager {
         } else {
             $DB->insert_record('license', $license);
         }
+        // Add the new license to the end of the licensepriority config.
+        $licensepriority = explode(',', get_config('', 'licensepriority'));
+        $licensepriority[] = $license->shortname;
+        set_config('licensepriority', implode(',', $licensepriority));
+
         return true;
     }
 
@@ -90,6 +95,44 @@ class license_manager {
         } else {
             return array();
         }
+    }
+
+    /**
+     * Get all installed licenses in order of priority.
+     *
+     * @return array $result of license objects.
+     */
+    static public function get_licenses_in_priority_order() {
+        $result = [];
+        $licenses = self::get_licenses();
+
+        $order = explode(',', get_config('', 'licensepriority'));
+
+        foreach ($order as $licensename) {
+            foreach ($licenses as $key => $license) {
+                if ($licensename == $license->shortname) {
+                    $result[$key] = $license;
+                }
+            }
+        }
+
+        // We shouldn't get here as priority is added on install and at license creation,
+        // but just in case, check for any licenses not in the global licensepriority config,
+        // add them to the results and update config to include them.
+        $remaininglicensekeys = array_diff(array_keys($licenses), array_keys($result));
+        if ($remaininglicensekeys) {
+
+            $licensepriority = explode(',', get_config('', 'licensepriority'));
+
+            foreach ($remaininglicensekeys as $key) {
+                $result[$key] = $licenses[$key];
+                $licensepriority[] = $licenses[$key]->shortname;
+            }
+
+            set_config('licensepriority', implode(',', $licensepriority));
+        }
+
+        return $result;
     }
 
     /**
@@ -306,6 +349,7 @@ class license_manager {
         self::add($license);
 
         set_config('licenses', implode(',', $activelicenses));
+        set_config('licensepriority', implode(',', $activelicenses));
         set_config('sitedefaultlicense', reset($activelicenses));
     }
 }

@@ -78,6 +78,16 @@ class manager {
     const ACTION_VIEW_LICENSE_MANAGER = 'viewlicensemanager';
 
     /**
+     * Action for deleting a custom license.
+     */
+    const ACTION_MOVE_UP = 'moveup';
+
+    /**
+     * Action for deleting a custom license.
+     */
+    const ACTION_MOVE_DOWN = 'movedown';
+
+    /**
      * Entry point for internal license manager api.
      *
      * @param string $action the api action to carry out.
@@ -110,6 +120,11 @@ class manager {
             case self::ACTION_UPDATE:
                 $this->edit($action, $license);
                 $return = false;
+                break;
+
+            case self::ACTION_MOVE_UP:
+            case self::ACTION_MOVE_DOWN:
+                $this->change_license_priority($action, $license);
                 break;
 
             case self::ACTION_READ:
@@ -165,6 +180,31 @@ class manager {
     }
 
     /**
+     * Change license priority by moving up or down license priority order.
+     *
+     * @param $direction
+     * @param $licenseshortname
+     */
+    private function change_license_priority($direction, $licenseshortname) {
+
+        if (in_array($direction, [self::ACTION_MOVE_UP, self::ACTION_MOVE_DOWN]) && !empty($licenseshortname)) {
+            $priorityorder = explode(',', get_config('', 'licensepriority'));
+
+            $currentindex = array_search($licenseshortname, $priorityorder);
+
+            // Can only move priority up if not already at the top or move priority down if not at bottom of order.
+            if (($currentindex > 0 && $direction == self::ACTION_MOVE_UP)
+                    || ($currentindex < count($priorityorder) - 1) && $direction == self::ACTION_MOVE_DOWN) {
+                $newindex = $direction == self::ACTION_MOVE_UP ? $currentindex - 1 : $currentindex + 1;
+                $license = array_splice($priorityorder, $currentindex, 1);
+                array_splice($priorityorder, $newindex, 0, $license);
+            }
+
+            set_config('licensepriority', implode(',', $priorityorder));
+        }
+    }
+
+    /**
      * Display the main license manager view.
      *
      */
@@ -172,7 +212,7 @@ class manager {
         global $PAGE;
 
         // Display the table of all licenses within this Moodle instance and their statuses.
-        $licenses = license_manager::get_licenses();
+        $licenses = license_manager::get_licenses_in_priority_order();
         $renderer = $PAGE->get_renderer('tool_licenses');
 
         $return = $renderer->header();
@@ -182,19 +222,26 @@ class manager {
 
         $table = new html_table();
         $table->head  = array(
+            get_string('up') .  '/' . get_string('down'),
             get_string('shortname', 'tool_licenses'),
             get_string('fullname', 'tool_licenses'),
             get_string('version', 'tool_licenses'),
             get_string('source', 'tool_licenses'),
             get_string('enable'), get_string('edit'), get_string('delete')
         );
-        $table->colclasses = array('text-left', 'text-left', 'text-left', 'text-left', 'text-center', 'text-center', 'text-center');
+        $table->colclasses = array('text-center', 'text-left', 'text-left', 'text-left', 'text-left', 'text-center', 'text-center', 'text-center');
         $table->id = 'availablelicenses';
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        foreach ($licenses as $value) {
-            $table->data[] = $this->get_license_table_row_data($value, $renderer);
+        $keys = array_keys($licenses);
+        $lastkey = end($keys);
+        $firstkey = reset($keys);
+
+        foreach ($licenses as $key => $value) {
+            $canmoveup = $key != $firstkey;
+            $canmovedown = $key != $lastkey;
+            $table->data[] = $this->get_license_table_row_data($value, $renderer, $canmoveup, $canmovedown);
         }
 
         $return .= html_writer::table($table);
@@ -250,11 +297,14 @@ class manager {
      *
      * @param object $license the license to populate row data for.
      * @param \renderer_base $renderer the PAGE renderer.
+     * @param bool $canmoveup can this row move up.
+     * @param bool $canmovedown can this row move down.
      *
      * @return array of columns values for row.
      * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    private function get_license_table_row_data($license, $renderer) {
+    private function get_license_table_row_data($license, $renderer, $canmoveup, $canmovedown) {
         global $CFG;
 
         $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
@@ -287,7 +337,24 @@ class manager {
                 $deletelicense = $renderer->pix_icon('t/block', get_string('editlock'));
             }
         }
-        return [$license->shortname, $license->fullname, $license->version ,$source, $hideshow, $editlicense, $deletelicense];
+
+        $spacer = $renderer->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
+        $updown = '';
+        if ($canmoveup) {
+            $updown .= html_writer::link(helper::get_moveup_license_url($license->shortname),
+                    $renderer->pix_icon('t/up', get_string('up'), 'moodle', array('class' => 'iconsmall'))). '';
+        } else {
+            $updown .= $spacer;
+        }
+
+        if ($canmovedown) {
+            $updown .= '&nbsp;'.html_writer::link(helper::get_movedown_license_url($license->shortname),
+                    $renderer->pix_icon('t/down', get_string('down'), 'moodle', array('class' => 'iconsmall')));
+        } else {
+            $updown .= $spacer;
+        }
+        
+        return [$updown, $license->shortname, $license->fullname, $license->version ,$source, $hideshow, $editlicense, $deletelicense];
     }
 
 }

@@ -392,7 +392,7 @@ class form_filemanager implements renderable {
      *       return_types=>FILE_INTERNAL,
      *       context=>$PAGE->context,
      *       author=>fullname($USER),
-     *       licenses=>array build from $CFG->licenses,
+     *       licenses=>array build from $CFG->activelicenses,
      *       defaultlicense=>$CFG->sitedefaultlicense
      */
     public function __construct(stdClass $options) {
