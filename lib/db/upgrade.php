@@ -3140,6 +3140,8 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2018120307.01);
+
+        license_manager::install_licenses();
     }
 
     return true;

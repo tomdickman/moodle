@@ -73,8 +73,10 @@ class license_manager {
         }
         // Add the new license to the end of priority order for licenses.
         $licensepriority = explode(',', get_config('', 'licensepriority'));
-        $licensepriority[] = $license->shortname;
-        set_config('licensepriority', implode(',', $licensepriority));
+        if (!in_array($license->shortname, $licensepriority)) {
+            $licensepriority[] = $license->shortname;
+            set_config('licensepriority', implode(',', $licensepriority));
+        }
 
         return true;
     }
@@ -228,7 +230,7 @@ class license_manager {
 
         if (!empty($CFG->licenses)) {
             $activelicenses = explode(',', $CFG->licenses);
-            $licenses = self::get_licenses();
+            $licenses = self::get_licenses_in_priority_order();
             foreach ($licenses as $license) {
                 if (in_array($license->shortname, $activelicenses)) {
                     // Interpret core license strings for internationalisation.
@@ -249,10 +251,10 @@ class license_manager {
      * @return array $licenses an associative array of licenses shaped as ['shortname' => 'fullname']
      */
     static public function get_active_licenses_as_array() {
-        $activelicense = self::get_active_licenses();
+        $activelicenses = self::get_active_licenses();
 
         $licenses = [];
-        foreach ($activelicense as $license) {
+        foreach ($activelicenses as $license) {
             $licenses[$license->shortname] = $license->fullname;
         }
 
@@ -260,7 +262,9 @@ class license_manager {
     }
 
     /**
-     * Install moodle build-in licenses
+     * Install moodle built-in licenses.
+     *
+     * NOTE: this function is called from lib/db/upgrade.php
      */
     static public function install_licenses() {
         $activelicenses = array();
@@ -349,7 +353,6 @@ class license_manager {
         self::add($license);
 
         set_config('licenses', implode(',', $activelicenses));
-        set_config('licensepriority', implode(',', $activelicenses));
         set_config('sitedefaultlicense', reset($activelicenses));
     }
 }
