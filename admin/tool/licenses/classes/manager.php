@@ -285,7 +285,7 @@ class manager {
                 $form->set_data(['shortname' => $license->shortname]);
                 $form->set_data(['fullname' => $license->fullname]);
                 $form->set_data(['source' => $license->source]);
-                $form->set_data(['version' => $license->version]);
+                $form->set_data(['version' => helper::convert_version_to_epoch($license->version)]);
             } else {
                 // There is no license to update, so redirect to creation url.
                 redirect(helper::get_create_license_url());

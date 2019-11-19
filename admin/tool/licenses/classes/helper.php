@@ -149,4 +149,18 @@ class helper {
         return $url;
     }
 
+    /**
+     * Convert a license version number string to a UNIX epoch.
+     * 
+     * @param string $version
+     * 
+     * @return int $epoch
+     */
+    public static function convert_version_to_epoch(string $version) {
+        $date = substr($version, 0, 8);
+        $epoch = strtotime($date);
+
+        return $epoch;
+    }
+
 }
