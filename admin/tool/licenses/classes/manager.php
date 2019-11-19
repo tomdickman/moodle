@@ -167,6 +167,7 @@ class manager {
             $license->shortname = $data->shortname;
             $license->fullname = $data->fullname;
             $license->source = $data->source;
+            // Legacy date format maintained to prevent breaking on upgrade.
             $license->version = date('Ymd', $data->version) . '00';
             $license->custom = license_manager::CUSTOM_LICENSE;
             license_manager::add($license);
