@@ -61,11 +61,11 @@ class edit_license extends \moodleform {
 
         $mform->addElement('text', 'shortname', get_string('shortname', 'tool_licenses'));
         $mform->setType('shortname', PARAM_ALPHANUMEXT);
-        $mform->addRule('shortname', get_string('shortnamerequirederror'), 'required');
+        $mform->addRule('shortname', get_string('shortnamerequirederror', 'tool_licenses'), 'required');
 
         $mform->addElement('text', 'fullname', get_string('fullname', 'tool_licenses'));
         $mform->setType('fullname', PARAM_TEXT);
-        $mform->addRule('fullname', get_string('fullnamerequirederror'), 'required');
+        $mform->addRule('fullname', get_string('fullnamerequirederror', 'tool_licenses'), 'required');
 
         $mform->addElement('text', 'source', get_string('source', 'tool_licenses'));
         $mform->setType('source', PARAM_URL);
