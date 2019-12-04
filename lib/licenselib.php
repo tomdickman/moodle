@@ -234,7 +234,7 @@ class license_manager {
             foreach ($licenses as $license) {
                 if (in_array($license->shortname, $activelicenses)) {
                     // Interpret core license strings for internationalisation.
-                    if ($license->custom == self::CORE_LICENSE) {
+                    if (isset($license->custom) && $license->custom == self::CORE_LICENSE) {
                         $license->fullname = get_string($license->shortname, 'license');
                     }
                     $result[] = $license;
