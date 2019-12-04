@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contain the logic for the confirming deleting of a license.
+ * Contains the logic for confirming deletion of a custom license.
  *
  * @module     tool_licenses/delete_licenses
  * @class      delete_license
@@ -31,7 +31,10 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'],
             title: 'Delete license',
             body: 'Are you sure you want to delete this license?',
             preShowCallback: function(triggerElement, modal) {
-                modal.redirecturl = triggerElement[0].href;
+                triggerElement = $(triggerElement);
+                let action = 'delete';
+                let license = triggerElement.data('license');
+                modal.deleteURL = `/admin/tool/licenses/manager.php?action=${action}&license=${license}`;
             },
             large: true,
         }, trigger)
@@ -40,7 +43,7 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'],
                     // Stop the default save button behaviour which is to close the modal.
                     e.preventDefault();
                     // Redirect to delete url.
-                    window.location.href = modal.redirecturl;
+                    window.location.href = modal.deleteURL;
                 });
             });
     });
