@@ -32,9 +32,9 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'],
             body: 'Are you sure you want to delete this license?',
             preShowCallback: function(triggerElement, modal) {
                 triggerElement = $(triggerElement);
-                let action = 'delete';
-                let license = triggerElement.data('license');
-                modal.deleteURL = `/admin/tool/licenses/manager.php?action=${action}&license=${license}`;
+                var action = 'delete';
+                var license = triggerElement.data('license');
+                modal.deleteURL = '/admin/tool/licenses/manager.php?action=' + action + '&license=' + license;
             },
             large: true,
         }, trigger)
