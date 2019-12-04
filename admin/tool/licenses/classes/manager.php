@@ -340,7 +340,8 @@ class manager {
 
             if ($license->custom == license_manager::CUSTOM_LICENSE) {
                 $deletelicense = html_writer::link(helper::get_delete_license_url($license->shortname),
-                    $renderer->pix_icon('i/trash', get_string('delete')));
+                    $renderer->pix_icon('i/trash', get_string('delete')),
+                    ['class' => 'delete-license']);
             } else {
                 $deletelicense = '';
             }
