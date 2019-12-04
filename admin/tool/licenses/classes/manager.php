@@ -339,9 +339,11 @@ class manager {
             }
 
             if ($license->custom == license_manager::CUSTOM_LICENSE) {
-                $deletelicense = html_writer::link(helper::get_delete_license_url($license->shortname),
+                // Link url is added by the JS `delete_license` modal used for confirmation of deletion, to avoid
+                // link being usable before JavaScript loads on page.
+                $deletelicense = html_writer::link('#',
                     $renderer->pix_icon('i/trash', get_string('delete')),
-                    ['class' => 'delete-license']);
+                    ['class' => 'delete-license', 'data-license' => $license->shortname]);
             } else {
                 $deletelicense = '';
             }
