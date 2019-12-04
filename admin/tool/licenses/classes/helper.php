@@ -108,20 +108,6 @@ class helper {
     }
 
     /**
-     * Get the URL endpoint to delete an existing license.
-     *
-     * @param string $licenseshortname the shortname of license to delete.
-     *
-     * @return \moodle_url
-     */
-    public static function get_delete_license_url(string $licenseshortname) {
-        $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_DELETE, 'license' => $licenseshortname]);
-
-        return $url;
-    }
-
-    /**
      * Get the URL endpoint to move a license priority up order.
      *
      * @param string $licenseshortname the shortname of license to move up.
