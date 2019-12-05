@@ -182,8 +182,8 @@ class manager {
     /**
      * Change license priority by moving up or down license priority order.
      *
-     * @param $direction
-     * @param $licenseshortname
+     * @param string $direction which direction to move, up or down.
+     * @param string $licenseshortname the shortname of the license to move up or down order.
      */
     private function change_license_priority($direction, $licenseshortname) {
 

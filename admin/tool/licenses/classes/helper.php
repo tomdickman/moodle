@@ -137,9 +137,9 @@ class helper {
 
     /**
      * Convert a license version number string to a UNIX epoch.
-     * 
+     *
      * @param string $version
-     * 
+     *
      * @return int $epoch
      */
     public static function convert_version_to_epoch(string $version) {
