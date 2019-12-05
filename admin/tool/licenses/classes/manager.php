@@ -318,9 +318,7 @@ class manager {
         $summary = $license->fullname . ' ('. $license->shortname . ')<br>' . $source;
 
         if ($license->shortname == $CFG->sitedefaultlicense) {
-            $source .= ' ' . $renderer->pix_icon('t/locked', get_string('default'));
             $hideshow = $renderer->pix_icon('t/locked', get_string('default'));
-            $editlicense = $renderer->pix_icon('t/locked', get_string('default'));
             $deletelicense = $renderer->pix_icon('t/locked', get_string('default'));
         } else {
             if ($license->enabled == license_manager::LICENSE_ENABLED) {
@@ -332,13 +330,6 @@ class manager {
             }
 
             if ($license->custom == license_manager::CUSTOM_LICENSE) {
-                $editlicense = html_writer::link(helper::get_update_license_url($license->shortname),
-                    $renderer->pix_icon('t/editinline', get_string('edit')));
-            } else {
-                $editlicense = '';
-            }
-
-            if ($license->custom == license_manager::CUSTOM_LICENSE) {
                 // Link url is added by the JS `delete_license` modal used for confirmation of deletion, to avoid
                 // link being usable before JavaScript loads on page.
                 $deletelicense = html_writer::link('#',
@@ -347,6 +338,13 @@ class manager {
             } else {
                 $deletelicense = '';
             }
+        }
+
+        if ($license->custom == license_manager::CUSTOM_LICENSE) {
+            $editlicense = html_writer::link(helper::get_update_license_url($license->shortname),
+                $renderer->pix_icon('t/editinline', get_string('edit')));
+        } else {
+            $editlicense = '';
         }
 
         $spacer = $renderer->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
