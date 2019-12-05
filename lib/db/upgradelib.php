@@ -739,6 +739,9 @@ function upgrade_core_licenses() {
         }
     }
 
+    // Delete any USER preferences relating to recently selected license in filepicker.
+    $DB->delete_records('user_preferences', ['name' => 'filepicker_recentlicense']);
+
     set_config('licenses', implode(',', $activelicenses));
     set_config('sitedefaultlicense', reset($activelicenses));
 }

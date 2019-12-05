@@ -105,15 +105,26 @@ class license_manager {
      * @return array $result of license objects.
      */
     static public function get_licenses_in_priority_order() {
+        global $CFG;
+
         $result = [];
         $licenses = self::get_licenses();
 
-        $order = explode(',', get_config('', 'licensepriority'));
+        $order = explode(',', $CFG->licensepriority);
+        $revisedorder = [];
+
+        // Always place site default license at the top of order.
+        if ($CFG->sitedefaultlicense) {
+            $index = array_search($CFG->sitedefaultlicense, $order);
+            array_splice($order, $index, 1);
+            array_unshift($order, $CFG->sitedefaultlicense);
+        }
 
         foreach ($order as $licensename) {
             foreach ($licenses as $key => $license) {
-                if ($licensename == $license->shortname) {
+                if ($licensename == $license->shortname && !in_array($license->shortname, $revisedorder)) {
                     $result[$key] = $license;
+                    $revisedorder[] = $license->shortname;
                 }
             }
         }
@@ -123,15 +134,14 @@ class license_manager {
         // add them to the results and update config to include them.
         $remaininglicensekeys = array_diff(array_keys($licenses), array_keys($result));
         if ($remaininglicensekeys) {
-
-            $licensepriority = explode(',', get_config('', 'licensepriority'));
-
             foreach ($remaininglicensekeys as $key) {
                 $result[$key] = $licenses[$key];
-                $licensepriority[] = $licenses[$key]->shortname;
+                $revisedorder[] = $licenses[$key]->shortname;
             }
+        }
 
-            set_config('licensepriority', implode(',', $licensepriority));
+        if ($order !== $revisedorder) {
+            set_config('licensepriority', implode(',', $revisedorder));
         }
 
         return $result;
