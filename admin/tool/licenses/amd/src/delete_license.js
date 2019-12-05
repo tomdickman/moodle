@@ -25,25 +25,32 @@
 define(['jquery', 'core/modal_factory', 'core/modal_events'],
     function($, ModalFactory, ModalEvents) {
 
-        var trigger = $('.delete-license');
-        ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
-            title: 'Delete license',
-            body: 'Are you sure you want to delete this license?',
-            preShowCallback: function(triggerElement, modal) {
-                triggerElement = $(triggerElement);
-                var action = 'delete';
-                var license = triggerElement.data('license');
-                modal.deleteURL = '/admin/tool/licenses/manager.php?action=' + action + '&license=' + license;
-            },
-            large: true,
-        }, trigger)
-            .done(function(modal) {
-                modal.getRoot().on(ModalEvents.save, function(e) {
-                    // Stop the default save button behaviour which is to close the modal.
-                    e.preventDefault();
-                    // Redirect to delete url.
-                    window.location.href = modal.deleteURL;
+        var init = function()
+        {
+            var trigger = $('.delete-license');
+            ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+                title: 'Delete license',
+                body: 'Are you sure you want to delete this license?',
+                preShowCallback: function(triggerElement, modal) {
+                    triggerElement = $(triggerElement);
+                    var action = 'delete';
+                    var license = triggerElement.data('license');
+                    modal.deleteURL = '/admin/tool/licenses/manager.php?action=' + action + '&license=' + license;
+                },
+                large: true,
+            }, trigger)
+                .done(function (modal) {
+                    modal.getRoot().on(ModalEvents.save, function (e) {
+                        // Stop the default save button behaviour which is to close the modal.
+                        e.preventDefault();
+                        // Redirect to delete url.
+                        window.location.href = modal.deleteURL;
+                    });
                 });
-            });
+        };
+
+        return {
+            init: init
+        };
     });

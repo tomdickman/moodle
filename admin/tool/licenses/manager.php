@@ -33,6 +33,6 @@ $license = optional_param('license', '', PARAM_SAFEDIR);
 
 $licensemanager = new \tool_licenses\manager();
 $PAGE->set_context(context_system::instance());
-$PAGE->requires->js_call_amd('tool_licenses/delete_license');
+$PAGE->requires->js_call_amd('tool_licenses/delete_license', 'init');
 
 $licensemanager->execute($action, $license);
