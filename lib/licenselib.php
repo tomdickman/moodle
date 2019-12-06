@@ -110,14 +110,18 @@ class license_manager {
         $result = [];
         $licenses = self::get_licenses();
 
+        $orderfix = false;
         $order = explode(',', $CFG->licensepriority);
         $revisedorder = [];
 
         // Always place site default license at the top of order.
         if ($CFG->sitedefaultlicense) {
             $index = array_search($CFG->sitedefaultlicense, $order);
-            array_splice($order, $index, 1);
-            array_unshift($order, $CFG->sitedefaultlicense);
+            if ($index > 0) {
+                array_splice($order, $index, 1);
+                array_unshift($order, $CFG->sitedefaultlicense);
+                $orderfix = true;
+            }
         }
 
         foreach ($order as $licensename) {
@@ -140,7 +144,7 @@ class license_manager {
             }
         }
 
-        if ($order !== $revisedorder) {
+        if (($order !== $revisedorder) || $orderfix) {
             set_config('licensepriority', implode(',', $revisedorder));
         }
 
