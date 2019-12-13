@@ -188,8 +188,8 @@ if ($hassiteconfig) {
 
     require_once($CFG->libdir . '/licenselib.php');
     $licenses = license_manager::get_active_licenses_as_array();
-    $temp->add(new admin_setting_configselect('sitedefaultlicense', new lang_string('configsitedefaultlicense','admin'),
-        new lang_string('configsitedefaultlicensehelp','admin'), 'unknown', $licenses));
+    $temp->add(new admin_setting_configselect('sitedefaultlicense', new lang_string('configsitedefaultlicense', 'admin'),
+        new lang_string('configsitedefaultlicensehelp', 'admin'), 'unknown', $licenses));
     $ADMIN->add('licensesettings', $temp);
 
 /// Filter plugins
