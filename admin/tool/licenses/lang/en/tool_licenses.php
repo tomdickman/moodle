@@ -34,6 +34,7 @@ $string['pluginname'] = 'Licenses';
 $string['privacy:metadata'] = 'The tool_licenses plugin stores no personal data.';
 $string['shortname'] = 'License short name';
 $string['shortnamerequirederror'] = 'You must enter a short name for license.';
+$string['sitedefaultlicense'] = 'Site default license.';
 $string['source'] = 'License source';
 $string['source_help'] = 'URL where the license terms and conditions can be found.';
 $string['version'] = 'License version';

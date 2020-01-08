@@ -24,11 +24,12 @@
 
 namespace tool_licenses;
 
+use admin_setting_configselect;
 use html_table;
 use html_writer;
+use local_forced\redirect;
 use stdClass;
 use license_manager;
-use tool_licenses\form\edit_license;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -87,6 +88,11 @@ class manager {
     const ACTION_MOVE_DOWN = 'movedown';
 
     /**
+     * Action for setting the site default license.
+     */
+    const ACTION_SET_SITEDEFAULT = 'setsitedefault';
+
+    /**
      * Entry point for internal license manager.
      *
      * @param string $action the api action to carry out.
@@ -126,10 +132,6 @@ class manager {
                 $this->change_license_priority($action, $license);
                 break;
 
-            case self::ACTION_READ:
-                return license_manager::get_license_by_shortname($license);
-                break;
-
             case self::ACTION_VIEW_LICENSE_MANAGER:
             default:
                 $this->view_license_manager();
@@ -137,6 +139,7 @@ class manager {
                 break;
         }
 
+        // Check if we need to redirect back to the license manager after action.
         if ($return) {
             redirect(helper::get_view_license_manager_url());
         }
@@ -180,6 +183,21 @@ class manager {
     }
 
     /**
+     * View sitedefault license select setting form.
+     *
+     * @return string html for form rendering.
+     * @throws \moodle_exception
+     */
+    private function view_sitedefault_select_form() {
+        $form = new form\sitedefault_select(helper::get_view_license_manager_url());
+
+        if ($data = $form->get_data()) {
+            set_config('sitedefaultlicense', $data->sitedefault);
+        }
+        return $form->render();
+    }
+
+    /**
      * Change license priority by moving up or down license priority order.
      *
      * @param string $direction which direction to move, up or down.
@@ -206,16 +224,19 @@ class manager {
 
     /**
      * Display the main license manager view.
-     *
      */
     private function view_license_manager() {
         global $PAGE;
 
-        $licenses = license_manager::get_licenses_in_priority_order();
         $renderer = $PAGE->get_renderer('tool_licenses');
 
         $return = $renderer->header();
         $return .= $renderer->heading(get_string('managelicenses', 'tool_licenses'), 3, 'main', true);
+
+        $return .= $this->view_sitedefault_select_form();
+        // Get the licenses after rendering the sitedefault form, to ensure order is correct if form
+        // submission updated the site default license.
+        $licenses = license_manager::get_licenses_in_priority_order();
 
         $return .= $renderer->box_start('generalbox editorsui');
 
