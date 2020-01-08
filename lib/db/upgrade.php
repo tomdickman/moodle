@@ -1205,13 +1205,13 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2019032900.01);
-     }
+    }
 
     if ($oldversion < 2019040200.01) {
         // Removing the themes BSB, Clean, More from core.
         // If these theme wish to be retained empty this array before upgrade.
         $themes = array('theme_bootstrapbase' => 'bootstrapbase',
-                'theme_clean' => 'clean', 'theme_more' => 'more');
+            'theme_clean' => 'clean', 'theme_more' => 'more');
         foreach ($themes as $key => $theme) {
             if (check_dir_exists($CFG->dirroot . '/theme/' . $theme, false)) {
                 // Ignore the themes that have been re-downloaded.
@@ -1334,8 +1334,8 @@ function xmldb_main_upgrade($oldversion) {
         foreach ($selfconversationsrs as $selfconversation) {
             $DB->update_record('message_conversations',
                 ['id' => $selfconversation->conversationid,
-                 'type' => \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
-                 'convhash' => \core_message\helper::get_conversation_hash([$selfconversation->userid])
+                    'type' => \core_message\api::MESSAGE_CONVERSATION_TYPE_SELF,
+                    'convhash' => \core_message\helper::get_conversation_hash([$selfconversation->userid])
                 ]
             );
 
@@ -2094,6 +2094,11 @@ function xmldb_main_upgrade($oldversion) {
         $field = new xmldb_field('coreminor', XMLDB_TYPE_INTEGER, '4', null, null, null, null, 'coremajor');
 
         // Conditionally launch add field coreminor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
         upgrade_main_savepoint(true, 2019111300.00);
     }
 
