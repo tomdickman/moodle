@@ -205,10 +205,18 @@ class manager {
 
             $currentindex = array_search($licenseshortname, $priorityorder);
 
-            // Can only move priority up if not already at the top or move priority down if not at bottom of order.
-            if (($currentindex > 0 && $direction == self::ACTION_MOVE_UP)
-                    || ($currentindex < count($priorityorder) - 1) && $direction == self::ACTION_MOVE_DOWN) {
-                $newindex = $direction == self::ACTION_MOVE_UP ? $currentindex - 1 : $currentindex + 1;
+            // Can only move priority up if not already in the top two licenses, as the top license
+            // is always the site default, and should not be overridden here, so the second to top license cannot
+            // be moved up either.
+            $shouldmoveup = $currentindex > 1 && $direction == self::ACTION_MOVE_UP;
+            // Bottom license cannot be moved down as there is no license to move it under and site default cannot be
+            // moved down the order either at is always the top license in priority.
+            $shouldmovedown = ($currentindex < count($priorityorder) - 1)
+                && $currentindex != 0
+                && $direction == self::ACTION_MOVE_DOWN;
+
+            if ($shouldmoveup || $shouldmovedown) {
+                $newindex = $shouldmoveup ? $currentindex - 1 : $currentindex + 1;
                 $license = array_splice($priorityorder, $currentindex, 1);
                 array_splice($priorityorder, $newindex, 0, $license);
             }
@@ -256,14 +264,16 @@ class manager {
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        $keys = array_keys($licenses);
-        $lastkey = end($keys);
-        $firstkey = reset($keys);
+        $rownumber = 0;
+        $rowcount = count($licenses);
 
         foreach ($licenses as $key => $value) {
-            $canmoveup = $key != $firstkey;
-            $canmovedown = $key != $lastkey;
+            // Site default and license immediately following it cannot move up.
+            $canmoveup = $rownumber > 1;
+            // Bottom license and site default cannot move down.
+            $canmovedown = ($rownumber > 0) && ($rownumber < $rowcount - 1);
             $table->data[] = $this->get_license_table_row_data($value, $renderer, $canmoveup, $canmovedown);
+            $rownumber++;
         }
 
         $return .= html_writer::table($table);
