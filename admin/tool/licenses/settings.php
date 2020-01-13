@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/licenselib.php');
 
 if ($hassiteconfig) {
 
-    $ADMIN->add('root', new admin_category('licensesettings', new lang_string('licenses')));
+    $ADMIN->add('root', new admin_category('licensesettings', new lang_string('licenses')), 'location');
 
     $licensemanager = new admin_externalpage(
         'tool_licenses/manager',
