@@ -24,12 +24,11 @@
 
 namespace tool_licenses;
 
-use admin_setting_configselect;
+use tool_licenses\form\edit_license;
 use html_table;
 use html_writer;
-use local_forced\redirect;
-use stdClass;
 use license_manager;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
