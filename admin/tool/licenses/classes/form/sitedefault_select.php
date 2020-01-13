@@ -45,8 +45,14 @@ class sitedefault_select extends \moodleform {
 
         $options = \license_manager::get_active_licenses_as_array();
 
+        if (!empty($CFG->sitedefaultlicense) and in_array($CFG->sitedefaultlicense, $options)) {
+            $default = $CFG->sitedefaultlicense;
+        } else {
+            $default = reset($options);
+        }
+
         $mform->addElement('select', 'sitedefault', get_string('sitedefaultlicense', 'tool_licenses'), $options);
-        $mform->setDefault('sitedefault', $CFG->sitedefaultlicense);
+        $mform->setDefault('sitedefault', $default);
 
         $this->add_action_buttons();
     }
