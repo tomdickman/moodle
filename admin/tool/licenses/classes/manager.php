@@ -88,11 +88,6 @@ class manager {
     const ACTION_MOVE_DOWN = 'movedown';
 
     /**
-     * Action for setting the site default license.
-     */
-    const ACTION_SET_SITEDEFAULT = 'setsitedefault';
-
-    /**
      * Entry point for internal license manager.
      *
      * @param string $action the api action to carry out.
