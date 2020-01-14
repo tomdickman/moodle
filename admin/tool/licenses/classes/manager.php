@@ -182,10 +182,10 @@ class manager {
      * @return string html for form rendering.
      * @throws \moodle_exception
      */
-    private function view_sitedefault_select_form($renderer) {
+    private function view_license_admin_settings_form($renderer) {
         global $CFG;
 
-        $form = new form\sitedefault_select(helper::get_view_license_manager_url());
+        $form = new form\license_admin_settings_form(helper::get_view_license_manager_url());
         $return = '';
 
         if ($data = $form->get_data()) {
@@ -246,7 +246,7 @@ class manager {
         $return = $renderer->header();
         $return .= $renderer->heading(get_string('managelicenses', 'tool_licenses'), 3, 'main', true);
 
-        $return .= $this->view_sitedefault_select_form($renderer);
+        $return .= $this->view_license_admin_settings_form($renderer);
         // Get the licenses after rendering the sitedefault form, to ensure order is correct if form
         // submission updated the site default license.
         $licenses = license_manager::get_licenses_in_priority_order();

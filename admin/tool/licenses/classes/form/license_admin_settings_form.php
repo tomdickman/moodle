@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sitedefault_select extends \moodleform {
+class license_admin_settings_form extends \moodleform {
 
     /**
      * Form definition for selecting the site default license.
