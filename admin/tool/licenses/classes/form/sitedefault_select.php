@@ -24,6 +24,8 @@
 
 namespace tool_licenses\form;
 
+use license_manager;
+
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 /**
@@ -45,7 +47,7 @@ class sitedefault_select extends \moodleform {
 
         $options = \license_manager::get_active_licenses_as_array();
 
-        if (!empty($CFG->sitedefaultlicense) and in_array($CFG->sitedefaultlicense, $options)) {
+        if (!empty($CFG->sitedefaultlicense) and in_array($CFG->sitedefaultlicense, array_keys($options))) {
             $default = $CFG->sitedefaultlicense;
         } else {
             $default = reset($options);
@@ -55,6 +57,18 @@ class sitedefault_select extends \moodleform {
         $mform->setDefault('sitedefault', $default);
 
         $this->add_action_buttons();
+    }
+
+    /**
+     * Inject logic after form definition to allow forcing of setting in config.php.
+     */
+    public function after_definition() {
+        global $CFG;
+
+        // Override form post data to allow forced config of site default license in config.php.
+        if (array_key_exists('sitedefaultlicense', $CFG->config_php_settings)) {
+            $_POST['sitedefault'] = $CFG->sitedefaultlicense;
+        }
     }
 
 }

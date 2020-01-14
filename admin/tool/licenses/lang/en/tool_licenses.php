@@ -25,6 +25,7 @@ $string['pluginname'] = 'Licenses';
 $string['createlicense'] = 'Create custom license';
 $string['duplicatelicenseshortname'] = 'Error: License shortname must be unique, duplicate value found.';
 $string['editlicense'] = 'Edit license';
+$string['forcedsitedefaultlicense'] = 'Site default license has been set in config.php and cannot be changed.';
 $string['fullname'] = 'License full name';
 $string['fullnamerequirederror'] = 'You must enter a full name for license.';
 $string['invalidurl'] = 'Invalid source url';

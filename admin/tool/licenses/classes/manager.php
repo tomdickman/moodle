@@ -182,13 +182,24 @@ class manager {
      * @return string html for form rendering.
      * @throws \moodle_exception
      */
-    private function view_sitedefault_select_form() {
+    private function view_sitedefault_select_form($renderer) {
+        global $CFG;
+
         $form = new form\sitedefault_select(helper::get_view_license_manager_url());
+        $return = '';
 
         if ($data = $form->get_data()) {
-            set_config('sitedefaultlicense', $data->sitedefault);
+            // Display error notification if the setting change failed due to a forced setting.
+            if (array_key_exists('sitedefaultlicense', $CFG->config_php_settings)) {
+                $return .= $renderer->notification(get_string('forcedsitedefaultlicense', 'tool_licenses'),
+                    \core\output\notification::NOTIFY_ERROR);
+            } else {
+                set_config('sitedefaultlicense', $data->sitedefault);
+            }
         }
-        return $form->render();
+        $return .= $form->render();
+
+        return $return;
     }
 
     /**
@@ -235,7 +246,7 @@ class manager {
         $return = $renderer->header();
         $return .= $renderer->heading(get_string('managelicenses', 'tool_licenses'), 3, 'main', true);
 
-        $return .= $this->view_sitedefault_select_form();
+        $return .= $this->view_sitedefault_select_form($renderer);
         // Get the licenses after rendering the sitedefault form, to ensure order is correct if form
         // submission updated the site default license.
         $licenses = license_manager::get_licenses_in_priority_order();
