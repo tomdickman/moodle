@@ -7389,10 +7389,8 @@ class admin_setting_managelicenses extends admin_setting {
         $rowcount = count($licenses);
 
         foreach ($licenses as $key => $value) {
-            // Site default and license immediately following it cannot move up.
-            $canmoveup = $rownumber > 1;
-            // Bottom license and site default cannot move down.
-            $canmovedown = ($rownumber > 0) && ($rownumber < $rowcount - 1);
+            $canmoveup = $rownumber > 0;
+            $canmovedown = $rownumber < $rowcount - 1;
             $table->data[] = $this->get_license_table_row_data($value, $canmoveup, $canmovedown);
             $rownumber++;
         }
