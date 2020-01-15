@@ -3115,7 +3115,7 @@ final class repository_type_form extends moodleform {
  *          accepted_types
  */
 function initialise_filepicker($args) {
-    global $CFG, $USER, $PAGE, $OUTPUT;
+    global $CFG, $USER, $PAGE;
     static $templatesinitialized = array();
     require_once($CFG->libdir . '/licenselib.php');
 
@@ -3168,11 +3168,14 @@ function initialise_filepicker($args) {
 
     $return->userprefs = array();
     $return->userprefs['recentrepository'] = get_user_preferences('filepicker_recentrepository', '');
-    $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
     $return->userprefs['recentviewmode'] = get_user_preferences('filepicker_recentviewmode', '');
 
+    if (empty($CFG->rememberuserlicensepref) || $CFG->rememberuserlicensepref == 1) {
+        $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
+        user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
+    }
+
     user_preference_allow_ajax_update('filepicker_recentrepository', PARAM_INT);
-    user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
     user_preference_allow_ajax_update('filepicker_recentviewmode', PARAM_INT);
 
 

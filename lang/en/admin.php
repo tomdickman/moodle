@@ -349,7 +349,7 @@ $string['configshowicalsource'] = 'Show source information for iCal events';
 $string['configshowcommentscount'] = 'Show comments count, it will cost one more query when display comments link';
 $string['configshowsiteparticipantslist'] = 'All of these site students and site teachers will be listed on the site participants list. Who shall be allowed to see this site participants list?';
 $string['configsitedefaultlicense'] = 'Default site licence';
-$string['configsitedefaultlicensehelp'] = 'The default licence for publishing content on this site';
+$string['configsitedefaultlicense_help'] = 'The default licence for publishing content on this site.';
 $string['configsitemailcharset'] = 'This setting specifies the default charset for all emails sent from the site.';
 $string['configsitemaxcategorydepth'] = 'Maximum category depth';
 $string['configsitemaxcategorydepthhelp'] = 'This specifies the maximum depth of child categories expanded when displaying categories or combo list. Deeper level categories will appear as links and user can expand them with AJAX request.';
@@ -1044,6 +1044,8 @@ $string['registration_help'] = 'By registering:
 $string['registrationwarning'] = 'Your site is not yet registered.';
 $string['registrationwarningcontactadmin'] = 'Your site is not yet registered. Please notify your administrator.';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target="_blank" href="{$a}">Release Notes</a>';
+$string['rememberuserlicensepref'] = 'Remember user license preference';
+$string['rememberuserlicensepref_help'] = 'Enable if you want the filepicker to preselect the last license a user selected when uploading a file. If this is disabled, the default site license will be preselected.';
 $string['rememberusername'] = 'Remember username';
 $string['rememberusername_desc'] = 'Enable if you want to store permanent cookies with usernames during user login. Permanent cookies may be considered a privacy issue if used without consent.';
 $string['reportsmanage'] = 'Manage reports';
