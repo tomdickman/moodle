@@ -47,9 +47,12 @@ class helper {
      *
      * @return \moodle_url
      */
-    public static function get_view_license_manager_url() {
-        $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_VIEW_LICENSE_MANAGER]);
+    public static function get_admin_setting_managelicenses_url() {
+        global $CFG;
+
+        $url = new moodle_url($CFG->wwwroot . '/admin/settings.php',
+            ['section' => 'managelicenses']);
+
         return $url;
     }
 
@@ -62,7 +65,7 @@ class helper {
      */
     public static function get_enable_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_ENABLE, 'license' => $licenseshortname]);
+            ['action' => manager::ACTION_ENABLE, 'license' => $licenseshortname, 'sesskey' => sesskey()]);
 
         return $url;
     }
@@ -76,7 +79,7 @@ class helper {
      */
     public static function get_disable_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_DISABLE, 'license' => $licenseshortname]);
+            ['action' => manager::ACTION_DISABLE, 'license' => $licenseshortname, 'sesskey' => sesskey()]);
 
         return $url;
     }
@@ -88,7 +91,7 @@ class helper {
      */
     public static function get_create_license_url() {
         $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_CREATE]);
+            ['action' => manager::ACTION_CREATE, 'sesskey' => sesskey()]);
 
         return $url;
     }
@@ -102,7 +105,7 @@ class helper {
      */
     public static function get_update_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_UPDATE, 'license' => $licenseshortname]);
+            ['action' => manager::ACTION_UPDATE, 'license' => $licenseshortname, 'sesskey' => sesskey()]);
 
         return $url;
     }
@@ -116,7 +119,7 @@ class helper {
      */
     public static function get_moveup_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_MOVE_UP, 'license' => $licenseshortname]);
+            ['action' => manager::ACTION_MOVE_UP, 'license' => $licenseshortname, 'sesskey' => sesskey()]);
 
         return $url;
     }
@@ -130,7 +133,7 @@ class helper {
      */
     public static function get_movedown_license_url(string $licenseshortname) {
         $url = new moodle_url(self::MANAGER_PATH,
-            ['action' => manager::ACTION_MOVE_DOWN, 'license' => $licenseshortname]);
+            ['action' => manager::ACTION_MOVE_DOWN, 'license' => $licenseshortname, 'sesskey' => sesskey()]);
 
         return $url;
     }
@@ -148,5 +151,4 @@ class helper {
 
         return $epoch;
     }
-
 }

@@ -15,26 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings for 'tool_licenses' component.
+ * Create license button.
  *
- * @package   tool_licenses
- * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_licenses
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/licenselib.php');
+/**
+ * Create license button.
+ *
+ * @package    tool_licenses
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class create_license_button implements renderable, templatable {
 
-if ($hassiteconfig) {
+    /**
+     * @inheritDoc
+     */
+    public function export_for_template(renderer_base $output) {
+        $context = '';
 
-    $ADMIN->add('root', new admin_category('licensesettings', new lang_string('licenses')), 'location');
-
-    $licensemanager = new admin_externalpage(
-        'tool_licenses/manager',
-        get_string('managelicenses', 'tool_licenses'),
-        new moodle_url('/admin/tool/licenses/manager.php')
-    );
-
-    $ADMIN->add('licensesettings', $licensemanager);
+        return $context;
+    }
 }

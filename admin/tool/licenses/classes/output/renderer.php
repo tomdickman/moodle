@@ -26,7 +26,9 @@ namespace tool_licenses\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+use navigation_node;
 use plugin_renderer_base;
+use tool_licenses\helper;
 
 /**
  * Renderer class for 'tool_licenses' component.
@@ -37,4 +39,39 @@ use plugin_renderer_base;
  */
 class renderer extends plugin_renderer_base {
 
+    /**
+     * Render the headers for create license form.
+     *
+     * @return string html fragment for display.
+     */
+    public function render_create_licence_headers() {
+        global $PAGE;
+
+        $PAGE->navbar->add(get_string('createlicense', 'tool_licenses'),
+            helper::get_create_license_url());
+
+        $return = $this->header();
+        $return .= $this->heading(get_string('createlicense', 'tool_licenses'));
+
+        return $return;
+    }
+
+    /**
+     * Render the headers for edit license form.
+     *
+     * @param string $licenseshortname the shortname of license to edit.
+     *
+     * @return string html fragment for display.
+     */
+    public function render_edit_licence_headers(string $licenseshortname) {
+        global $PAGE;
+
+        $PAGE->navbar->add(get_string('editlicense', 'tool_licenses'),
+            helper::get_update_license_url($licenseshortname));
+
+        $return = $this->header();
+        $return .= $this->heading(get_string('editlicense', 'tool_licenses'));
+
+        return $return;
+    }
 }

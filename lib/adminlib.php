@@ -7239,6 +7239,176 @@ class admin_setting_manageantiviruses extends admin_setting {
 }
 
 /**
+ * Special class for license administration.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_managelicenses extends admin_setting {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        $this->nosave = true;
+        parent::__construct('licensesui', get_string('licensesettings', 'admin'), '', '');
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
+     *
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+        // do not write any setting
+        return '';
+    }
+
+    /**
+     * Get table row data for a license.
+     *
+     * @param object $license the license to populate row data for.
+     * @param bool $canmoveup can this row move up.
+     * @param bool $canmovedown can this row move down.
+     *
+     * @return array of columns values for row.
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    private function get_license_table_row_data($license, bool $canmoveup, bool $canmovedown) {
+        global $CFG, $OUTPUT, $PAGE;
+
+        $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
+
+        $summary = $license->fullname . ' ('. $license->shortname . ')<br>' . $source;
+
+        if ($license->shortname == $CFG->sitedefaultlicense) {
+            $hideshow = $OUTPUT->pix_icon('t/locked', get_string('default'));
+            $deletelicense = $OUTPUT->pix_icon('t/locked', get_string('default'));
+        } else {
+            if ($license->enabled == license_manager::LICENSE_ENABLED) {
+                $hideshow = html_writer::link(\tool_licenses\helper::get_disable_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/hide', get_string('disable')));
+            } else {
+                $hideshow = html_writer::link(\tool_licenses\helper::get_enable_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/show', get_string('enable')));
+            }
+
+            if ($license->custom == license_manager::CUSTOM_LICENSE) {
+                // Link url is added by the JS `delete_license` modal used for confirmation of deletion, to avoid
+                // link being usable before JavaScript loads on page.
+                $deletelicense = html_writer::link('#',
+                    $OUTPUT->pix_icon('i/trash', get_string('delete')),
+                    ['class' => 'delete-license', 'data-license' => $license->shortname]);
+            } else {
+                $deletelicense = '';
+            }
+        }
+
+        if ($license->custom == license_manager::CUSTOM_LICENSE) {
+            $editlicense = html_writer::link(\tool_licenses\helper::get_update_license_url($license->shortname),
+                $OUTPUT->pix_icon('t/editinline', get_string('edit')));
+        } else {
+            $editlicense = '';
+        }
+
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
+        $updown = '';
+        if ($canmoveup) {
+            $updown .= html_writer::link(\tool_licenses\helper::get_moveup_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/up', get_string('up'), 'moodle', array('class' => 'iconsmall'))). '';
+        } else {
+            $updown .= $spacer;
+        }
+
+        if ($canmovedown) {
+            $updown .= '&nbsp;'.html_writer::link(\tool_licenses\helper::get_movedown_license_url($license->shortname),
+                    $OUTPUT->pix_icon('t/down', get_string('down'), 'moodle', array('class' => 'iconsmall')));
+        } else {
+            $updown .= $spacer;
+        }
+
+        $PAGE->requires->js_call_amd('tool_licenses/delete_license');
+
+        return [$hideshow, $summary, $license->version, $updown, $editlicense, $deletelicense];
+    }
+
+    /**
+     * Builds the XHTML to display the control
+     *
+     * @param string $data Unused
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+        require_once($CFG->libdir . '/licenselib.php');
+
+        $licenses = license_manager::get_licenses_in_priority_order();
+
+        $return = $OUTPUT->box_start('generalbox editorsui');
+
+        $table = new html_table();
+        $table->head  = array(
+            get_string('enable'),
+            get_string('licenses', 'admin'),
+            get_string('version'),
+            get_string('order'),
+            get_string('edit'),
+            get_string('delete'),
+        );
+        $table->colclasses = array(
+            'text-center',
+            'text-left',
+            'text-left',
+            'text-center',
+            'text-center',
+            'text-center',
+        );
+        $table->id = 'availablelicenses';
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->data  = array();
+
+        $rownumber = 0;
+        $rowcount = count($licenses);
+
+        foreach ($licenses as $key => $value) {
+            // Site default and license immediately following it cannot move up.
+            $canmoveup = $rownumber > 1;
+            // Bottom license and site default cannot move down.
+            $canmovedown = ($rownumber > 0) && ($rownumber < $rowcount - 1);
+            $table->data[] = $this->get_license_table_row_data($value, $canmoveup, $canmovedown);
+            $rownumber++;
+        }
+
+        $return .= html_writer::table($table);
+        $return .= $OUTPUT->box_end();
+
+        $return .= html_writer::link(\tool_licenses\helper::get_create_license_url(),
+            get_string('createlicensebuttontext', 'admin'),
+            ['class' => 'btn btn-secondary btn-lg btn-block mb-3']);
+
+        return highlight($query, $return);
+    }
+}
+
+/**
  * Course formats manager. Allows to enable/disable formats and jump to settings
  */
 class admin_setting_manageformats extends admin_setting {

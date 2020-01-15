@@ -25,8 +25,6 @@
 namespace tool_licenses;
 
 use tool_licenses\form\edit_license;
-use html_table;
-use html_writer;
 use license_manager;
 use stdClass;
 
@@ -93,7 +91,6 @@ class manager {
      * @param string|object $license the license object or shortname of license to carry action out on.
      */
     public function execute($action, $license) {
-        admin_externalpage_setup('tool_licenses/manager');
 
         // Convert license to a string if it's a full license object.
         if (is_object($license)) {
@@ -128,14 +125,12 @@ class manager {
 
             case self::ACTION_VIEW_LICENSE_MANAGER:
             default:
-                $this->view_license_manager();
-                $return = false;
                 break;
         }
 
         // Check if we need to redirect back to the license manager after action.
         if ($return) {
-            redirect(helper::get_view_license_manager_url());
+            redirect(helper::get_admin_setting_managelicenses_url());
         }
     }
 
@@ -146,17 +141,16 @@ class manager {
      * @param string $licenseshortname the shortname of the license to edit.
      */
     private function edit(string $action, string $licenseshortname) {
-
         $form = new form\edit_license($action, $licenseshortname);
 
         if ($form->is_cancelled()) {
-            redirect(helper::get_view_license_manager_url());
+            redirect(helper::get_admin_setting_managelicenses_url());
         } else if ($data = $form->get_data()) {
             // Process the form data and create or update a license record.
             $existing = license_manager::get_license_by_shortname($data->shortname);
 
             if (!empty($existing) && $action == self::ACTION_CREATE) {
-                print_error('duplicatelicenseshortname', 'tool_licenses', helper::get_view_license_manager_url(),
+                print_error('duplicatelicenseshortname', 'tool_licenses', helper::get_admin_setting_managelicenses_url(),
                     $data->shortname);
             }
 
@@ -170,36 +164,10 @@ class manager {
             license_manager::add($license);
             license_manager::enable($licenseshortname);
 
-            redirect(helper::get_view_license_manager_url());
+            redirect(helper::get_admin_setting_managelicenses_url());
         } else {
             $this->view_license_editor($action, $licenseshortname, $form);
         }
-    }
-
-    /**
-     * View sitedefault license select setting form.
-     *
-     * @return string html for form rendering.
-     * @throws \moodle_exception
-     */
-    private function view_license_admin_settings_form($renderer) {
-        global $CFG;
-
-        $form = new form\license_admin_settings_form(helper::get_view_license_manager_url());
-        $return = '';
-
-        if ($data = $form->get_data()) {
-            // Display error notification if the setting change failed due to a forced setting.
-            if (array_key_exists('sitedefaultlicense', $CFG->config_php_settings)) {
-                $return .= $renderer->notification(get_string('forcedsitedefaultlicense', 'tool_licenses'),
-                    \core\output\notification::NOTIFY_ERROR);
-            } else {
-                set_config('sitedefaultlicense', $data->sitedefault);
-            }
-        }
-        $return .= $form->render();
-
-        return $return;
     }
 
     /**
@@ -236,66 +204,6 @@ class manager {
     }
 
     /**
-     * Display the main license manager view.
-     */
-    private function view_license_manager() {
-        global $PAGE;
-
-        $renderer = $PAGE->get_renderer('tool_licenses');
-
-        $return = $renderer->header();
-        $return .= $renderer->heading(get_string('managelicenses', 'tool_licenses'), 3, 'main', true);
-
-        $return .= $this->view_license_admin_settings_form($renderer);
-        // Get the licenses after rendering the sitedefault form, to ensure order is correct if form
-        // submission updated the site default license.
-        $licenses = license_manager::get_licenses_in_priority_order();
-
-        $return .= $renderer->box_start('generalbox editorsui');
-
-        $table = new html_table();
-        $table->head  = array(
-            get_string('enable'),
-            get_string('licenses', 'tool_licenses'),
-            get_string('version', 'tool_licenses'),
-            get_string('order'),
-            get_string('edit'),
-            get_string('delete'),
-        );
-        $table->colclasses = array(
-            'text-center',
-            'text-left',
-            'text-left',
-            'text-center',
-            'text-center',
-            'text-center',
-        );
-        $table->id = 'availablelicenses';
-        $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
-
-        $rownumber = 0;
-        $rowcount = count($licenses);
-
-        foreach ($licenses as $key => $value) {
-            // Site default and license immediately following it cannot move up.
-            $canmoveup = $rownumber > 1;
-            // Bottom license and site default cannot move down.
-            $canmovedown = ($rownumber > 0) && ($rownumber < $rowcount - 1);
-            $table->data[] = $this->get_license_table_row_data($value, $renderer, $canmoveup, $canmovedown);
-            $rownumber++;
-        }
-
-        $return .= html_writer::table($table);
-        $return .= $renderer->box_end();
-        $return .= $renderer->single_button(helper::get_create_license_url(),
-            get_string('createlicense', 'tool_licenses'));
-        $return .= $renderer->footer();
-
-        echo $return;
-    }
-
-    /**
      * View the license editor to create or edit a license.
      *
      * @param string $action
@@ -309,97 +217,21 @@ class manager {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('tool_licenses');
-        $return = $renderer->header();
 
-        if ($action == self::ACTION_CREATE) {
-            $return .= $renderer->heading(get_string('createlicense', 'tool_licenses'));
-        } else if ($action == self::ACTION_UPDATE) {
-            $return .= $renderer->heading(get_string('editlicense', 'tool_licenses'));
+        if ($action == self::ACTION_UPDATE && $license = license_manager::get_license_by_shortname($licenseshortname)) {
+            $return = $renderer->render_edit_licence_headers($licenseshortname);
 
-            $license = license_manager::get_license_by_shortname($licenseshortname);
+            $form->set_data(['shortname' => $license->shortname]);
+            $form->set_data(['fullname' => $license->fullname]);
+            $form->set_data(['source' => $license->source]);
+            $form->set_data(['version' => helper::convert_version_to_epoch($license->version)]);
 
-            if (!empty($license)) {
-                $form->set_data(['shortname' => $license->shortname]);
-                $form->set_data(['fullname' => $license->fullname]);
-                $form->set_data(['source' => $license->source]);
-                $form->set_data(['version' => helper::convert_version_to_epoch($license->version)]);
-            } else {
-                // There is no license to update, so redirect to creation url.
-                redirect(helper::get_create_license_url());
-            }
+        } else {
+            $return = $renderer->render_create_licence_headers();
         }
         $return .= $form->render();
         $return .= $renderer->footer();
 
         echo $return;
     }
-
-    /**
-     * Get table row data for a license.
-     *
-     * @param object $license the license to populate row data for.
-     * @param \renderer_base $renderer the PAGE renderer.
-     * @param bool $canmoveup can this row move up.
-     * @param bool $canmovedown can this row move down.
-     *
-     * @return array of columns values for row.
-     * @throws \coding_exception
-     * @throws \moodle_exception
-     */
-    private function get_license_table_row_data($license, $renderer, bool $canmoveup, bool $canmovedown) {
-        global $CFG;
-
-        $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
-
-        $summary = $license->fullname . ' ('. $license->shortname . ')<br>' . $source;
-
-        if ($license->shortname == $CFG->sitedefaultlicense) {
-            $hideshow = $renderer->pix_icon('t/locked', get_string('default'));
-            $deletelicense = $renderer->pix_icon('t/locked', get_string('default'));
-        } else {
-            if ($license->enabled == license_manager::LICENSE_ENABLED) {
-                $hideshow = html_writer::link(helper::get_disable_license_url($license->shortname),
-                    $renderer->pix_icon('t/hide', get_string('disable')));
-            } else {
-                $hideshow = html_writer::link(helper::get_enable_license_url($license->shortname),
-                    $renderer->pix_icon('t/show', get_string('enable')));
-            }
-
-            if ($license->custom == license_manager::CUSTOM_LICENSE) {
-                // Link url is added by the JS `delete_license` modal used for confirmation of deletion, to avoid
-                // link being usable before JavaScript loads on page.
-                $deletelicense = html_writer::link('#',
-                    $renderer->pix_icon('i/trash', get_string('delete')),
-                    ['class' => 'delete-license', 'data-license' => $license->shortname]);
-            } else {
-                $deletelicense = '';
-            }
-        }
-
-        if ($license->custom == license_manager::CUSTOM_LICENSE) {
-            $editlicense = html_writer::link(helper::get_update_license_url($license->shortname),
-                $renderer->pix_icon('t/editinline', get_string('edit')));
-        } else {
-            $editlicense = '';
-        }
-
-        $spacer = $renderer->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
-        $updown = '';
-        if ($canmoveup) {
-            $updown .= html_writer::link(helper::get_moveup_license_url($license->shortname),
-                    $renderer->pix_icon('t/up', get_string('up'), 'moodle', array('class' => 'iconsmall'))). '';
-        } else {
-            $updown .= $spacer;
-        }
-
-        if ($canmovedown) {
-            $updown .= '&nbsp;'.html_writer::link(helper::get_movedown_license_url($license->shortname),
-                    $renderer->pix_icon('t/down', get_string('down'), 'moodle', array('class' => 'iconsmall')));
-        } else {
-            $updown .= $spacer;
-        }
-
-        return [$hideshow, $summary, $license->version, $updown, $editlicense, $deletelicense];
-    }
-
 }

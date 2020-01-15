@@ -24,14 +24,25 @@
 
 require_once('../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/licenselib.php');
 
 require_admin();
+
+$returnurl = \tool_licenses\helper::get_admin_setting_managelicenses_url();
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $license = optional_param('license', '', PARAM_SAFEDIR);
 
+////////////////////////////////////////////////////////////////////////////////
+// process actions
+
+if (!confirm_sesskey()) {
+    redirect($returnurl);
+}
+
 $licensemanager = new \tool_licenses\manager();
 $PAGE->set_context(context_system::instance());
-$PAGE->requires->js_call_amd('tool_licenses/delete_license');
+$PAGE->set_url(\tool_licenses\helper::get_admin_setting_managelicenses_url());
+$PAGE->set_title(get_string('licensemanager', 'tool_licenses'));
 
 $licensemanager->execute($action, $license);

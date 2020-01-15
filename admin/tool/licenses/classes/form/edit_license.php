@@ -24,10 +24,13 @@
 
 namespace tool_licenses\form;
 
+use moodleform;
 use tool_licenses\helper;
 use tool_licenses\manager;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
+
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Form for creating/updating a custom license.
@@ -36,7 +39,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * @copyright  2019 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class edit_license extends \moodleform {
+class edit_license extends moodleform {
 
     /**
      * edit_license constructor.

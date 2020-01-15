@@ -22,8 +22,8 @@
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/modal_factory', 'core/modal_events'],
-    function($, ModalFactory, ModalEvents) {
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/config'],
+    function($, ModalFactory, ModalEvents, config) {
 
         var trigger = $('.delete-license');
         ModalFactory.create({
@@ -34,7 +34,7 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'],
                 triggerElement = $(triggerElement);
                 let action = 'delete';
                 let license = triggerElement.data('license');
-                modal.deleteURL = `/admin/tool/licenses/manager.php?action=${action}&license=${license}`;
+                modal.deleteURL = `/admin/tool/licenses/manager.php?action=${action}&license=${license}&sesskey=${config.sesskey}`;
             },
             large: true,
         }, trigger)
