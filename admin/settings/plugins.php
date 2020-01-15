@@ -182,7 +182,7 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'mlbackendsettings', $hassiteconfig);
     }
 
-    /// License types
+/// License types
     $ADMIN->add('root', new admin_category('licensesettings', new lang_string('licenses')), 'location');
     $temp = new admin_settingpage('managelicenses', new lang_string('managelicenses', 'admin'));
 
@@ -190,11 +190,13 @@ if ($hassiteconfig) {
     $licenses = license_manager::get_active_licenses_as_array();
 
     $temp->add(new admin_setting_configselect('sitedefaultlicense',
-        new lang_string('configsitedefaultlicense','admin'),
-        new lang_string('configsitedefaultlicense_help','admin'), 'unknown', $licenses));
-    $temp->add(new admin_setting_configcheckbox('rememberuserlicensepref',
-        new lang_string('rememberuserlicensepref', 'admin'),
-        new lang_string('rememberuserlicensepref_help', 'admin'),
+        new lang_string('configsitedefaultlicense','admin'), 
+        new lang_string('configsitedefaultlicense_help','admin'), 
+        'unknown', 
+        $licenses));
+    $temp->add(new admin_setting_configcheckbox('rememberuserlicensepref', 
+        new lang_string('rememberuserlicensepref', 'admin'), 
+        new lang_string('rememberuserlicensepref_help', 'admin'), 
         1));
     $temp->add(new admin_setting_managelicenses());
     $ADMIN->add('licensesettings', $temp);
