@@ -75,12 +75,12 @@ class manager {
     const ACTION_VIEW_LICENSE_MANAGER = 'viewlicensemanager';
 
     /**
-     * Action for moving a license up  order.
+     * Action for moving a license up order.
      */
     const ACTION_MOVE_UP = 'moveup';
 
     /**
-     * Action for moving a license down  order.
+     * Action for moving a license down order.
      */
     const ACTION_MOVE_DOWN = 'movedown';
 
@@ -171,7 +171,7 @@ class manager {
     }
 
     /**
-     * Change license order by moving up or down license  order.
+     * Change license order by moving up or down license order.
      *
      * @param string $direction which direction to move, up or down.
      * @param string $licenseshortname the shortname of the license to move up or down order.
