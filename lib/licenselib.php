@@ -71,11 +71,11 @@ class license_manager {
         } else {
             $DB->insert_record('license', $license);
         }
-        // Add the new license to the end of priority order for licenses.
-        $licensepriority = explode(',', get_config('', 'licensepriority'));
-        if (!in_array($license->shortname, $licensepriority)) {
-            $licensepriority[] = $license->shortname;
-            set_config('licensepriority', implode(',', $licensepriority));
+        // Add the new license to the end of order for licenses.
+        $licenseorder = explode(',', get_config('', 'licenseorder'));
+        if (!in_array($license->shortname, $licenseorder)) {
+            $licenseorder[] = $license->shortname;
+            set_config('licenseorder', implode(',', $licenseorder));
         }
 
         return true;
@@ -100,61 +100,45 @@ class license_manager {
     }
 
     /**
-     * Get all installed licenses in order of priority.
+     * Get all installed licenses in order.
      *
      * @return array $result of license objects.
      */
-    static public function get_licenses_in_priority_order() {
+    static public function get_licenses_in_order() {
         global $CFG;
 
         $result = [];
         $licenses = self::get_licenses();
 
-        $orderfix = false;
-        if (!empty($CFG->licensepriority)) {
-            $order = explode(',', $CFG->licensepriority);
-        } else {
-            $order = [];
-            foreach ($licenses as $license) {
-                $order[] = $license->shortname;
-            }
-            $orderfix = true;
-        }
-        $revisedorder = [];
+        if (!empty($CFG->licenseorder)) {
+            $order = explode(',', $CFG->licenseorder);
 
-        // Always place site default license at the top of order.
-        if (!empty($CFG->sitedefaultlicense)) {
-            $index = array_search($CFG->sitedefaultlicense, $order);
-            if ($index > 0) {
-                array_splice($order, $index, 1);
-                array_unshift($order, $CFG->sitedefaultlicense);
-                $orderfix = true;
-            }
-        }
-
-        foreach ($order as $licensename) {
-            foreach ($licenses as $key => $license) {
-                if ($licensename == $license->shortname && !in_array($license->shortname, $revisedorder)) {
-                    $result[$key] = $license;
-                    $revisedorder[] = $license->shortname;
+            foreach ($order as $licensename) {
+                foreach ($licenses as $license) {
+                    if ($licensename == $license->shortname) {
+                        $result[$license->shortname] = $license;
+                    }
                 }
             }
-        }
 
-        // We shouldn't get here as priority is added on install and at license creation,
-        // but just in case, check for any licenses not in the global licensepriority config,
-        // add them to the results and update config to include them.
-        $remaininglicensekeys = array_diff(array_keys($licenses), array_keys($result));
-        if ($remaininglicensekeys) {
-            foreach ($remaininglicensekeys as $key) {
-                $result[$key] = $licenses[$key];
-                $revisedorder[] = $licenses[$key]->shortname;
+            // We shouldn't be missing any licenses as order is created on install and amended on
+            // license creation, but just in case, check for any licenses not in the licenseorder,
+            // add them to the bottom of results order.
+            foreach ($licenses as $license) {
+                if (!in_array($license->shortname, array_keys($result))) {
+                    $result[$license->shortname] = $license;
+                }
+            }
+
+        } else {
+            // There is no order set so get the licenses in any order.
+            foreach ($licenses as $license) {
+                $result[$license->shortname] = $license;
             }
         }
 
-        if (($order !== $revisedorder) || $orderfix) {
-            set_config('licensepriority', implode(',', $revisedorder));
-        }
+        // Update the config setting.
+        set_config('licenseorder', implode(',', array_keys($result)));
 
         return $result;
     }
@@ -252,7 +236,7 @@ class license_manager {
 
         if (!empty($CFG->licenses)) {
             $activelicenses = explode(',', $CFG->licenses);
-            $licenses = self::get_licenses_in_priority_order();
+            $licenses = self::get_licenses_in_order();
             foreach ($licenses as $license) {
                 if (in_array($license->shortname, $activelicenses)) {
                     // Interpret core license strings for internationalisation.
@@ -373,6 +357,7 @@ class license_manager {
         self::add($license);
 
         set_config('licenses', implode(',', $activelicenses));
+        set_config('licenseorder', implode(',', $activelicenses));
         set_config('sitedefaultlicense', reset($activelicenses));
     }
 }

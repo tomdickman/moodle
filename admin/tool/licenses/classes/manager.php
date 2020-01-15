@@ -75,12 +75,12 @@ class manager {
     const ACTION_VIEW_LICENSE_MANAGER = 'viewlicensemanager';
 
     /**
-     * Action for moving a license up priority order.
+     * Action for moving a license up  order.
      */
     const ACTION_MOVE_UP = 'moveup';
 
     /**
-     * Action for deleting a license down priority order.
+     * Action for moving a license down  order.
      */
     const ACTION_MOVE_DOWN = 'movedown';
 
@@ -120,7 +120,7 @@ class manager {
 
             case self::ACTION_MOVE_UP:
             case self::ACTION_MOVE_DOWN:
-                $this->change_license_priority($action, $license);
+                $this->change_license_order($action, $license);
                 break;
 
             case self::ACTION_VIEW_LICENSE_MANAGER:
@@ -171,35 +171,30 @@ class manager {
     }
 
     /**
-     * Change license priority by moving up or down license priority order.
+     * Change license order by moving up or down license  order.
      *
      * @param string $direction which direction to move, up or down.
      * @param string $licenseshortname the shortname of the license to move up or down order.
      */
-    private function change_license_priority($direction, $licenseshortname) {
+    private function change_license_order($direction, $licenseshortname) {
 
         if (in_array($direction, [self::ACTION_MOVE_UP, self::ACTION_MOVE_DOWN]) && !empty($licenseshortname)) {
-            $priorityorder = explode(',', get_config('', 'licensepriority'));
+            $licenseorder = explode(',', get_config('', 'licenseorder'));
 
-            $currentindex = array_search($licenseshortname, $priorityorder);
+            $currentindex = array_search($licenseshortname, $licenseorder);
 
-            // Can only move priority up if not already in the top two licenses, as the top license
-            // is always the site default, and should not be overridden here, so the second to top license cannot
-            // be moved up either.
-            $shouldmoveup = $currentindex > 1 && $direction == self::ACTION_MOVE_UP;
-            // Bottom license cannot be moved down as there is no license to move it under and site default cannot be
-            // moved down the order either at is always the top license in priority.
-            $shouldmovedown = ($currentindex < count($priorityorder) - 1)
-                && $currentindex != 0
-                && $direction == self::ACTION_MOVE_DOWN;
+            // Can only move up order if not the top license already.
+            $shouldmoveup = $direction == self::ACTION_MOVE_UP && $currentindex > 0;
+            // Bottom license cannot be moved down as there is no license to move it under.
+            $shouldmovedown = $direction == self::ACTION_MOVE_DOWN && ($currentindex < count($licenseorder) - 1);
 
             if ($shouldmoveup || $shouldmovedown) {
                 $newindex = $shouldmoveup ? $currentindex - 1 : $currentindex + 1;
-                $license = array_splice($priorityorder, $currentindex, 1);
-                array_splice($priorityorder, $newindex, 0, $license);
+                $license = array_splice($licenseorder, $currentindex, 1);
+                array_splice($licenseorder, $newindex, 0, $license);
             }
 
-            set_config('licensepriority', implode(',', $priorityorder));
+            set_config('licenseorder', implode(',', $licenseorder));
         }
     }
 

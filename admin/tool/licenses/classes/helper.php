@@ -111,7 +111,7 @@ class helper {
     }
 
     /**
-     * Get the URL endpoint to move a license priority up order.
+     * Get the URL endpoint to move a license  up order.
      *
      * @param string $licenseshortname the shortname of license to move up.
      *
@@ -125,7 +125,7 @@ class helper {
     }
 
     /**
-     * Get the URL endpoint to move a license priority down order.
+     * Get the URL endpoint to move a license  down order.
      *
      * @param string $licenseshortname the shortname of license to move down.
      *

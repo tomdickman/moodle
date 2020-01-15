@@ -743,5 +743,6 @@ function upgrade_core_licenses() {
     $DB->delete_records('user_preferences', ['name' => 'filepicker_recentlicense']);
 
     set_config('licenses', implode(',', $activelicenses));
+    set_config('licenseorder', implode(',', $activelicenses));
     set_config('sitedefaultlicense', reset($activelicenses));
 }

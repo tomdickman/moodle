@@ -7360,7 +7360,7 @@ class admin_setting_managelicenses extends admin_setting {
         global $CFG, $OUTPUT;
         require_once($CFG->libdir . '/licenselib.php');
 
-        $licenses = license_manager::get_licenses_in_priority_order();
+        $licenses = license_manager::get_licenses_in_order();
 
         $return = $OUTPUT->box_start('generalbox editorsui');
 
