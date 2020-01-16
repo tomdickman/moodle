@@ -3170,7 +3170,7 @@ function initialise_filepicker($args) {
     $return->userprefs['recentrepository'] = get_user_preferences('filepicker_recentrepository', '');
     $return->userprefs['recentviewmode'] = get_user_preferences('filepicker_recentviewmode', '');
 
-    if (empty($CFG->rememberuserlicensepref) || $CFG->rememberuserlicensepref == 1) {
+    if (!isset($CFG->rememberuserlicensepref) || $CFG->rememberuserlicensepref == 1) {
         $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
         user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
     }
