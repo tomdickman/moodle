@@ -109,6 +109,7 @@ class license_manager {
 
         $result = [];
         $licenses = self::get_licenses();
+        $orderupdated = false;
 
         if (!empty($CFG->licenseorder)) {
             $order = explode(',', $CFG->licenseorder);
@@ -127,6 +128,7 @@ class license_manager {
             foreach ($licenses as $license) {
                 if (!in_array($license->shortname, array_keys($result))) {
                     $result[$license->shortname] = $license;
+                    $orderupdated = true;
                 }
             }
 
@@ -135,10 +137,12 @@ class license_manager {
             foreach ($licenses as $license) {
                 $result[$license->shortname] = $license;
             }
+            $orderupdated = true;
         }
 
-        // Update the config setting.
-        set_config('licenseorder', implode(',', array_keys($result)));
+        if ($orderupdated) {
+            set_config('licenseorder', implode(',', array_keys($result)));
+        }
 
         return $result;
     }
@@ -203,10 +207,10 @@ class license_manager {
             if ($license->custom == self::CUSTOM_LICENSE) {
                 $DB->delete_records('license', ['id' => $license->id]);
             } else {
-                print_error('licensecantdeletecore', 'error');
+                print_error('licensecantdeletecore', 'tool_licenses');
             }
         } else {
-            print_error('licensenotfoundshortname', 'error', '', $licenseshortname);
+            print_error('licensenotfoundshortname', 'tool_licenses', '', $licenseshortname);
         }
     }
 

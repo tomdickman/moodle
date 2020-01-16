@@ -23,14 +23,21 @@
  */
 $string['pluginname'] = 'Licenses';
 $string['createlicense'] = 'Create custom license';
+$string['createlicensebuttontext'] = 'Create license';
+$string['deletelicense'] = 'Delete license';
+$string['deletelicenseconfirmmessage'] = 'Are you sure you want to delete this license?';
 $string['duplicatelicenseshortname'] = 'Error: License shortname must be unique, duplicate value found.';
 $string['editlicense'] = 'Edit license';
 $string['fullname'] = 'License full name';
 $string['fullnamerequirederror'] = 'You must enter a full name for license.';
 $string['invalidurl'] = 'Invalid source url';
+$string['license'] = 'License';
+$string['licensecantdeletecore'] = 'Cannot delete a core Moodle license';
+$string['licensenotfoundshortname'] = 'Cannot find a license with the short name \'{$a}\'';
 $string['licensemanager'] = 'License manager';
-$string['pluginname'] = 'Licenses';
 $string['privacy:metadata'] = 'The tool_licenses plugin stores no personal data.';
+$string['rememberuserlicensepref'] = 'Remember user license preference';
+$string['rememberuserlicensepref_help'] = 'Enable if you want the filepicker to preselect the last license a user selected when uploading a file. If this is disabled, the default site license will be preselected.';
 $string['shortname'] = 'License short name';
 $string['shortnamerequirederror'] = 'You must enter a short name for license.';
 $string['source'] = 'License source';

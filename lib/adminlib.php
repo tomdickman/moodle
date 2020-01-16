@@ -7367,7 +7367,7 @@ class admin_setting_managelicenses extends admin_setting {
         $table = new html_table();
         $table->head  = array(
             get_string('enable'),
-            get_string('licenses', 'admin'),
+            get_string('license', 'tool_licenses'),
             get_string('version'),
             get_string('order'),
             get_string('edit'),
@@ -7399,8 +7399,8 @@ class admin_setting_managelicenses extends admin_setting {
         $return .= $OUTPUT->box_end();
 
         $return .= html_writer::link(\tool_licenses\helper::get_create_license_url(),
-            get_string('createlicensebuttontext', 'admin'),
-            ['class' => 'btn btn-secondary btn-lg btn-block mb-3']);
+            get_string('createlicensebuttontext', 'tool_licenses'),
+            ['class' => 'btn btn-secondary mb-3']);
 
         return highlight($query, $return);
     }

@@ -22,14 +22,14 @@
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/config'],
-    function($, ModalFactory, ModalEvents, config) {
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/config', 'core/str'],
+    function($, ModalFactory, ModalEvents, config, String) {
 
         var trigger = $('.delete-license');
         ModalFactory.create({
             type: ModalFactory.types.SAVE_CANCEL,
-            title: 'Delete license',
-            body: 'Are you sure you want to delete this license?',
+            title: String.get_string('deletelicense', 'tool_licenses'),
+            body: String.get_string('deletelicenseconfirmmessage', 'tool_licenses'),
             preShowCallback: function(triggerElement, modal) {
                 triggerElement = $(triggerElement);
                 let action = 'delete';
