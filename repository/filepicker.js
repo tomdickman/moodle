@@ -1773,9 +1773,8 @@ M.core_filepicker.init = function(Y, options) {
             }
             node.setContent('');
             var licenses = this.options.licenses;
-            var recentlicense = this.get_preference('recentlicense');
-            if (recentlicense) {
-                this.options.defaultlicense=recentlicense;
+            if (this.options.rememberuserlicensepref) {
+                this.options.defaultlicense = this.get_preference('recentlicense');;
             }
             for (var i in licenses) {
                 var option = Y.Node.create('<option/>').
@@ -1795,9 +1794,14 @@ M.core_filepicker.init = function(Y, options) {
             });
             if (!licenseset) {
                 // we did not find the value in the list
-                var recentlicense = this.get_preference('recentlicense');
+                var selectedlicense;
+                if (this.option.rememberuserlicensepref) {
+                    selectedlicense = this.get_preference('recentlicense');
+                } else {
+                    selectedlicense = this.option.defaultlicense;
+                }
                 node.all('option[selected]').set('selected', false);
-                node.all('option[value='+recentlicense+']').set('selected', true);
+                node.all('option[value='+selectedlicense+']').set('selected', true);
             }
         },
         create_object_container: function(data) {
