@@ -3166,16 +3166,15 @@ function initialise_filepicker($args) {
         $return->externallink = true;
     }
 
+    $return->rememberuserlicensepref = (bool) get_config(null, 'rememberuserlicensepref');
+
     $return->userprefs = array();
     $return->userprefs['recentrepository'] = get_user_preferences('filepicker_recentrepository', '');
+    $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
     $return->userprefs['recentviewmode'] = get_user_preferences('filepicker_recentviewmode', '');
 
-    if (!isset($CFG->rememberuserlicensepref) || $CFG->rememberuserlicensepref == 1) {
-        $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
-        user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
-    }
-
     user_preference_allow_ajax_update('filepicker_recentrepository', PARAM_INT);
+    user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
     user_preference_allow_ajax_update('filepicker_recentviewmode', PARAM_INT);
 
 

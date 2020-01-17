@@ -1255,7 +1255,9 @@ M.core_filepicker.init = function(Y, options) {
                     if (origlicense) {
                         origlicense = origlicense.getContent();
                     }
-                    this.set_preference('recentlicense', license.get('value'));
+                    if (this.options.rememberuserlicensepref) {
+                        this.set_preference('recentlicense', license.get('value'));
+                    }
                 }
                 params['author'] = selectnode.one('.fp-setauthor input').get('value');
 
@@ -1841,7 +1843,9 @@ M.core_filepicker.init = function(Y, options) {
                 e.preventDefault();
                 var license = content.one('.fp-setlicense select');
 
-                this.set_preference('recentlicense', license.get('value'));
+                if (this.options.rememberuserlicensepref) {
+                    this.set_preference('recentlicense', license.get('value'));
+                }
                 if (!content.one('.fp-file input').get('value')) {
                     scope.print_msg(M.util.get_string('nofilesattached', 'repository'), 'error');
                     return false;
