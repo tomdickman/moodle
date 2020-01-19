@@ -1774,7 +1774,7 @@ M.core_filepicker.init = function(Y, options) {
             node.setContent('');
             var licenses = this.options.licenses;
             if (this.options.rememberuserlicensepref) {
-                this.options.defaultlicense = this.get_preference('recentlicense');;
+                this.options.defaultlicense = this.get_preference('recentlicense');
             }
             for (var i in licenses) {
                 var option = Y.Node.create('<option/>').
@@ -1801,7 +1801,7 @@ M.core_filepicker.init = function(Y, options) {
                     selectedlicense = this.option.defaultlicense;
                 }
                 node.all('option[selected]').set('selected', false);
-                node.all('option[value='+selectedlicense+']').set('selected', true);
+                node.all('option[value=' + selectedlicense + ']').set('selected', true);
             }
         },
         create_object_container: function(data) {
