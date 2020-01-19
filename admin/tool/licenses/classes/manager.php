@@ -45,11 +45,6 @@ class manager {
     const ACTION_CREATE = 'create';
 
     /**
-     * Action for reading a license.
-     */
-    const ACTION_READ = 'read';
-
-    /**
      * Action for updating a custom license's details.
      */
     const ACTION_UPDATE = 'update';
@@ -60,12 +55,12 @@ class manager {
     const ACTION_DELETE = 'delete';
 
     /**
-     * Action for deleting a custom license.
+     * Action for disabling a custom license.
      */
     const ACTION_DISABLE = 'disable';
 
     /**
-     * Action for deleting a custom license.
+     * Action for enabling a custom license.
      */
     const ACTION_ENABLE = 'enable';
 
