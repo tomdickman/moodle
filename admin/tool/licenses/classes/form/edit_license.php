@@ -73,6 +73,7 @@ class edit_license extends moodleform {
         $mform->addElement('text', 'source', get_string('source', 'tool_licenses'));
         $mform->setType('source', PARAM_URL);
         $mform->addHelpButton('source', 'source', 'tool_licenses');
+        $mform->addRule('source', get_string('sourcerequirederror', 'tool_licenses'), 'required');
 
         $mform->addElement('date_selector', 'version', get_string('version', 'tool_licenses'), get_string('from'));
         $mform->addHelpButton('version', 'version', 'tool_licenses');
