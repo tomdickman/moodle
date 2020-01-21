@@ -42,12 +42,25 @@ require_once($CFG->libdir . '/formslib.php');
 class edit_license extends moodleform {
 
     /**
+     * @var string the action form is taking.
+     */
+    private $action;
+
+    /**
+     * @var string license shortname if editing or empty string if creating license.
+     */
+    private $licenseshortname;
+
+    /**
      * edit_license constructor.
      *
      * @param string $action the license_manager action to be taken by form.
      * @param string $licenseshortname the shortname of the license to edit.
      */
     public function __construct(string $action, string $licenseshortname) {
+        $this->action = $action;
+        $this->licenseshortname = $licenseshortname;
+
         if ($action == manager::ACTION_UPDATE && !empty($licenseshortname)) {
             parent::__construct(helper::get_update_license_url($licenseshortname));
         } else {
@@ -62,9 +75,16 @@ class edit_license extends moodleform {
 
         $mform = $this->_form;
 
-        $mform->addElement('text', 'shortname', get_string('shortname', 'tool_licenses'));
-        $mform->setType('shortname', PARAM_ALPHANUMEXT);
-        $mform->addRule('shortname', get_string('shortnamerequirederror', 'tool_licenses'), 'required');
+        // Shortname is only editable when user is creating a license.
+        if ($this->action == manager::ACTION_CREATE) {
+            $mform->addElement('text', 'shortname', get_string('shortname', 'tool_licenses'));
+            $mform->setType('shortname', PARAM_ALPHANUMEXT);
+            $mform->addRule('shortname', get_string('shortnamerequirederror', 'tool_licenses'), 'required');
+        } else {
+            $mform->addElement('static', 'shortname',
+                get_string('shortname', 'tool_licenses'),
+                $this->licenseshortname);
+        }
 
         $mform->addElement('text', 'fullname', get_string('fullname', 'tool_licenses'));
         $mform->setType('fullname', PARAM_TEXT);

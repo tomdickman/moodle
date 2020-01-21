@@ -92,7 +92,7 @@ class manager {
             $license = $license->shortname;
         }
 
-        $return = true;
+        $return = helper::get_admin_setting_managelicenses_url();
 
         switch ($action) {
             case self::ACTION_DISABLE:
@@ -109,8 +109,7 @@ class manager {
 
             case self::ACTION_CREATE:
             case self::ACTION_UPDATE:
-                $this->edit($action, $license);
-                $return = false;
+                $return = $this->edit($action, $license);
                 break;
 
             case self::ACTION_MOVE_UP:
@@ -134,23 +133,28 @@ class manager {
      *
      * @param string $action the form action to carry out.
      * @param string $licenseshortname the shortname of the license to edit.
+     *
+     * @return bool true if license editing complete, false otherwise.
      */
     private function edit(string $action, string $licenseshortname) {
         $form = new form\edit_license($action, $licenseshortname);
 
         if ($form->is_cancelled()) {
-            redirect(helper::get_admin_setting_managelicenses_url());
+            return true;
         } else if ($data = $form->get_data()) {
-            // Process the form data and create or update a license record.
-            $existing = license_manager::get_license_by_shortname($data->shortname);
-
-            if (!empty($existing) && $action == self::ACTION_CREATE) {
-                print_error('duplicatelicenseshortname', 'tool_licenses', helper::get_admin_setting_managelicenses_url(),
-                    $data->shortname);
-            }
 
             $license = new stdClass();
-            $license->shortname = $data->shortname;
+            if ($action == self::ACTION_CREATE) {
+                // Check that license shortname isn't already in use.
+                if (!empty(license_manager::get_license_by_shortname($data->shortname))) {
+                    print_error('duplicatelicenseshortname', 'tool_licenses',
+                        helper::get_admin_setting_managelicenses_url(),
+                        $data->shortname);
+                }
+                $license->shortname = $data->shortname;
+            } else {
+                $license->shortname = $licenseshortname;
+            }
             $license->fullname = $data->fullname;
             $license->source = $data->source;
             // Legacy date format maintained to prevent breaking on upgrade.
@@ -159,9 +163,10 @@ class manager {
             license_manager::add($license);
             license_manager::enable($licenseshortname);
 
-            redirect(helper::get_admin_setting_managelicenses_url());
+            return true;
         } else {
             $this->view_license_editor($action, $licenseshortname, $form);
+            return false;
         }
     }
 
