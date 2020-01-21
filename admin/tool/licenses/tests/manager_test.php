@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for edit_license form.
+ * Tests for tool_license manager class.
  *
  * @package    tool_licenses
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/licenselib.php');
 
 /**
- * Tests for edit_license form.
+ * Tests for tool_license manager class.
  *
  * @package    tool_licenses
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
