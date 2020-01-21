@@ -153,6 +153,11 @@ class manager {
                 }
                 $license->shortname = $data->shortname;
             } else {
+                if (empty(license_manager::get_license_by_shortname($licenseshortname))) {
+                    print_error('licensenotfoundshortname', 'tool_licenses',
+                        helper::get_admin_setting_managelicenses_url(),
+                        $licenseshortname);
+                }
                 $license->shortname = $licenseshortname;
             }
             $license->fullname = $data->fullname;
