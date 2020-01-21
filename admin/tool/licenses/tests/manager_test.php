@@ -59,7 +59,7 @@ class manager_test extends advanced_testcase {
 
         $manager = new \tool_licenses\manager();
 
-        // Attempt to submit form data with a altered details.
+        // Attempt to submit form data with altered details.
         $formdata = [
             'shortname' => 'new-value',
             'fullname' => 'New License Name',
@@ -86,11 +86,11 @@ class manager_test extends advanced_testcase {
         $this->assertSame($formdata['source'], $actual->source);
         $this->assertSame(date('Ymd', $formdata['version']) . '00', $actual->version);
 
-        // Attempt to update a license with that doesn't exist.
+        // Attempt to update a license that doesn't exist.
         $formdata['shortname'] = 'non-existent';
         \tool_licenses\form\edit_license::mock_submit($formdata);
 
-        // Should not be able to update  a license with a shortname that doesn't exist.
+        // Should not be able to update a license with a shortname that doesn't exist.
         $this->expectException('moodle_exception');
         $method->invoke($manager, \tool_licenses\manager::ACTION_UPDATE, $formdata['shortname']);
 
