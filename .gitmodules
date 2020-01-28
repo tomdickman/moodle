@@ -1,0 +1,3 @@
+[submodule "admin/tool/metadata"]
+	path = admin/tool/metadata
+	url = git@github.com:catalyst/moodle-tool_metadata.git
