@@ -174,12 +174,15 @@ class license_manager {
      * @return object
      */
     static public function get_license_by_shortname($name) {
-        global $DB;
-        if ($record = $DB->get_record('license', array('shortname'=>$name))) {
-            return $record;
+        $licenses = self::get_licenses(['shortname' => $name]);
+
+        if (!empty($licenses)) {
+            $license = reset($licenses);
         } else {
-            return null;
+            $license = null;
         }
+
+        return $license;
     }
 
     /**
@@ -193,8 +196,6 @@ class license_manager {
             $license->enabled = self::LICENSE_ENABLED;
             $DB->update_record('license', $license);
         }
-        // Must reset the cache before setting the active licenses.
-        self::reset_license_cache();
         self::set_active_licenses();
 
         return true;
@@ -215,8 +216,6 @@ class license_manager {
             $license->enabled = self::LICENSE_DISABLED;
             $DB->update_record('license', $license);
         }
-        // Must reset the cache before setting the active licenses.
-        self::reset_license_cache();
         self::set_active_licenses();
 
         return true;
@@ -246,7 +245,7 @@ class license_manager {
      * Store active licenses in global $CFG.
      */
     static private function set_active_licenses() {
-        // set to global $CFG
+        self::reset_license_cache();
         $licenses = self::get_licenses(array('enabled'=>1));
         $result = array();
         foreach ($licenses as $l) {
