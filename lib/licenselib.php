@@ -78,6 +78,8 @@ class license_manager {
             set_config('licenseorder', implode(',', $licenseorder));
         }
 
+        self::reset_license_cache();
+
         return true;
     }
 
@@ -88,15 +90,34 @@ class license_manager {
      */
     static public function get_licenses($param = null) {
         global $DB;
-        if (empty($param) || !is_array($param)) {
-            $param = array();
+
+        $cache = \cache::make('core', 'licenses');
+        $licenses = $cache->get('licenses');
+
+        if (empty($licenses)) {
+            $licenses = $DB->get_records('license');
+            $cache->set('licenses', $licenses);
         }
-        // get licenses by conditions
-        if ($records = $DB->get_records('license', $param)) {
-            return $records;
-        } else {
-            return array();
+
+        // Apply condition here rather than in database query as we cache all licenses.
+        if (!empty($param)) {
+            $filteredlicenses = [];
+
+            foreach ($licenses as $id => $license) {
+                $filtermatch = true;
+                foreach ($param as $key => $value) {
+                    if ($license->$key != $value) {
+                        $filtermatch = false;
+                    }
+                }
+                if ($filtermatch) {
+                    $filteredlicenses[$id] = $license;
+                }
+            }
+            $licenses = $filteredlicenses;
         }
+
+        return $licenses;
     }
 
     /**
@@ -172,7 +193,10 @@ class license_manager {
             $license->enabled = self::LICENSE_ENABLED;
             $DB->update_record('license', $license);
         }
+        // Must reset the cache before setting the active licenses.
+        self::reset_license_cache();
         self::set_active_licenses();
+
         return true;
     }
 
@@ -191,7 +215,10 @@ class license_manager {
             $license->enabled = self::LICENSE_DISABLED;
             $DB->update_record('license', $license);
         }
+        // Must reset the cache before setting the active licenses.
+        self::reset_license_cache();
         self::set_active_licenses();
+
         return true;
     }
 
@@ -206,6 +233,7 @@ class license_manager {
         if ($license = self::get_license_by_shortname($licenseshortname)) {
             if ($license->custom == self::CUSTOM_LICENSE) {
                 $DB->delete_records('license', ['id' => $license->id]);
+                self::reset_license_cache();
             } else {
                 print_error('licensecantdeletecore', 'tool_licenses');
             }
@@ -363,5 +391,13 @@ class license_manager {
         set_config('licenses', implode(',', $activelicenses));
         set_config('licenseorder', implode(',', $activelicenses));
         set_config('sitedefaultlicense', reset($activelicenses));
+    }
+
+    /**
+     * Reset the license cache so it rebuilds next time licenses are fetched.
+     */
+    static public function reset_license_cache() {
+        $cache = \cache::make('core', 'licenses');
+        $cache->delete('licenses');
     }
 }

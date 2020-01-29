@@ -446,4 +446,11 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true,
     ],
+
+    // Cache the licenses.
+    'licenses' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => false,
+        'simpledata' => false
+    ]
 );

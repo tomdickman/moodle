@@ -59,6 +59,7 @@ $string['cachedef_suspended_userids'] = 'List of suspended users per course';
 $string['cachedef_groupdata'] = 'Course group information';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
 $string['cachedef_langmenu'] = 'List of available languages';
+$string['cachedef_licenses'] = 'List of licenses';
 $string['cachedef_message_time_last_message_between_users'] = 'Time created for most recent message in a conversation';
 $string['cachedef_modelfirstanalyses'] = 'First analysis by model and analysable';
 $string['cachedef_locking'] = 'Locking';
