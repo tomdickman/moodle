@@ -7292,7 +7292,7 @@ class admin_setting_managelicenses extends admin_setting {
      * @throws \moodle_exception
      */
     private function get_license_table_row_data($license, bool $canmoveup, bool $canmovedown) {
-        global $CFG, $OUTPUT, $PAGE;
+        global $CFG, $OUTPUT;
 
         $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
 
@@ -7344,8 +7344,6 @@ class admin_setting_managelicenses extends admin_setting {
             $updown .= $spacer;
         }
 
-        $PAGE->requires->js_call_amd('tool_licenses/delete_license');
-
         return [$hideshow, $summary, $license->version, $updown, $editlicense, $deletelicense];
     }
 
@@ -7357,8 +7355,10 @@ class admin_setting_managelicenses extends admin_setting {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
+
         require_once($CFG->libdir . '/licenselib.php');
+        $PAGE->requires->js_call_amd('tool_licenses/delete_license');
 
         $licenses = license_manager::get_licenses_in_order();
 
