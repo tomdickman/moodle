@@ -1,3 +1,4 @@
 [submodule "admin/tool/metadata"]
+	branch = tika-dev
 	path = admin/tool/metadata
 	url = git@github.com:catalyst/moodle-tool_metadata.git
