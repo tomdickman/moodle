@@ -30,6 +30,7 @@ use tool_license\manager;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
+global $CFG;
 require_once($CFG->libdir . '/formslib.php');
 
 /**

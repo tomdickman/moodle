@@ -44,7 +44,7 @@ class renderer extends plugin_renderer_base {
      *
      * @return string html fragment for display.
      */
-    public function render_create_licence_headers() {
+    public function render_create_licence_headers() : string {
         global $PAGE;
 
         $PAGE->navbar->add(get_string('createlicense', 'tool_license'),
@@ -63,7 +63,7 @@ class renderer extends plugin_renderer_base {
      *
      * @return string html fragment for display.
      */
-    public function render_edit_licence_headers(string $licenseshortname) {
+    public function render_edit_licence_headers(string $licenseshortname) : string {
         global $PAGE;
 
         $PAGE->navbar->add(get_string('editlicense', 'tool_license'),

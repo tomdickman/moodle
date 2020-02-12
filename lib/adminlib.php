@@ -7288,10 +7288,8 @@ class admin_setting_managelicenses extends admin_setting {
      * @param bool $canmovedown can this row move down.
      *
      * @return array of columns values for row.
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    private function get_license_table_row_data($license, bool $canmoveup, bool $canmovedown) {
+    private function get_license_table_row_data(object $license, bool $canmoveup, bool $canmovedown) : array {
         global $CFG, $OUTPUT;
 
         $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);

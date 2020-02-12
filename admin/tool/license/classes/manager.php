@@ -85,7 +85,7 @@ class manager {
      * @param string $action the api action to carry out.
      * @param string|object $license the license object or shortname of license to carry action out on.
      */
-    public function execute($action, $license) {
+    public function execute(string $action, $license) : void {
 
         // Convert license to a string if it's a full license object.
         if (is_object($license)) {
@@ -136,7 +136,7 @@ class manager {
      *
      * @return bool true if license editing complete, false otherwise.
      */
-    private function edit(string $action, string $licenseshortname) {
+    private function edit(string $action, string $licenseshortname) : bool {
         $form = new form\edit_license($action, $licenseshortname);
 
         if ($form->is_cancelled()) {
@@ -181,7 +181,7 @@ class manager {
      * @param string $direction which direction to move, up or down.
      * @param string $licenseshortname the shortname of the license to move up or down order.
      */
-    private function change_license_order($direction, $licenseshortname) {
+    private function change_license_order(string $direction, string $licenseshortname) : void {
 
         if (in_array($direction, [self::ACTION_MOVE_UP, self::ACTION_MOVE_DOWN]) && !empty($licenseshortname)) {
             $licenseorder = license_manager::get_license_order();
@@ -209,11 +209,8 @@ class manager {
      * @param string $action
      * @param string $licenseshortname the shortname of the license to create/edit.
      * @param \tool_license\form\edit_license $form the form for submitting edit data.
-     *
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    private function view_license_editor(string $action, string $licenseshortname, edit_license $form) {
+    private function view_license_editor(string $action, string $licenseshortname, edit_license $form) : void {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('tool_license');
