@@ -232,7 +232,16 @@ class license_manager {
         if ($license = self::get_license_by_shortname($licenseshortname)) {
             if ($license->custom == self::CUSTOM_LICENSE) {
                 $DB->delete_records('license', ['id' => $license->id]);
+
+                // Remove the license from license order.
+                $licenseorder = explode(',', get_config('', 'licenseorder'));
+                if ($index = array_search($licenseshortname, $licenseorder)) {
+                    array_splice($licenseorder, $index, 1);
+                    set_config('licenseorder', implode(',', $licenseorder));
+                }
+
                 self::reset_license_cache();
+
             } else {
                 print_error('licensecantdeletecore', 'tool_licenses');
             }
