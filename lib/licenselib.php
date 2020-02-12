@@ -72,7 +72,7 @@ class license_manager {
             $DB->insert_record('license', $license);
         }
         // Add the new license to the end of order for licenses.
-        $licenseorder = explode(',', get_config('', 'licenseorder'));
+        $licenseorder = self::get_license_order();
         if (!in_array($license->shortname, $licenseorder)) {
             $licenseorder[] = $license->shortname;
             set_config('licenseorder', implode(',', $licenseorder));
@@ -118,6 +118,19 @@ class license_manager {
         }
 
         return $licenses;
+    }
+
+    /**
+     * Get an array of license shortnames in order.
+     *
+     * @return array string[] of license shortnames.
+     */
+    public static function get_license_order() {
+
+        $licenses = self::get_licenses_in_order();
+        $licenseorder = array_keys($licenses);
+
+        return $licenseorder;
     }
 
     /**
@@ -234,7 +247,7 @@ class license_manager {
                 $DB->delete_records('license', ['id' => $license->id]);
 
                 // Remove the license from license order.
-                $licenseorder = explode(',', get_config('', 'licenseorder'));
+                $licenseorder = self::get_license_order();
                 if ($index = array_search($licenseshortname, $licenseorder)) {
                     array_splice($licenseorder, $index, 1);
                     set_config('licenseorder', implode(',', $licenseorder));

@@ -184,7 +184,7 @@ class manager {
     private function change_license_order($direction, $licenseshortname) {
 
         if (in_array($direction, [self::ACTION_MOVE_UP, self::ACTION_MOVE_DOWN]) && !empty($licenseshortname)) {
-            $licenseorder = explode(',', get_config('', 'licenseorder'));
+            $licenseorder = license_manager::get_license_order();
 
             $currentindex = array_search($licenseshortname, $licenseorder);
 
