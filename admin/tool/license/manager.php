@@ -17,7 +17,7 @@
 /**
  * Manager page.
  *
- * @package   tool_licenses
+ * @package   tool_license
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/licenselib.php');
 
 require_admin();
 
-$returnurl = \tool_licenses\helper::get_admin_setting_managelicenses_url();
+$returnurl = \tool_license\helper::get_admin_setting_managelicenses_url();
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $license = optional_param('license', '', PARAM_SAFEDIR);
@@ -40,9 +40,9 @@ if (!confirm_sesskey()) {
     redirect($returnurl);
 }
 
-$licensemanager = new \tool_licenses\manager();
+$licensemanager = new \tool_license\manager();
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url(\tool_licenses\helper::get_admin_setting_managelicenses_url());
-$PAGE->set_title(get_string('licensemanager', 'tool_licenses'));
+$PAGE->set_url(\tool_license\helper::get_admin_setting_managelicenses_url());
+$PAGE->set_title(get_string('licensemanager', 'tool_license'));
 
 $licensemanager->execute($action, $license);

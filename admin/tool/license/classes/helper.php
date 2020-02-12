@@ -17,12 +17,12 @@
 /**
  * License manager helper class.
  *
- * @package    tool_licenses
+ * @package    tool_license
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_licenses;
+namespace tool_license;
 
 use moodle_url;
 
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * License manager helper class.
  *
- * @package    tool_licenses
+ * @package    tool_license
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,7 +40,7 @@ class helper {
     /**
      * Moodle relative path to the licenses manager.
      */
-    const MANAGER_PATH = '/admin/tool/licenses/manager.php';
+    const MANAGER_PATH = '/admin/tool/license/manager.php';
 
     /**
      * Get the URL for viewing the license manager interface.

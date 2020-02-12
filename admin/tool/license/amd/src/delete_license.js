@@ -16,9 +16,9 @@
 /**
  * Contains the logic for confirming deletion of a custom license.
  *
- * @module     tool_licenses/delete_licenses
+ * @module     tool_license/delete_license
  * @class      delete_license
- * @package    tool_licenses
+ * @package    tool_license
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,13 +28,13 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/config', 'cor
         var trigger = $('.delete-license');
         ModalFactory.create({
             type: ModalFactory.types.SAVE_CANCEL,
-            title: String.get_string('deletelicense', 'tool_licenses'),
-            body: String.get_string('deletelicenseconfirmmessage', 'tool_licenses'),
+            title: String.get_string('deletelicense', 'tool_license'),
+            body: String.get_string('deletelicenseconfirmmessage', 'tool_license'),
             preShowCallback: function(triggerElement, modal) {
                 triggerElement = $(triggerElement);
                 let action = 'delete';
                 let license = triggerElement.data('license');
-                modal.deleteURL = `/admin/tool/licenses/manager.php?action=${action}&license=${license}&sesskey=${config.sesskey}`;
+                modal.deleteURL = `/admin/tool/license/manager.php?action=${action}&license=${license}&sesskey=${config.sesskey}`;
             },
             large: true,
         }, trigger)

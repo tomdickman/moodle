@@ -7303,10 +7303,10 @@ class admin_setting_managelicenses extends admin_setting {
             $deletelicense = $OUTPUT->pix_icon('t/locked', get_string('default'));
         } else {
             if ($license->enabled == license_manager::LICENSE_ENABLED) {
-                $hideshow = html_writer::link(\tool_licenses\helper::get_disable_license_url($license->shortname),
+                $hideshow = html_writer::link(\tool_license\helper::get_disable_license_url($license->shortname),
                     $OUTPUT->pix_icon('t/hide', get_string('disable')));
             } else {
-                $hideshow = html_writer::link(\tool_licenses\helper::get_enable_license_url($license->shortname),
+                $hideshow = html_writer::link(\tool_license\helper::get_enable_license_url($license->shortname),
                     $OUTPUT->pix_icon('t/show', get_string('enable')));
             }
 
@@ -7322,7 +7322,7 @@ class admin_setting_managelicenses extends admin_setting {
         }
 
         if ($license->custom == license_manager::CUSTOM_LICENSE) {
-            $editlicense = html_writer::link(\tool_licenses\helper::get_update_license_url($license->shortname),
+            $editlicense = html_writer::link(\tool_license\helper::get_update_license_url($license->shortname),
                 $OUTPUT->pix_icon('t/editinline', get_string('edit')));
         } else {
             $editlicense = '';
@@ -7331,14 +7331,14 @@ class admin_setting_managelicenses extends admin_setting {
         $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
         $updown = '';
         if ($canmoveup) {
-            $updown .= html_writer::link(\tool_licenses\helper::get_moveup_license_url($license->shortname),
+            $updown .= html_writer::link(\tool_license\helper::get_moveup_license_url($license->shortname),
                     $OUTPUT->pix_icon('t/up', get_string('up'), 'moodle', array('class' => 'iconsmall'))). '';
         } else {
             $updown .= $spacer;
         }
 
         if ($canmovedown) {
-            $updown .= '&nbsp;'.html_writer::link(\tool_licenses\helper::get_movedown_license_url($license->shortname),
+            $updown .= '&nbsp;'.html_writer::link(\tool_license\helper::get_movedown_license_url($license->shortname),
                     $OUTPUT->pix_icon('t/down', get_string('down'), 'moodle', array('class' => 'iconsmall')));
         } else {
             $updown .= $spacer;
@@ -7358,7 +7358,7 @@ class admin_setting_managelicenses extends admin_setting {
         global $CFG, $OUTPUT, $PAGE;
 
         require_once($CFG->libdir . '/licenselib.php');
-        $PAGE->requires->js_call_amd('tool_licenses/delete_license');
+        $PAGE->requires->js_call_amd('tool_license/delete_license');
 
         $licenses = license_manager::get_licenses_in_order();
 
@@ -7367,7 +7367,7 @@ class admin_setting_managelicenses extends admin_setting {
         $table = new html_table();
         $table->head  = array(
             get_string('enable'),
-            get_string('license', 'tool_licenses'),
+            get_string('license', 'tool_license'),
             get_string('version'),
             get_string('order'),
             get_string('edit'),
@@ -7398,8 +7398,8 @@ class admin_setting_managelicenses extends admin_setting {
         $return .= html_writer::table($table);
         $return .= $OUTPUT->box_end();
 
-        $return .= html_writer::link(\tool_licenses\helper::get_create_license_url(),
-            get_string('createlicensebuttontext', 'tool_licenses'),
+        $return .= html_writer::link(\tool_license\helper::get_create_license_url(),
+            get_string('createlicensebuttontext', 'tool_license'),
             ['class' => 'btn btn-secondary mb-3']);
 
         return highlight($query, $return);

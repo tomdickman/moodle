@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_licenses', language 'en'
+ * Strings for component 'tool_license', language 'en'
  *
- * @package   tool_licenses
+ * @package   tool_license
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ $string['license'] = 'License';
 $string['licensecantdeletecore'] = 'Cannot delete a core Moodle license';
 $string['licensenotfoundshortname'] = 'Cannot find a license with the short name \'{$a}\'';
 $string['licensemanager'] = 'License manager';
-$string['privacy:metadata'] = 'The tool_licenses plugin stores no personal data.';
+$string['privacy:metadata'] = 'The tool_license plugin stores no personal data.';
 $string['rememberuserlicensepref'] = 'Remember user license preference';
 $string['rememberuserlicensepref_help'] = 'Enable if you want the filepicker to preselect the last license a user selected when uploading a file. If this is disabled, the default site license will be preselected.';
 $string['shortname'] = 'License short name';

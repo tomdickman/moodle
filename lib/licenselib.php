@@ -256,10 +256,10 @@ class license_manager {
                 self::reset_license_cache();
 
             } else {
-                print_error('licensecantdeletecore', 'tool_licenses');
+                print_error('licensecantdeletecore', 'tool_license');
             }
         } else {
-            print_error('licensenotfoundshortname', 'tool_licenses', '', $licenseshortname);
+            print_error('licensenotfoundshortname', 'tool_license', '', $licenseshortname);
         }
     }
 

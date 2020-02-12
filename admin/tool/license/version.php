@@ -15,33 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for tool_licenses implementing null_provider.
+ * Version details for component 'tool_license'.
  *
- * @package    tool_licenses
- * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
+ * @package    tool_license
+ * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_licenses\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Privacy Subsystem implementation for tool_licenses implementing null_provider.
- *
- * @package    tool_licenses
- * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class provider implements \core_privacy\local\metadata\null_provider {
+$plugin->version   = 2020050600;
+$plugin->requires  = 2020050200;         // Requires this Moodle version.
+$plugin->component = 'tool_licenses';
 
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
-    }
-}
+$plugin->maturity = MATURITY_STABLE;

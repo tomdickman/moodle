@@ -17,7 +17,7 @@
 /**
  * Tests for tool_license manager class.
  *
- * @package    tool_licenses
+ * @package    tool_license
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/licenselib.php');
 /**
  * Tests for tool_license manager class.
  *
- * @package    tool_licenses
+ * @package    tool_license
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,7 +57,7 @@ class manager_test extends advanced_testcase {
         license_manager::add($testlicense);
         license_manager::enable($testlicense->shortname);
 
-        $manager = new \tool_licenses\manager();
+        $manager = new \tool_license\manager();
 
         // Attempt to submit form data with altered details.
         $formdata = [
@@ -68,12 +68,12 @@ class manager_test extends advanced_testcase {
         ];
 
         // Attempt to submit form data with an altered shortname.
-        \tool_licenses\form\edit_license::mock_submit($formdata);
+        \tool_license\form\edit_license::mock_submit($formdata);
 
         // We're testing a private method, so we need to setup reflector magic.
-        $method = new ReflectionMethod('\tool_licenses\manager', 'edit');
+        $method = new ReflectionMethod('\tool_license\manager', 'edit');
         $method->setAccessible(true); // Allow accessing of private method.
-        $method->invoke($manager, \tool_licenses\manager::ACTION_UPDATE, $testlicense->shortname);
+        $method->invoke($manager, \tool_license\manager::ACTION_UPDATE, $testlicense->shortname);
 
         // Should not create a new license when updating an existing license.
         $this->assertEmpty(license_manager::get_license_by_shortname($formdata['shortname']));
@@ -88,19 +88,19 @@ class manager_test extends advanced_testcase {
 
         // Attempt to update a license that doesn't exist.
         $formdata['shortname'] = 'non-existent';
-        \tool_licenses\form\edit_license::mock_submit($formdata);
+        \tool_license\form\edit_license::mock_submit($formdata);
 
         // Should not be able to update a license with a shortname that doesn't exist.
         $this->expectException('moodle_exception');
-        $method->invoke($manager, \tool_licenses\manager::ACTION_UPDATE, $formdata['shortname']);
+        $method->invoke($manager, \tool_license\manager::ACTION_UPDATE, $formdata['shortname']);
 
         // Attempt to update a license without passing license shortname.
         unset($formdata['shortname']);
-        \tool_licenses\form\edit_license::mock_submit($formdata);
+        \tool_license\form\edit_license::mock_submit($formdata);
 
         // Should not be able to update empty license shortname.
         $this->expectException('moodle_exception');
-        $method->invoke($manager, \tool_licenses\manager::ACTION_UPDATE, '');
+        $method->invoke($manager, \tool_license\manager::ACTION_UPDATE, '');
     }
 
     /**
@@ -109,7 +109,7 @@ class manager_test extends advanced_testcase {
     public function test_edit_create_license() {
         $licensecount = count(license_manager::get_licenses());
 
-        $manager = new \tool_licenses\manager();
+        $manager = new \tool_license\manager();
 
         $formdata = [
             'shortname' => 'new-value',
@@ -119,12 +119,12 @@ class manager_test extends advanced_testcase {
         ];
 
         // Attempt to submit form data for a new license.
-        \tool_licenses\form\edit_license::mock_submit($formdata);
+        \tool_license\form\edit_license::mock_submit($formdata);
 
         // We're testing a private method, so we need to setup reflector magic.
-        $method = new ReflectionMethod('\tool_licenses\manager', 'edit');
+        $method = new ReflectionMethod('\tool_license\manager', 'edit');
         $method->setAccessible(true); // Allow accessing of private method.
-        $method->invoke($manager, \tool_licenses\manager::ACTION_CREATE, $formdata['shortname']);
+        $method->invoke($manager, \tool_license\manager::ACTION_CREATE, $formdata['shortname']);
 
         // Should create a new license in database.
         $this->assertCount($licensecount + 1, license_manager::get_licenses());
@@ -135,11 +135,11 @@ class manager_test extends advanced_testcase {
         $this->assertSame(date('Ymd', $formdata['version']) . '00', $actual->version);
 
         // Attempt to submit form data for a duplicate license.
-        \tool_licenses\form\edit_license::mock_submit($formdata);
+        \tool_license\form\edit_license::mock_submit($formdata);
 
         // Should not be able to create duplicate licenses.
         $this->expectException('moodle_exception');
-        $method->invoke($manager, \tool_licenses\manager::ACTION_CREATE, $formdata['shortname']);
+        $method->invoke($manager, \tool_license\manager::ACTION_CREATE, $formdata['shortname']);
     }
 
 }
