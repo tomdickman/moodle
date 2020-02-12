@@ -738,8 +738,4 @@ function upgrade_core_licenses() {
             $DB->insert_record('license',  $updatedlicense);
         }
     }
-
-    set_config('licenses', implode(',', $activelicenses));
-    set_config('licenseorder', implode(',', $activelicenses));
-    set_config('sitedefaultlicense', reset($activelicenses));
 }
