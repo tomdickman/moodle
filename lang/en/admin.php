@@ -697,7 +697,6 @@ $string['legacyfilesaddallowed_help'] = 'If a course has legacy course files, al
 $string['legacyfilesinnewcourses'] = 'Legacy course files in new courses';
 $string['legacyfilesinnewcourses_help'] = 'By default, legacy course files areas are available in upgraded courses only. Please note that some features such as activity backup and restore are not compatible with this setting.';
 $string['libcurlwarning'] = 'It has been detected that libcurl doesn\'t have CURLOPT_PROTOCOL support. An up-to-date libcurl installation is recommended for security reasons.';
-$string['licenses'] = 'Licenses';
 $string['licensesettings'] = 'Licence settings';
 $string['linkadmincategories'] = 'Link admin categories';
 $string['linkadmincategories_help'] = 'If enabled admin setting categories will be displayed as links in the navigation and will lead to the admin category pages.';
