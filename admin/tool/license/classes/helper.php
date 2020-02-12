@@ -40,7 +40,7 @@ class helper {
     /**
      * Moodle relative path to the licenses manager.
      */
-    const MANAGER_PATH = '/admin/tool/license/manager.php';
+    const MANAGER_PATH = '/admin/tool/license/index.php';
 
     /**
      * Get the URL for viewing the license manager interface.

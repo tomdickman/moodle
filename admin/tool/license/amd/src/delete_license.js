@@ -34,7 +34,7 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/config', 'cor
                 triggerElement = $(triggerElement);
                 let action = 'delete';
                 let license = triggerElement.data('license');
-                modal.deleteURL = `/admin/tool/license/manager.php?action=${action}&license=${license}&sesskey=${Config.sesskey}`;
+                modal.deleteURL = `/admin/tool/license/index.php?action=${action}&license=${license}&sesskey=${Config.sesskey}`;
             },
             large: true,
         }, trigger)
