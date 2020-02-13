@@ -58,16 +58,21 @@ class license_manager {
      *            source => string the homepage of the license type[required]
      *            enabled => int is it enabled?
      *            version  => int a version number used by moodle [required]
-     *            custom => int is this a custom license?
      * }
+     *
+     * @throws \moodle_exception when attempting to amend a core license.
      */
     static public function add($license) {
         global $DB;
         if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
             // record exists
-            $license->enabled = $record->enabled;
-            $license->id = $record->id;
-            $DB->update_record('license', $license);
+            if ($record->custom == self::CUSTOM_LICENSE) {
+                $license->enabled = $record->enabled;
+                $license->id = $record->id;
+                $DB->update_record('license', $license);
+            } else {
+                throw new moodle_exception('cannotupdatecorelicense', 'error');
+            }
         } else {
             $DB->insert_record('license', $license);
         }
