@@ -190,9 +190,9 @@ class license_manager {
      * Get license record by shortname
      *
      * @param string $param the shortname of license
-     * @return object
+     * @return object|null the license or null if no license found.
      */
-    static public function get_license_by_shortname(string $name) : object {
+    static public function get_license_by_shortname(string $name) {
         $licenses = self::get_licenses(['shortname' => $name]);
 
         if (!empty($licenses)) {
