@@ -22,8 +22,8 @@
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/config', 'core/str'],
-    function($, ModalFactory, ModalEvents, Config, String) {
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/url', 'core/str'],
+    function($, ModalFactory, ModalEvents, Url, String) {
 
         var trigger = $('.delete-license');
         ModalFactory.create({
@@ -32,9 +32,11 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/config', 'cor
             body: String.get_string('deletelicenseconfirmmessage', 'tool_license'),
             preShowCallback: function(triggerElement, modal) {
                 triggerElement = $(triggerElement);
-                let action = 'delete';
-                let license = triggerElement.data('license');
-                modal.deleteURL = `/admin/tool/license/index.php?action=${action}&license=${license}&sesskey=${Config.sesskey}`;
+                let params = {
+                    'action': 'delete',
+                    'license': triggerElement.data('license')
+                };
+                modal.deleteURL = Url.relativeUrl('/admin/tool/license/index.php', params, true);
             },
             large: true,
         }, trigger)
