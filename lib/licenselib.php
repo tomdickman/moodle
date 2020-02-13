@@ -96,7 +96,7 @@ class license_manager {
     static public function get_licenses($param = null) {
         global $DB;
 
-        $cache = \cache::make('core', 'licenses');
+        $cache = \cache::make('core', 'license');
         $licenses = $cache->get('licenses');
 
         if (empty($licenses)) {
@@ -424,7 +424,7 @@ class license_manager {
      * Reset the license cache so it rebuilds next time licenses are fetched.
      */
     static public function reset_license_cache() {
-        $cache = \cache::make('core', 'licenses');
+        $cache = \cache::make('core', 'license');
         $cache->delete('licenses');
     }
 }

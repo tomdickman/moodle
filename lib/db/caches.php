@@ -432,8 +432,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
     ],
-
-    // Caches contentbank extensions management.
+        // Caches contentbank extensions management.
     'contentbank_enabled_extensions' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
@@ -447,8 +446,8 @@ $definitions = array(
         'staticacceleration' => true,
     ],
 
-    // Cache the licenses.
-    'licenses' => [
+    // Cache for licenses.
+    'license' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => false,
         'simpledata' => false

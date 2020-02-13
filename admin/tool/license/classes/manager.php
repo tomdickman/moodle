@@ -166,7 +166,7 @@ class manager {
             $license->version = date('Ymd', $data->version) . '00';
             $license->custom = license_manager::CUSTOM_LICENSE;
             license_manager::add($license);
-            license_manager::enable($licenseshortname);
+            license_manager::enable($license->shortname);
 
             return true;
         } else {
