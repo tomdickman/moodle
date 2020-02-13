@@ -66,7 +66,7 @@ class license_manager {
         global $DB;
         if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
             // record exists
-            if ($record->custom == self::CUSTOM_LICENSE) {
+            if ($record->custom != self::CORE_LICENSE) {
                 $license->enabled = $record->enabled;
                 $license->id = $record->id;
                 $DB->update_record('license', $license);
