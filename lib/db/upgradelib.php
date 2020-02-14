@@ -734,8 +734,6 @@ function upgrade_core_licenses() {
             // Remember if the license was enabled before upgrade.
             $updatedlicense->enabled = $currentlicense->enabled;
             $DB->update_record('license', $updatedlicense);
-        } else {
-            $DB->insert_record('license',  $updatedlicense);
         }
     }
 }
