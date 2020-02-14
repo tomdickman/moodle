@@ -137,6 +137,11 @@ class manager {
      * @return bool true if license editing complete, false otherwise.
      */
     private function edit(string $action, string $licenseshortname) : bool {
+
+        if ($action != self::ACTION_CREATE && $action != self::ACTION_UPDATE) {
+            throw new \coding_exception('license edit actions are limited to create and update');
+        }
+
         $form = new form\edit_license($action, $licenseshortname);
 
         if ($form->is_cancelled()) {
