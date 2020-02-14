@@ -7360,7 +7360,13 @@ class admin_setting_managelicenses extends admin_setting {
 
         $licenses = license_manager::get_licenses_in_order();
 
-        $return = $OUTPUT->box_start('generalbox editorsui');
+        // Add the create license button.
+        $return = html_writer::link(\tool_license\helper::get_create_license_url(),
+            get_string('createlicensebuttontext', 'tool_license'),
+            ['class' => 'btn btn-secondary mb-3']);
+
+        // Add the table containing licenses for management.
+        $return .= $OUTPUT->box_start('generalbox editorsui');
 
         $table = new html_table();
         $table->head  = array(
@@ -7395,10 +7401,6 @@ class admin_setting_managelicenses extends admin_setting {
 
         $return .= html_writer::table($table);
         $return .= $OUTPUT->box_end();
-
-        $return .= html_writer::link(\tool_license\helper::get_create_license_url(),
-            get_string('createlicensebuttontext', 'tool_license'),
-            ['class' => 'btn btn-secondary mb-3']);
 
         return highlight($query, $return);
     }
