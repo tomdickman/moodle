@@ -26,7 +26,6 @@ namespace tool_license\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use navigation_node;
 use plugin_renderer_base;
 use tool_license\helper;
 
