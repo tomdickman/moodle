@@ -117,6 +117,10 @@ class edit_license extends moodleform {
             $errors['source'] = get_string('invalidurl', 'tool_license');
         }
 
+        if (array_key_exists('version', $data) && $data['version'] > time()) {
+            $errors['version'] = get_string('versioncannotbefuture', 'tool_license');
+        }
+
         return $errors;
     }
 }

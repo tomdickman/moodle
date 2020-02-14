@@ -42,5 +42,6 @@ $string['source'] = 'License source';
 $string['source_help'] = 'Fully qualified domain name where the license terms and conditions can be found. Must be preceded by the protocol identifier as well (http:// or https://).';
 $string['sourcerequirederror'] = 'You must enter a valid URL for license source.';
 $string['version'] = 'License version';
+$string['versioncannotbefuture'] = 'License version cannot be set to a future date.';
 $string['version_help'] = 'Publication date of the license version being utilised.';
 
