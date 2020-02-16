@@ -28,7 +28,6 @@ require_once($CFG->libdir . '/licenselib.php');
 
 if ($hassiteconfig) {
 
-    $ADMIN->add('root', new admin_category('licensesettings', new lang_string('licenses')), 'location');
     $temp = new admin_settingpage('managelicenses', new lang_string('managelicenses', 'admin'));
 
     $licenses = license_manager::get_active_licenses_as_array();
@@ -43,5 +42,5 @@ if ($hassiteconfig) {
         new lang_string('rememberuserlicensepref_help', 'admin'),
         1));
     $temp->add(new admin_setting_managelicenses());
-    $ADMIN->add('licensesettings', $temp);
+    $ADMIN->add('licenses', $temp);
 }
