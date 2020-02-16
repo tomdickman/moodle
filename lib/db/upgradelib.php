@@ -640,7 +640,7 @@ function upgrade_core_licenses() {
 
     $license = new stdClass();
     $license->shortname = 'unknown';
-    $license->fullname = 'Unknown license';
+    $license->fullname = 'License not specified';
     $license->source = '';
     $license->enabled = 1;
     $license->version = '2010033100';

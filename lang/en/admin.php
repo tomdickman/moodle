@@ -1042,7 +1042,7 @@ $string['registrationwarning'] = 'Your site is not yet registered.';
 $string['registrationwarningcontactadmin'] = 'Your site is not yet registered. Please notify your administrator.';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target="_blank" href="{$a}">Release Notes</a>';
 $string['rememberuserlicensepref'] = 'Remember user license preference';
-$string['rememberuserlicensepref_help'] = 'Enable if you want the filepicker to preselect the last license a user selected when uploading a file. If this is disabled, the default site license will be preselected.';
+$string['rememberuserlicensepref_help'] = 'If enabled, the last license selected by the user is preselected when uploading a file in the file picker. Otherwise, the default site license is preselected.';
 $string['rememberusername'] = 'Remember username';
 $string['rememberusername_desc'] = 'Enable if you want to store permanent cookies with usernames during user login. Permanent cookies may be considered a privacy issue if used without consent.';
 $string['reportsmanage'] = 'Manage reports';
