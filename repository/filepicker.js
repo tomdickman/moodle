@@ -1199,7 +1199,7 @@ M.core_filepicker.init = function(Y, options) {
 
             // TODO MDL-32532: attributes 'hasauthor' and 'haslicense' need to be obsolete,
             selectnode.one('.fp-setauthor input').set('value', args.author ? args.author : this.options.author);
-            this.set_selected_license(selectnode.one('.fp-setlicense'), args.license);
+            this.populate_licenses_select(selectnode.one('.fp-setlicense select'), args);
             selectnode.one('form #filesource-'+client_id).set('value', args.source);
             selectnode.one('form #filesourcekey-'+client_id).set('value', args.sourcekey);
 
@@ -1237,7 +1237,6 @@ M.core_filepicker.init = function(Y, options) {
             selectnode.all('.fp-linktype-2,.fp-linktype-1,.fp-linktype-4,.fp-linktype-8').each(function (node) {
                 node.one('input').on('change', changelinktype, this);
             });
-            this.populate_licenses_select(selectnode.one('.fp-setlicense select'));
             // register event on clicking submit button
             getfile.on('click', function(e) {
                 e.preventDefault();
@@ -1767,41 +1766,29 @@ M.core_filepicker.init = function(Y, options) {
                 callback: this.display_response
             }, true);
         },
-        populate_licenses_select: function(node) {
-            if (!node) {
+        populate_licenses_select: function(licensenode, filenode) {
+            if (!licensenode) {
                 return;
             }
-            node.setContent('');
-            var licenses = this.options.licenses;
-            if (this.options.rememberuserlicensepref) {
-                this.options.defaultlicense = this.get_preference('recentlicense');
+            licensenode.setContent('');
+            var selectedlicense = this.options.defaultlicense;
+            if (filenode) {
+                // File has a license already, use it.
+                selectedlicense = filenode.license;
+            } else if (this.options.rememberuserlicensepref) {
+                selectedlicense = this.get_preference('recentlicense');
             }
+            var licenses = this.options.licenses;
             for (var i in licenses) {
-                var option = Y.Node.create('<option/>').
-                    set('selected', (this.options.defaultlicense==licenses[i].shortname)).
+                // Include the file's current license, even if not enabled, to prevent displaying
+                // misleading information about which license the file currently has assigned to it.
+                if (licenses[i].enabled == true || (filenode != null && licenses[i].shortname === filenode.license)) {
+                    var option = Y.Node.create('<option/>').
+                    set('selected', (licenses[i].shortname == selectedlicense)).
                     set('value', licenses[i].shortname).
                     setContent(Y.Escape.html(licenses[i].fullname));
-                node.appendChild(option)
-            }
-        },
-        set_selected_license: function(node, value) {
-            var licenseset = false;
-            node.all('option').each(function(el) {
-                if (el.get('value')==value || el.getContent()==value) {
-                    el.set('selected', true);
-                    licenseset = true;
+                    licensenode.appendChild(option);
                 }
-            });
-            if (!licenseset) {
-                // we did not find the value in the list
-                var selectedlicense;
-                if (this.option.rememberuserlicensepref) {
-                    selectedlicense = this.get_preference('recentlicense');
-                } else {
-                    selectedlicense = this.option.defaultlicense;
-                }
-                node.all('option[selected]').set('selected', false);
-                node.all('option[value=' + selectedlicense + ']').set('selected', true);
             }
         },
         create_object_container: function(data) {

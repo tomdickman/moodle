@@ -3121,7 +3121,7 @@ function initialise_filepicker($args) {
 
     $return = new stdClass();
 
-    $licenses = license_manager::get_active_licenses();
+    $licenses = license_manager::get_licenses();
 
     if (!empty($CFG->sitedefaultlicense)) {
         $return->defaultlicense = $CFG->sitedefaultlicense;

@@ -411,7 +411,7 @@ class form_filemanager implements renderable {
             'licenses'=>array()
             );
 
-        $defaults['licenses'] = license_manager::get_active_licenses();
+        $defaults['licenses'] = license_manager::get_licenses();
 
         if (!empty($CFG->sitedefaultlicense)) {
             $defaults['defaultlicense'] = $CFG->sitedefaultlicense;
