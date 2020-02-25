@@ -33,6 +33,7 @@ $string['fullnamerequirederror'] = 'You must enter a full name for the license.'
 $string['invalidurl'] = 'Invalid source URL';
 $string['license'] = 'License';
 $string['licensecantdeletecore'] = 'Cannot delete a standard license';
+$string['licensecantdeletelicenseinuse'] = 'Cannot delete a license which is currently assigned to one or more files';
 $string['licensenotfoundshortname'] = 'Cannot find a license with the short name \'{$a}\'';
 $string['licensemanager'] = 'License manager';
 $string['privacy:metadata'] = 'The tool_license plugin stores no personal data.';

@@ -244,12 +244,21 @@ class license_manager {
      * Delete a custom license.
      *
      * @param string $licenseshortname the shortname of license.
+     *
+     * @throws \moodle_exception when attempting to delete a license you are not allowed to.
      */
     static public function delete($licenseshortname) {
         global $DB;
 
         if ($license = self::get_license_by_shortname($licenseshortname)) {
             if ($license->custom == self::CUSTOM_LICENSE) {
+                // Check that the license is not in use by any files, if so it
+                // cannot be deleted.
+                $countfilesusinglicense = $DB->count_records('files', ['license' => $licenseshortname]);
+                if ($countfilesusinglicense > 0) {
+                    throw new moodle_exception('licensecantdeletelicenseinuse', 'tool_license',
+                        \tool_license\helper::get_admin_setting_managelicenses_url());
+                }
                 $DB->delete_records('license', ['id' => $license->id]);
 
                 // Remove the license from license order.
@@ -262,10 +271,12 @@ class license_manager {
                 self::reset_license_cache();
 
             } else {
-                print_error('licensecantdeletecore', 'tool_license');
+                throw new moodle_exception('licensecantdeletecore', 'tool_license',
+                    \tool_license\helper::get_admin_setting_managelicenses_url());
             }
         } else {
-            print_error('licensenotfoundshortname', 'tool_license', '', $licenseshortname);
+            throw new moodle_exception('licensenotfoundshortname', 'tool_license',
+                \tool_license\helper::get_admin_setting_managelicenses_url(), $licenseshortname);
         }
     }
 
