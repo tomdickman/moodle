@@ -76,15 +76,13 @@ class edit_license extends moodleform {
 
         $mform = $this->_form;
 
+        $mform->addElement('text', 'shortname', get_string('shortname', 'tool_license'));
+        $mform->setType('shortname', PARAM_ALPHANUMEXT);
         // Shortname is only editable when user is creating a license.
-        if ($this->action == manager::ACTION_CREATE) {
-            $mform->addElement('text', 'shortname', get_string('shortname', 'tool_license'));
-            $mform->setType('shortname', PARAM_ALPHANUMEXT);
-            $mform->addRule('shortname', get_string('shortnamerequirederror', 'tool_license'), 'required');
+        if ($this->action != manager::ACTION_CREATE) {
+            $mform->freeze('shortname');
         } else {
-            $mform->addElement('static', 'shortname',
-                get_string('shortname', 'tool_license'),
-                $this->licenseshortname);
+            $mform->addRule('shortname', get_string('shortnamerequirederror', 'tool_license'), 'required');
         }
 
         $mform->addElement('text', 'fullname', get_string('fullname', 'tool_license'));

@@ -7287,14 +7287,18 @@ class admin_setting_managelicenses extends admin_setting {
      * @param bool $canmoveup can this row move up.
      * @param bool $canmovedown can this row move down.
      *
-     * @return array of columns values for row.
+     * @return \html_table_row of columns values for row.
      */
-    private function get_license_table_row_data(object $license, bool $canmoveup, bool $canmovedown) : array {
+    private function get_license_table_row_data(object $license, bool $canmoveup, bool $canmovedown) {
         global $CFG, $OUTPUT;
 
         $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
 
         $summary = $license->fullname . ' ('. $license->shortname . ')<br>' . $source;
+        $summarycell = new html_table_cell($summary);
+        $summarycell->attributes['class'] = 'license-summary';
+        $versioncell = new html_table_cell($license->version);
+        $versioncell->attributes['class'] = 'license-version';
 
         if ($license->shortname == $CFG->sitedefaultlicense) {
             $hideshow = $OUTPUT->pix_icon('t/locked', get_string('default'));
@@ -7318,31 +7322,44 @@ class admin_setting_managelicenses extends admin_setting {
                 $deletelicense = '';
             }
         }
+        $hideshowcell = new html_table_cell($hideshow);
+        $hideshowcell->attributes['class'] = 'license-status';
 
         if ($license->custom == license_manager::CUSTOM_LICENSE) {
             $editlicense = html_writer::link(\tool_license\helper::get_update_license_url($license->shortname),
-                $OUTPUT->pix_icon('t/editinline', get_string('edit')));
+                $OUTPUT->pix_icon('t/editinline', get_string('edit')),
+                ['class' => 'edit-license']);
         } else {
             $editlicense = '';
         }
+        $editlicensecell = new html_table_cell($editlicense);
+        $editlicensecell->attributes['class'] = 'edit-license';
 
-        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', ['class' => 'iconsmall']);
         $updown = '';
         if ($canmoveup) {
             $updown .= html_writer::link(\tool_license\helper::get_moveup_license_url($license->shortname),
-                    $OUTPUT->pix_icon('t/up', get_string('up'), 'moodle', array('class' => 'iconsmall'))). '';
+                    $OUTPUT->pix_icon('t/up', get_string('up'), 'moodle', ['class' => 'iconsmall']),
+                    ['class' => 'move-up']). '';
         } else {
             $updown .= $spacer;
         }
 
         if ($canmovedown) {
             $updown .= '&nbsp;'.html_writer::link(\tool_license\helper::get_movedown_license_url($license->shortname),
-                    $OUTPUT->pix_icon('t/down', get_string('down'), 'moodle', array('class' => 'iconsmall')));
+                    $OUTPUT->pix_icon('t/down', get_string('down'), 'moodle', ['class' => 'iconsmall']),
+                    ['class' => 'move-down']);
         } else {
             $updown .= $spacer;
         }
+        $updowncell = new html_table_cell($updown);
+        $updowncell->attributes['class'] = 'license-order';
 
-        return [$hideshow, $summary, $license->version, $updown, $editlicense, $deletelicense];
+        $row = new html_table_row([$hideshowcell, $summarycell, $versioncell, $updowncell, $editlicensecell, $deletelicense]);
+        $row->attributes['data-license'] = $license->shortname;
+        $row->attributes['class'] = strtolower(get_string('license', 'tool_license'));
+
+        return $row;
     }
 
     /**
@@ -7369,25 +7386,25 @@ class admin_setting_managelicenses extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox editorsui');
 
         $table = new html_table();
-        $table->head  = array(
+        $table->head  = [
             get_string('enable'),
             get_string('license', 'tool_license'),
             get_string('version'),
             get_string('order'),
             get_string('edit'),
             get_string('delete'),
-        );
-        $table->colclasses = array(
+        ];
+        $table->colclasses = [
             'text-center',
             'text-left',
             'text-left',
             'text-center',
             'text-center',
             'text-center',
-        );
-        $table->id = 'availablelicenses';
+        ];
+        $table->id = 'manage-licenses';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
+        $table->data  = [];
 
         $rownumber = 0;
         $rowcount = count($licenses);
