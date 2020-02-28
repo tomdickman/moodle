@@ -34,6 +34,7 @@ require_once($CFG->libdir . '/licenselib.php');
  * @package    tool_license
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      tool_license
  */
 class manager_test extends advanced_testcase {
 

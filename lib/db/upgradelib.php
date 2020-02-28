@@ -635,17 +635,15 @@ function upgrade_analytics_fix_contextids_defaults() {
 function upgrade_core_licenses() {
     global $DB;
 
-    $activelicenses = [];
     $corelicenses = [];
 
     $license = new stdClass();
     $license->shortname = 'unknown';
-    $license->fullname = 'License not specified';
+    $license->fullname = 'Licence not specified';
     $license->source = '';
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -655,7 +653,6 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -665,7 +662,6 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -675,7 +671,6 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -685,7 +680,6 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -695,7 +689,6 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -705,7 +698,6 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -715,7 +707,6 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -725,11 +716,11 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
-    $activelicenses[] = $license->shortname;
     $corelicenses[] = $license;
 
     foreach ($corelicenses as $updatedlicense) {
-        if ($currentlicense = $DB->get_record('license', ['shortname' => $updatedlicense->shortname])) {
+        $currentlicense = $DB->get_record('license', ['shortname' => $updatedlicense->shortname]);
+        if (!empty($currentlicense)) {
             $updatedlicense->id = $currentlicense->id;
             // Remember if the license was enabled before upgrade.
             $updatedlicense->enabled = $currentlicense->enabled;

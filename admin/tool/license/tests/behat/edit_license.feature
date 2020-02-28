@@ -1,33 +1,33 @@
 @tool @tool_license
-Feature: Custom licenses
-  In order to use custom licenses
+Feature: Custom licences
+  In order to use custom licences
   As an admin
-  I need to be able to add custom licenses
+  I need to be able to add custom licences
 
-  Scenario: Add custom license
+  Scenario: Add custom licence
     Given I log in as "admin"
     And I navigate to "Licences > Manage licences" in site administration
-    And I click on "Create license" "link"
+    And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
-      | fullname       | MIT License                         |
+      | fullname       | MIT Licence                         |
       | source         | https://opensource.org/licenses/MIT |
       | version[day]   | 1                                   |
       | version[month] | January                             |
       | version[year]  | 2020                                |
     And I press "Save changes"
     Then I should see "Manage licences"
-    And I should see "MIT License" in the "MIT" "table_row"
+    And I should see "MIT Licence" in the "MIT" "table_row"
     And I should see "https://opensource.org/licenses/MIT" in the "MIT" "table_row"
     And I log out
 
-  Scenario: Custom license source must be a valid http(s) url including scheme.
+  Scenario: Custom license source must be a valid url including scheme.
     Given I log in as "admin"
     And I navigate to "Licences > Manage licences" in site administration
-    And I click on "Create license" "link"
+    And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
-      | fullname       | MIT License                         |
+      | fullname       | MIT Licence                         |
       | source         | opensource.org/licenses/MIT         |
       | version[day]   | 1                                   |
       | version[month] | January                             |
@@ -42,17 +42,17 @@ Feature: Custom licenses
       | source         | https://opensource.org/licenses/MIT |
     And I press "Save changes"
     Then I should see "Manage licences"
-    And I should see "MIT License" in the "MIT" "table_row"
+    And I should see "MIT Licence" in the "MIT" "table_row"
     And I should see "https://opensource.org/licenses/MIT" in the "MIT" "table_row"
     And I log out
 
   Scenario: Custom license version format must be YYYYMMDD00
     Given I log in as "admin"
     And I navigate to "Licences > Manage licences" in site administration
-    And I click on "Create license" "link"
+    And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
-      | fullname       | MIT License                         |
+      | fullname       | MIT Licence                         |
       | source         | https://opensource.org/licenses/MIT |
       | version[day]   | 1                                   |
       | version[month] | March                               |
@@ -66,18 +66,18 @@ Feature: Custom licenses
   Scenario: Custom license short name should not be editable
     Given I log in as "admin"
     And I navigate to "Licences > Manage licences" in site administration
-    And I click on "Create license" "link"
+    And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
-      | fullname       | MIT License                         |
+      | fullname       | MIT Licence                         |
       | source         | https://opensource.org/licenses/MIT |
       | version[day]   | 1                                   |
       | version[month] | March                               |
       | version[year]  | 2019                                |
     And I press "Save changes"
     And I should see "Manage licences"
-    And I should see "MIT License" in the "MIT" "table_row"
+    And I should see "MIT Licence" in the "MIT" "table_row"
     And I click on "Edit" "icon" in the "MIT" "table_row"
-    Then I should see "Edit license"
+    Then I should see "Edit licence"
     And the "shortname" "field" should be disabled
     And I log out

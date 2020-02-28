@@ -21,28 +21,28 @@
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['pluginname'] = 'Licenses';
-$string['createlicense'] = 'Create custom license';
-$string['createlicensebuttontext'] = 'Create license';
-$string['deletelicense'] = 'Delete license';
-$string['deletelicenseconfirmmessage'] = 'Are you sure you want to delete this license?';
-$string['duplicatelicenseshortname'] = 'Error: License shortname must be unique, duplicate value found.';
-$string['editlicense'] = 'Edit license';
-$string['fullname'] = 'License full name';
-$string['fullnamerequirederror'] = 'You must enter a full name for the license.';
+$string['pluginname'] = 'License';
+$string['createlicense'] = 'Create custom licence';
+$string['createlicensebuttontext'] = 'Create licence';
+$string['deletelicense'] = 'Delete licence';
+$string['deletelicenseconfirmmessage'] = 'Are you sure you want to delete this licence?';
+$string['duplicatelicenseshortname'] = 'Error: Licence shortname must be unique, duplicate value found.';
+$string['editlicense'] = 'Edit licence';
+$string['fullname'] = 'Licence full name';
+$string['fullnamerequirederror'] = 'You must enter a full name for the licence.';
 $string['invalidurl'] = 'Invalid source URL';
-$string['license'] = 'License';
-$string['licensecantdeletecore'] = 'Cannot delete a standard license';
-$string['licensecantdeletelicenseinuse'] = 'Cannot delete a license which is currently assigned to one or more files';
-$string['licensenotfoundshortname'] = 'Cannot find a license with the short name \'{$a}\'';
-$string['licensemanager'] = 'License manager';
+$string['license'] = 'Licence';
+$string['licensecantdeletecore'] = 'Cannot delete a standard licence';
+$string['licensecantdeletelicenseinuse'] = 'Cannot delete a licence which is currently assigned to one or more files';
+$string['licensenotfoundshortname'] = 'Cannot find a licence with the short name \'{$a}\'';
+$string['licensemanager'] = 'Licence manager';
 $string['privacy:metadata'] = 'The tool_license plugin stores no personal data.';
-$string['shortname'] = 'License short name';
-$string['shortnamerequirederror'] = 'You must enter a short name for the license.';
-$string['source'] = 'License source';
-$string['source_help'] = 'The URL (with http:// or https:// prefix) where the license terms and conditions can be found.';
-$string['sourcerequirederror'] = 'You must enter a valid URL for license source.';
-$string['version'] = 'License version';
-$string['versioncannotbefuture'] = 'License version cannot be set to a future date.';
-$string['version_help'] = 'Publication date of the license version being utilised.';
+$string['shortname'] = 'Licence short name';
+$string['shortnamerequirederror'] = 'You must enter a short name for the licence.';
+$string['source'] = 'Licence source';
+$string['source_help'] = 'The URL (with http:// or https:// prefix) where the licence terms and conditions can be found.';
+$string['sourcerequirederror'] = 'You must enter a valid URL for licence source.';
+$string['version'] = 'Licence version';
+$string['versioncannotbefuture'] = 'Licence version cannot be set to a future date.';
+$string['version_help'] = 'Publication date of the licence version being utilised.';
 

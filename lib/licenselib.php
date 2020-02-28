@@ -346,7 +346,7 @@ class license_manager {
         $license = new stdClass();
 
         $license->shortname = 'unknown';
-        $license->fullname = 'License not specified';
+        $license->fullname = 'Licence not specified';
         $license->source = '';
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
