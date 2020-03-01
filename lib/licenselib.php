@@ -101,6 +101,12 @@ class license_manager {
 
         if (empty($licenses)) {
             $licenses = $DB->get_records('license');
+            foreach ($licenses as $license) {
+                // Interpret core license strings for internationalisation.
+                if ($license->custom == self::CORE_LICENSE) {
+                    $license->fullname = get_string($license->shortname, 'license');
+                }
+            }
             $cache->set('licenses', $licenses);
         }
 
