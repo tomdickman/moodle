@@ -364,7 +364,7 @@ class license_manager {
         self::add($license);
 
         $license->shortname = 'public';
-        $license->fullname = 'Public Domain';
+        $license->fullname = 'Public domain';
         $license->source = 'https://en.wikipedia.org/wiki/Public_domain';
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';

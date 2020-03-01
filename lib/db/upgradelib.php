@@ -657,7 +657,7 @@ function upgrade_core_licenses() {
 
     $license = new stdClass();
     $license->shortname = 'public';
-    $license->fullname = 'Public Domain';
+    $license->fullname = 'Public domain';
     $license->source = 'https://en.wikipedia.org/wiki/Public_domain';
     $license->enabled = 1;
     $license->version = '2010033100';
