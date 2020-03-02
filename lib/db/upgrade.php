@@ -2326,6 +2326,15 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // Define index license (not unique) to be added to files.
+        $table = new xmldb_table('files');
+        $index = new xmldb_index('license', XMLDB_INDEX_NOTUNIQUE, ['license']);
+
+        // Conditionally launch add index license.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
         // Upgrade the core license details.
         upgrade_core_licenses();
 
