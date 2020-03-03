@@ -1819,7 +1819,7 @@ M.core_filepicker.init = function(Y, options) {
             content.one('.fp-saveas input').set('name', 'title');
             content.one('.fp-setauthor input').setAttrs({name:'author', value:this.options.author});
             content.one('.fp-setlicense select').set('name', 'license');
-            this.populateLicensesSelect(content.one('.fp-setlicense select'))
+            this.populateLicensesSelect(content.one('.fp-setlicense select'));
             // append hidden inputs to the upload form
             content.one('form').appendChild(Y.Node.create('<input/>').
                 setAttrs({type:'hidden',name:'itemid',value:this.options.itemid}));
