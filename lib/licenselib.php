@@ -195,7 +195,7 @@ class license_manager {
     /**
      * Get license record by shortname
      *
-     * @param string $param the shortname of license
+     * @param string $name the shortname of license
      * @return object|null the license or null if no license found.
      */
     static public function get_license_by_shortname(string $name) {

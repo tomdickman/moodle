@@ -1199,7 +1199,7 @@ M.core_filepicker.init = function(Y, options) {
 
             // TODO MDL-32532: attributes 'hasauthor' and 'haslicense' need to be obsolete,
             selectnode.one('.fp-setauthor input').set('value', args.author ? args.author : this.options.author);
-            this.populate_licenses_select(selectnode.one('.fp-setlicense select'), args);
+            this.populateLicensesSelect(selectnode.one('.fp-setlicense select'), args);
             selectnode.one('form #filesource-'+client_id).set('value', args.source);
             selectnode.one('form #filesourcekey-'+client_id).set('value', args.sourcekey);
 
@@ -1766,7 +1766,7 @@ M.core_filepicker.init = function(Y, options) {
                 callback: this.display_response
             }, true);
         },
-        populate_licenses_select: function(licensenode, filenode) {
+        populateLicensesSelect: function(licensenode, filenode) {
             if (!licensenode) {
                 return;
             }
@@ -1782,7 +1782,7 @@ M.core_filepicker.init = function(Y, options) {
             for (var i in licenses) {
                 // Include the file's current license, even if not enabled, to prevent displaying
                 // misleading information about which license the file currently has assigned to it.
-                if (licenses[i].enabled == true || (filenode != null && licenses[i].shortname === filenode.license)) {
+                if (licenses[i].enabled == true || (filenode !== null && licenses[i].shortname === filenode.license)) {
                     var option = Y.Node.create('<option/>').
                     set('selected', (licenses[i].shortname == selectedlicense)).
                     set('value', licenses[i].shortname).
@@ -1819,7 +1819,7 @@ M.core_filepicker.init = function(Y, options) {
             content.one('.fp-saveas input').set('name', 'title');
             content.one('.fp-setauthor input').setAttrs({name:'author', value:this.options.author});
             content.one('.fp-setlicense select').set('name', 'license');
-            this.populate_licenses_select(content.one('.fp-setlicense select'))
+            this.populateLicensesSelect(content.one('.fp-setlicense select'))
             // append hidden inputs to the upload form
             content.one('form').appendChild(Y.Node.create('<input/>').
                 setAttrs({type:'hidden',name:'itemid',value:this.options.itemid}));
