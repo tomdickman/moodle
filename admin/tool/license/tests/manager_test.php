@@ -143,4 +143,37 @@ class manager_test extends advanced_testcase {
         $method->invoke($manager, \tool_license\manager::ACTION_CREATE, $formdata['shortname']);
     }
 
+    /**
+     * Test changing the order of licenses.
+     */
+    public function test_change_license_order() {
+        global $DB;
+
+        // Reset the license table to known state with all core licenses installed.
+        $DB->delete_records('license');
+        license_manager::install_licenses();
+
+        $licenseorder = license_manager::get_license_order();
+        $initialposition = array_search('cc-nc', $licenseorder);
+
+        $manager = new tool_license\manager();
+
+        // We're testing a private method, so we need to setup reflector magic.
+        $method = new ReflectionMethod('\tool_license\manager', 'change_license_order');
+        $method->setAccessible(true); // Allow accessing of private method.
+        $method->invoke($manager, \tool_license\manager::ACTION_MOVE_UP, 'cc-nc');
+
+        $licenseorder = license_manager::get_license_order();
+        $newposition = array_search('cc-nc', $licenseorder);
+
+        $this->assertLessThan($initialposition, $newposition);
+
+        $initialposition = array_search('allrightsreserved', $licenseorder);
+        $method->invoke($manager, \tool_license\manager::ACTION_MOVE_DOWN, 'allrightsreserved');
+        $licenseorder = license_manager::get_license_order();
+        $newposition = array_search('cc-nc', $licenseorder);
+
+        $this->assertGreaterThan($initialposition, $newposition);
+    }
+
 }

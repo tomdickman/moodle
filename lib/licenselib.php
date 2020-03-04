@@ -100,12 +100,14 @@ class license_manager {
         $licenses = $cache->get('licenses');
 
         if (empty($licenses)) {
-            $licenses = $DB->get_records('license');
-            foreach ($licenses as $license) {
+            $licenses = [];
+            $records = $DB->get_records('license');
+            foreach ($records as $license) {
                 // Interpret core license strings for internationalisation.
                 if ($license->custom == self::CORE_LICENSE) {
                     $license->fullname = get_string($license->shortname, 'license');
                 }
+                $licenses[$license->shortname] = $license;
             }
             $cache->set('licenses', $licenses);
         }
@@ -114,7 +116,7 @@ class license_manager {
         if (!empty($param)) {
             $filteredlicenses = [];
 
-            foreach ($licenses as $id => $license) {
+            foreach ($licenses as $shortname => $license) {
                 $filtermatch = true;
                 foreach ($param as $key => $value) {
                     if ($license->$key != $value) {
@@ -122,7 +124,7 @@ class license_manager {
                     }
                 }
                 if ($filtermatch) {
-                    $filteredlicenses[$id] = $license;
+                    $filteredlicenses[$shortname] = $license;
                 }
             }
             $licenses = $filteredlicenses;
@@ -136,7 +138,7 @@ class license_manager {
      *
      * @return array string[] of license shortnames.
      */
-    public static function get_license_order() {
+    static public function get_license_order() {
 
         $licenses = self::get_licenses_in_order();
         $licenseorder = array_keys($licenses);
@@ -158,31 +160,28 @@ class license_manager {
 
         if (!empty($CFG->licenseorder)) {
             $order = explode(',', $CFG->licenseorder);
+            $licenseshortnames = array_keys($licenses);
 
-            foreach ($order as $licensename) {
-                foreach ($licenses as $license) {
-                    if ($licensename == $license->shortname) {
-                        $result[$license->shortname] = $license;
-                    }
+            // Add ordered licenses first
+            foreach ($order as $licenseshortname) {
+                if (in_array($licenseshortname, $licenseshortnames)) {
+                    $result[$licenseshortname] = $licenses[$licenseshortname];
                 }
             }
 
-            // We shouldn't be missing any licenses as order is created on install and amended on
-            // license creation, but just in case, check for any licenses not in the licenseorder,
-            // add them to the bottom of results order.
+            // Add all other licenses in any order.
             foreach ($licenses as $license) {
                 if (!in_array($license->shortname, array_keys($result))) {
-                    $result[$license->shortname] = $license;
                     $orderupdated = true;
+                    $result[$license->shortname] = $license;
                 }
             }
-
         } else {
             // There is no order set so get the licenses in any order.
             foreach ($licenses as $license) {
+                $orderupdated = true;
                 $result[$license->shortname] = $license;
             }
-            $orderupdated = true;
         }
 
         if ($orderupdated) {
@@ -287,7 +286,7 @@ class license_manager {
     }
 
     /**
-     * Store active licenses in global $CFG.
+     * Store active licenses in global config.
      */
     static private function set_active_licenses() {
         self::reset_license_cache();
@@ -319,7 +318,7 @@ class license_manager {
                     if (isset($license->custom) && $license->custom == self::CORE_LICENSE) {
                         $license->fullname = get_string($license->shortname, 'license');
                     }
-                    $result[] = $license;
+                    $result[$license->shortname] = $license;
                 }
             }
         }
