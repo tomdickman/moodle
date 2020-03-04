@@ -162,7 +162,7 @@ class license_manager {
             $order = explode(',', $CFG->licenseorder);
             $licenseshortnames = array_keys($licenses);
 
-            // Add ordered licenses first
+            // Add ordered licenses first.
             foreach ($order as $licenseshortname) {
                 if (in_array($licenseshortname, $licenseshortnames)) {
                     $result[$licenseshortname] = $licenses[$licenseshortname];
