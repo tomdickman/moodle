@@ -81,6 +81,7 @@ $string['autolang'] = 'Language autodetect';
 $string['autologinguests'] = 'Auto-login guests';
 $string['searchareas'] = 'Search areas';
 $string['availableto'] = 'Available to';
+$string['availablelicenses'] = 'Available licences';
 $string['backgroundcolour'] = 'Transparent colour';
 $string['backups'] = 'Backups';
 $string['backup_shortname'] = 'Use course name in backup filename';
