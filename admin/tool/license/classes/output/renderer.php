@@ -26,6 +26,7 @@ namespace tool_license\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+use license_manager;
 use plugin_renderer_base;
 use tool_license\helper;
 
@@ -82,6 +83,16 @@ class renderer extends plugin_renderer_base {
      * @return string HTML.
      */
     public function render_table(\renderable $table) {
-        return $table->output();
+        $licenses = license_manager::get_licenses_in_order();
+
+        // Add the create license button.
+        $html = $table->create_license_link();
+
+        // Add the table containing licenses for management.
+        $html .= $this->box_start('generalbox editorsui');
+        $html .= $table->create_license_manager_table($licenses, $this);
+        $html .= $this->box_end();
+
+        return $html;
     }
 }

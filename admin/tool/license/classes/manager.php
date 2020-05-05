@@ -215,7 +215,7 @@ class manager {
      * @param string $licenseshortname the shortname of the license to create/edit.
      * @param \tool_license\form\edit_license $form the form for submitting edit data.
      */
-    protected function view_license_editor(string $action, string $licenseshortname, edit_license $form) : void {
+    private function view_license_editor(string $action, string $licenseshortname, edit_license $form) : void {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('tool_license');
@@ -237,20 +237,18 @@ class manager {
         echo $return;
     }
 
-    protected function view_license_manager() {
+    private function view_license_manager() {
         global $PAGE;
+
+        $PAGE->requires->js_call_amd('tool_license/delete_license');
 
         $renderer = $PAGE->get_renderer('tool_license');
         $html = $renderer->header();
         $html .= $renderer->heading(get_string('licensemanager', 'tool_license'));
 
-        // TODO: Update this to use tool_license renderer and components.
         $table = new \tool_license\output\table();
         $html .= $renderer->render($table);
-
         $html .= $renderer->footer();
-
-        $PAGE->requires->js_call_amd('tool_license/delete_license');
 
         echo $html;
     }
