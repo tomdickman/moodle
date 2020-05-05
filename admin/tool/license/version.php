@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2020050600;
 $plugin->requires  = 2020050200;         // Requires this Moodle version.
-$plugin->component = 'tool_licenses';
+$plugin->component = 'tool_license';
 
 $plugin->maturity = MATURITY_STABLE;
