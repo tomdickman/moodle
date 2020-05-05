@@ -73,4 +73,15 @@ class renderer extends plugin_renderer_base {
 
         return $return;
     }
+
+    /**
+     * Render the license manager table.
+     *
+     * @param \renderable $table the renderable.
+     *
+     * @return string HTML.
+     */
+    public function render_table(\renderable $table) {
+        return $table->output();
+    }
 }

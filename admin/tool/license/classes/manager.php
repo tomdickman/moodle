@@ -245,10 +245,12 @@ class manager {
         $html .= $renderer->heading(get_string('licensemanager', 'tool_license'));
 
         // TODO: Update this to use tool_license renderer and components.
-        $legacysetting = new \admin_setting_managelicenses();
-        $html .= $legacysetting->output_html('');
+        $table = new \tool_license\output\table();
+        $html .= $renderer->render($table);
 
         $html .= $renderer->footer();
+
+        $PAGE->requires->js_call_amd('tool_license/delete_license');
 
         echo $html;
     }
