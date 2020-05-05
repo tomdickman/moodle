@@ -47,11 +47,11 @@ class helper {
      *
      * @return \moodle_url
      */
-    public static function get_admin_setting_managelicenses_url() : moodle_url {
+    public static function get_licensemanager_url() : moodle_url {
         global $CFG;
 
-        $url = new moodle_url($CFG->wwwroot . '/admin/settings.php',
-            ['section' => 'managelicenses']);
+        $url = new moodle_url($CFG->wwwroot . self::MANAGER_PATH,
+            ['sesskey' => sesskey()]);
 
         return $url;
     }

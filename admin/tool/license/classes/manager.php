@@ -87,12 +87,14 @@ class manager {
      */
     public function execute(string $action, $license) : void {
 
+        admin_externalpage_setup('licensemanager');
+
         // Convert license to a string if it's a full license object.
         if (is_object($license)) {
             $license = $license->shortname;
         }
 
-        $return = helper::get_admin_setting_managelicenses_url();
+        $viewmanager = true;
 
         switch ($action) {
             case self::ACTION_DISABLE:
@@ -109,7 +111,7 @@ class manager {
 
             case self::ACTION_CREATE:
             case self::ACTION_UPDATE:
-                $return = $this->edit($action, $license);
+                $viewmanager = $this->edit($action, $license);
                 break;
 
             case self::ACTION_MOVE_UP:
@@ -121,10 +123,8 @@ class manager {
             default:
                 break;
         }
-
-        // Check if we need to redirect back to the license manager after action.
-        if ($return) {
-            redirect(helper::get_admin_setting_managelicenses_url());
+        if ($viewmanager) {
+            $this->view_license_manager();
         }
     }
 
@@ -153,14 +153,14 @@ class manager {
                 // Check that license shortname isn't already in use.
                 if (!empty(license_manager::get_license_by_shortname($data->shortname))) {
                     print_error('duplicatelicenseshortname', 'tool_license',
-                        helper::get_admin_setting_managelicenses_url(),
+                        helper::get_licensemanager_url(),
                         $data->shortname);
                 }
                 $license->shortname = $data->shortname;
             } else {
                 if (empty(license_manager::get_license_by_shortname($licenseshortname))) {
                     print_error('licensenotfoundshortname', 'tool_license',
-                        helper::get_admin_setting_managelicenses_url(),
+                        helper::get_licensemanager_url(),
                         $licenseshortname);
                 }
                 $license->shortname = $licenseshortname;
@@ -215,7 +215,7 @@ class manager {
      * @param string $licenseshortname the shortname of the license to create/edit.
      * @param \tool_license\form\edit_license $form the form for submitting edit data.
      */
-    private function view_license_editor(string $action, string $licenseshortname, edit_license $form) : void {
+    protected function view_license_editor(string $action, string $licenseshortname, edit_license $form) : void {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('tool_license');
@@ -235,5 +235,21 @@ class manager {
         $return .= $renderer->footer();
 
         echo $return;
+    }
+
+    protected function view_license_manager() {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('tool_license');
+        $html = $renderer->header();
+        $html .= $renderer->heading(get_string('licensemanager', 'tool_license'));
+
+        // TODO: Update this to use tool_license renderer and components.
+        $legacysetting = new \admin_setting_managelicenses();
+        $html .= $legacysetting->output_html('');
+
+        $html .= $renderer->footer();
+
+        echo $html;
     }
 }
