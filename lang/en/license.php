@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Core licenses.
 $string['allrightsreserved'] = 'All rights reserved';
 $string['cc'] = 'Creative Commons';
 $string['cc-nc'] = 'Creative Commons - No Commercial';
@@ -31,3 +32,7 @@ $string['cc-nd'] = 'Creative Commons - NoDerivs';
 $string['cc-sa'] = 'Creative Commons - ShareAlike';
 $string['public'] = 'Public domain';
 $string['unknown'] = 'Licence not specified';
+
+// Error messages.
+$string['cantdeletecore'] = 'Cannot delete a standard licence';
+$string['cantdeletelicenseinuse'] = 'Cannot delete a licence which is currently assigned to one or more files';

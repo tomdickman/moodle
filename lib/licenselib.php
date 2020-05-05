@@ -261,8 +261,7 @@ class license_manager {
                 // cannot be deleted.
                 $countfilesusinglicense = $DB->count_records('files', ['license' => $licenseshortname]);
                 if ($countfilesusinglicense > 0) {
-                    throw new moodle_exception('licensecantdeletelicenseinuse', 'tool_license',
-                        \tool_license\helper::get_admin_setting_managelicenses_url());
+                    throw new moodle_exception('cantdeletelicenseinuse', 'license');
                 }
                 $DB->delete_records('license', ['id' => $license->id]);
 
@@ -276,12 +275,10 @@ class license_manager {
                 self::reset_license_cache();
 
             } else {
-                throw new moodle_exception('licensecantdeletecore', 'tool_license',
-                    \tool_license\helper::get_admin_setting_managelicenses_url());
+                throw new moodle_exception('cantdeletecore', 'license');
             }
         } else {
-            throw new moodle_exception('licensenotfoundshortname', 'tool_license',
-                \tool_license\helper::get_admin_setting_managelicenses_url(), $licenseshortname);
+            throw new moodle_exception('licensenotfoundshortname', 'license');
         }
     }
 
