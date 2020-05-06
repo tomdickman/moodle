@@ -35,20 +35,11 @@ require_once(__DIR__.'/../licenselib.php');
  */
 class licenselib_test extends advanced_testcase {
 
-    public function setUp() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        // Reset the license table to known state with all core licenses installed.
-        $DB->delete_records('license');
-        license_manager::install_licenses();
-    }
-
     /**
      * Test getting licenses from database or cache.
      */
     public function test_get_licenses() {
+        $this->resetAfterTest();
 
         // Reset the cache, to make sure we are not getting cached licenses.
         $cache = \cache::make('core', 'license');
@@ -86,6 +77,8 @@ class licenselib_test extends advanced_testcase {
     public function test_get_licenses_in_order() {
         global $DB;
 
+        $this->resetAfterTest();
+
         // Remove any licenses from the licenseorder config.
         unset_config('licenseorder');
 
@@ -109,6 +102,8 @@ class licenselib_test extends advanced_testcase {
      */
     public function test_add() {
         global $DB;
+
+        $this->resetAfterTest();
 
         $license = new stdClass();
         $license->shortname = 'mit';
@@ -161,6 +156,8 @@ class licenselib_test extends advanced_testcase {
     public function test_disable_license() {
         global $DB;
 
+        $this->resetAfterTest();
+
         // Manually set license record to enabled for testing.
         $DB->set_field('license', 'enabled', license_manager::LICENSE_ENABLED, ['shortname' => 'cc-nc']);
 
@@ -178,6 +175,8 @@ class licenselib_test extends advanced_testcase {
     public function test_enable_license() {
         global $DB;
 
+        $this->resetAfterTest();
+
         // Manually set license record to disabled for testing.
         $DB->set_field('license', 'enabled', license_manager::LICENSE_DISABLED, ['shortname' => 'cc-nc']);
 
@@ -189,7 +188,11 @@ class licenselib_test extends advanced_testcase {
         $this->assertEquals(license_manager::LICENSE_ENABLED, $actual);
     }
 
+    /**
+     * Test deleting a custom license.
+     */
     public function test_delete() {
+        $this->resetAfterTest();
 
         // Create a custom license.
         $license = new stdClass();
@@ -215,20 +218,6 @@ class licenselib_test extends advanced_testcase {
         $file = $fs->create_file_from_string($filerecord, 'Test file');
         $file->set_license($license->shortname);
 
-        // Should not be able to delete a license when in use by a file.
-        $this->expectException(moodle_exception::class);
-        license_manager::delete($license->shortname);
-        $this->assertNotNull(license_manager::get_license_by_shortname($license->shortname));
-
-        // Should not be able to delete a standard/core license.
-        $this->expectException(moodle_exception::class);
-        license_manager::delete('cc-nc');
-        $this->assertNotNull(license_manager::get_license_by_shortname('cc-nc'));
-
-        // Should throw an exception if license with shortname doesn't exist.
-        $this->expectException(moodle_exception::class);
-        license_manager::delete('somefakelicense');
-
         // Should be able to delete a custom license when not in use by a file.
         $file->set_license('cc-nc');
         license_manager::delete($license->shortname);
@@ -236,9 +225,63 @@ class licenselib_test extends advanced_testcase {
     }
 
     /**
+     * Test trying to delete a license currently in use by a file.
+     */
+    public function test_delete_license_in_use_by_file() {
+        $this->resetAfterTest();
+
+        // Create a custom license.
+        $license = new stdClass();
+        $license->shortname = 'mit';
+        $license->fullname = 'MIT';
+        $license->source = 'https://opensource.org/licenses/MIT';
+        $license->version = '2020020200';
+        $license->custom = license_manager::CUSTOM_LICENSE;
+
+        license_manager::add($license);
+
+        // Create a test file with custom license selected.
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'tool_metadata',
+            'filearea' => 'unittest',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'test.doc',
+        );
+        $file = $fs->create_file_from_string($filerecord, 'Test file');
+        $file->set_license($license->shortname);
+
+        // Should not be able to delete a license when in use by a file.
+        $this->expectException(moodle_exception::class);
+        license_manager::delete($license->shortname);
+    }
+
+    /**
+     * Test trying to delete a core license.
+     */
+    public function test_delete_license_core() {
+        // Should not be able to delete a standard/core license.
+        $this->expectException(moodle_exception::class);
+        license_manager::delete('cc-nc');
+    }
+
+    /**
+     * Test trying to delete a license which doesn't exist.
+     */
+    public function test_delete_license_not_exists() {
+        // Should throw an exception if license with shortname doesn't exist.
+        $this->expectException(moodle_exception::class);
+        license_manager::delete('somefakelicense');
+    }
+
+    /**
      * Test setting active licenses.
      */
     public function test_set_active_licenses() {
+        $this->resetAfterTest();
 
         // Private method used internally, test through disable and enable public methods.
         license_manager::disable('allrightsreserved');
@@ -252,6 +295,7 @@ class licenselib_test extends advanced_testcase {
      * Test getting active licenses.
      */
     public function test_get_active_licenses() {
+        $this->resetAfterTest();
 
         license_manager::disable('allrightsreserved');
         license_manager::reset_license_cache();
@@ -270,6 +314,8 @@ class licenselib_test extends advanced_testcase {
      * Test getting active licenses as array.
      */
     public function test_get_active_licenses_as_array() {
+        $this->resetAfterTest();
+
         license_manager::disable('allrightsreserved');
         license_manager::reset_license_cache();
 
@@ -290,6 +336,8 @@ class licenselib_test extends advanced_testcase {
      */
     public function test_reset_license_cache() {
         global $DB;
+
+        $this->resetAfterTest();
 
         $licenses = license_manager::get_licenses();
 
