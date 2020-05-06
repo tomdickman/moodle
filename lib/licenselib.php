@@ -363,7 +363,6 @@ class license_manager {
         $activelicenses = array();
 
         $license = new stdClass();
-        $sortorder = 1;
 
         $license->shortname = 'unknown';
         $license->fullname = 'Licence not specified';
@@ -371,7 +370,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -381,7 +379,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -391,7 +388,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -401,7 +397,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -411,7 +406,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -421,7 +415,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -431,7 +424,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -441,7 +433,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder++;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
@@ -451,7 +442,6 @@ class license_manager {
         $license->enabled = self::LICENSE_ENABLED;
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
-        $license->sortorder = $sortorder;
         $activelicenses[] = $license->shortname;
         self::add($license);
 
