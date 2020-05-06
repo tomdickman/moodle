@@ -633,7 +633,7 @@ function upgrade_analytics_fix_contextids_defaults() {
  * Upgrade core licenses shipped with Moodle.
  */
 function upgrade_core_licenses() {
-    global $DB;
+    global $CFG, $DB;
 
     $corelicenses = [];
 
@@ -718,13 +718,17 @@ function upgrade_core_licenses() {
     $license->custom = 0;
     $corelicenses[] = $license;
 
-    foreach ($corelicenses as $updatedlicense) {
-        $currentlicense = $DB->get_record('license', ['shortname' => $updatedlicense->shortname]);
+    foreach ($corelicenses as $corelicense) {
+        // Check for current license to maintain idempotence.
+        $currentlicense = $DB->get_record('license', ['shortname' => $corelicense->shortname]);
         if (!empty($currentlicense)) {
-            $updatedlicense->id = $currentlicense->id;
+            $corelicense->id = $currentlicense->id;
             // Remember if the license was enabled before upgrade.
-            $updatedlicense->enabled = $currentlicense->enabled;
-            $DB->update_record('license', $updatedlicense);
+            $corelicense->enabled = $currentlicense->enabled;
+            $DB->update_record('license', $corelicense);
+        } else if (!isset($CFG->upgraderunning) || during_initial_install()) {
+            // Only install missing core licenses if not upgrading or during initial install.
+            $DB->insert_record('license', $corelicense);
         }
     }
 
@@ -734,5 +738,12 @@ function upgrade_core_licenses() {
     foreach($licenses as $license) {
         $license->sortorder = $sortorder++;
         $DB->update_record('license', $license);
+    }
+
+    // Set the license config values, used by file repository for rendering licenses at front end.
+    $activelicenses = $DB->get_records_menu('license', ['enabled' => 1], 'id', 'id, shortname');
+    set_config('licenses', implode(',', $activelicenses));
+    if (!get_config('', 'sitedefaultlicense')) {
+        set_config('sitedefaultlicense', reset($activelicenses));
     }
 }

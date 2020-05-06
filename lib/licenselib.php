@@ -357,93 +357,11 @@ class license_manager {
      * Install moodle built-in licenses.
      */
     static public function install_licenses() {
-        $activelicenses = array();
+        global $CFG;
 
-        $license = new stdClass();
+        require_once($CFG->libdir . '/db/upgradelib.php');
 
-        $license->shortname = 'unknown';
-        $license->fullname = 'Licence not specified';
-        $license->source = '';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'allrightsreserved';
-        $license->fullname = 'All rights reserved';
-        $license->source = 'https://en.wikipedia.org/wiki/All_rights_reserved';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'public';
-        $license->fullname = 'Public domain';
-        $license->source = 'https://en.wikipedia.org/wiki/Public_domain';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'cc';
-        $license->fullname = 'Creative Commons';
-        $license->source = 'https://creativecommons.org/licenses/by/3.0/';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'cc-nd';
-        $license->fullname = 'Creative Commons - NoDerivs';
-        $license->source = 'https://creativecommons.org/licenses/by-nd/3.0/';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'cc-nc-nd';
-        $license->fullname = 'Creative Commons - No Commercial NoDerivs';
-        $license->source = 'https://creativecommons.org/licenses/by-nc-nd/3.0/';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'cc-nc';
-        $license->fullname = 'Creative Commons - No Commercial';
-        $license->source = 'https://creativecommons.org/licenses/by-nc/3.0/';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'cc-nc-sa';
-        $license->fullname = 'Creative Commons - No Commercial ShareAlike';
-        $license->source = 'https://creativecommons.org/licenses/by-nc-sa/3.0/';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        $license->shortname = 'cc-sa';
-        $license->fullname = 'Creative Commons - ShareAlike';
-        $license->source = 'https://creativecommons.org/licenses/by-sa/3.0/';
-        $license->enabled = self::LICENSE_ENABLED;
-        $license->version = '2010033100';
-        $license->custom = self::CORE_LICENSE;
-        $activelicenses[] = $license->shortname;
-        self::save($license);
-
-        set_config('licenses', implode(',', $activelicenses));
-        set_config('sitedefaultlicense', reset($activelicenses));
+        upgrade_core_licenses();
     }
 
     /**

@@ -322,4 +322,24 @@ class licenselib_test extends advanced_testcase {
         $licenses = license_manager::get_licenses();
         $this->assertArrayNotHasKey('cc-nc', $licenses);
     }
+
+    /**
+     * Test that all licenses are installed correctly.
+     */
+    public function test_install_licenses() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $DB->delete_records('license');
+
+        license_manager::install_licenses();
+
+        $expectedshortnames = ['allrightsreserved', 'cc', 'cc-nc', 'cc-nc-nd', 'cc-nc-sa', 'cc-nd', 'cc-sa', 'public', 'unknown'];
+        $actualshortnames = $DB->get_records_menu('license', null, '', 'id, shortname');
+
+        foreach ($expectedshortnames as $expectedshortname) {
+            $this->assertContains($expectedshortname, $actualshortnames);
+        }
+    }
 }
