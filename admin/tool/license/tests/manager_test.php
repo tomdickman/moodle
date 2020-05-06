@@ -146,13 +146,7 @@ class manager_test extends advanced_testcase {
      * Test changing the order of licenses.
      */
     public function test_change_license_order() {
-        global $DB;
-
         $this->resetAfterTest();
-
-        // Reset the license table to known state with all core licenses installed.
-        $DB->delete_records('license');
-        license_manager::install_licenses();
 
         $licenseorder = license_manager::get_license_order();
         $initialposition = array_search('cc-nc', $licenseorder);
