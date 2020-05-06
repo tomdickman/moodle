@@ -204,7 +204,7 @@ class manager {
                 array_splice($licenseorder, $newindex, 0, $license);
             }
 
-            set_config('licenseorder', implode(',', $licenseorder));
+            license_manager::set_license_order($licenseorder);
         }
     }
 

@@ -147,6 +147,22 @@ class license_manager {
     }
 
     /**
+     * Set the license order.
+     *
+     * @param array $licenseshortnames string[] of license shortnames.
+     *
+     * @throws \moodle_exception if new order is missing a license.
+     */
+    static public function set_license_order(array $licenseshortnames) {
+        foreach (self::get_licenses() as $license) {
+            if (!in_array($license->shortname, $licenseshortnames)) {
+                throw new moodle_exception('missinglicensesortorder', 'license');
+            }
+        }
+        set_config('licenseorder', implode(',', $licenseshortnames));
+    }
+
+    /**
      * Get all installed licenses in order.
      *
      * @return array $result of license objects.

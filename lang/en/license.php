@@ -39,3 +39,4 @@ $string['unknown'] = 'Licence not specified';
 // Error messages.
 $string['cantdeletecore'] = 'Cannot delete a standard licence';
 $string['cantdeletelicenseinuse'] = 'Cannot delete a licence which is currently assigned to one or more files';
+$string['missinglicensesortorder'] = 'Cannot set license order, one or more installed licenses is missing from new order';
