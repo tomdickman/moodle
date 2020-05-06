@@ -37,6 +37,7 @@ $string['public'] = 'Public domain';
 $string['unknown'] = 'Licence not specified';
 
 // Error messages.
-$string['cantdeletecore'] = 'Cannot delete a standard licence';
-$string['cantdeletelicenseinuse'] = 'Cannot delete a licence which is currently assigned to one or more files';
+$string['cannotdeletecore'] = 'Cannot delete a standard licence';
+$string['cannotdeletelicenseinuse'] = 'Cannot delete a licence which is currently assigned to one or more files';
+$string['invalidmovedirection'] = 'Must use a valid licence API move direction constant (LICENSE_MOVE_UP or LICENSE_MOVE_DOWN)';
 $string['missinglicensesortorder'] = 'Cannot set license order, one or more installed licenses is missing from new order';

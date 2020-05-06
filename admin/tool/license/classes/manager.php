@@ -170,12 +170,14 @@ class manager {
             // Legacy date format maintained to prevent breaking on upgrade.
             $license->version = date('Ymd', $data->version) . '00';
             $license->custom = license_manager::CUSTOM_LICENSE;
-            license_manager::add($license);
+
+            license_manager::save($license);
             license_manager::enable($license->shortname);
 
             return true;
         } else {
             $this->view_license_editor($action, $licenseshortname, $form);
+
             return false;
         }
     }
@@ -188,23 +190,12 @@ class manager {
      */
     private function change_license_order(string $direction, string $licenseshortname) : void {
 
-        if (in_array($direction, [self::ACTION_MOVE_UP, self::ACTION_MOVE_DOWN]) && !empty($licenseshortname)) {
-            $licenseorder = license_manager::get_license_order();
-
-            $currentindex = array_search($licenseshortname, $licenseorder);
-
-            // Can only move up order if not the top license already.
-            $shouldmoveup = $direction == self::ACTION_MOVE_UP && $currentindex > 0;
-            // Bottom license cannot be moved down as there is no license to move it under.
-            $shouldmovedown = $direction == self::ACTION_MOVE_DOWN && ($currentindex < count($licenseorder) - 1);
-
-            if ($shouldmoveup || $shouldmovedown) {
-                $newindex = $shouldmoveup ? $currentindex - 1 : $currentindex + 1;
-                $license = array_splice($licenseorder, $currentindex, 1);
-                array_splice($licenseorder, $newindex, 0, $license);
+        if (!empty($licenseshortname)) {
+            if ($direction == self::ACTION_MOVE_UP) {
+                license_manager::change_license_sortorder(license_manager::LICENSE_MOVE_UP, $licenseshortname);
+            } else if ($direction == self::ACTION_MOVE_DOWN) {
+                license_manager::change_license_sortorder(license_manager::LICENSE_MOVE_DOWN, $licenseshortname);
             }
-
-            license_manager::set_license_order($licenseorder);
         }
     }
 

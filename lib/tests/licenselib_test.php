@@ -72,35 +72,9 @@ class licenselib_test extends advanced_testcase {
     }
 
     /**
-     * Test getting all licenses in order.
+     * Test saving a license.
      */
-    public function test_get_licenses_in_order() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        // Remove any licenses from the licenseorder config.
-        unset_config('licenseorder');
-
-        $expected = $DB->count_records('license');
-        $licenses = license_manager::get_licenses_in_order();
-
-        // All licenses should be included in order.
-        $this->assertCount($expected, $licenses);
-
-        set_config('licenseorder', 'cc,public');
-        $licenses = license_manager::get_licenses_in_order();
-        $keys = array_keys($licenses);
-
-        // Config licenses should be in correct order.
-        $this->assertEquals('cc', $keys[0]);
-        $this->assertEquals('public', $keys[1]);
-    }
-
-    /**
-     * Test adding a license.
-     */
-    public function test_add() {
+    public function test_save() {
         global $DB;
 
         $this->resetAfterTest();
@@ -112,16 +86,21 @@ class licenselib_test extends advanced_testcase {
         $license->version = '2020020200';
         $license->custom = license_manager::CUSTOM_LICENSE;
 
-        license_manager::add($license);
-        $licenses = license_manager::get_licenses();
+        license_manager::save($license);
 
-        $this->assertNotEmpty($DB->get_records('license', ['shortname' => 'mit']));
-        $this->assertArrayHasKey($license->shortname, $licenses);
+        $license = $DB->get_record('license', ['shortname' => 'mit']);
+        $this->assertNotEmpty($license);
+        $this->assertEquals('mit', $license->shortname);
 
-        // Attempting to update a core license should throw an exception.
+        // Attempting to update a core license should only update sortorder.
         $license->shortname = 'cc';
-        $this->expectException(moodle_exception::class);
-        license_manager::add($license);
+        $license->sortorder = 33;
+        license_manager::save($license);
+
+        $record = $DB->get_record('license', ['id' => $license->id]);
+        $this->assertNotEquals('cc', $record->shortname);
+        $record = $DB->get_record('license', ['shortname' => 'cc']);
+        $this->assertEquals(33, $record->sortorder);
 
         // Adding a license with existing custom license shortname should update existing license.
         $updatelicense = new stdClass();
@@ -129,7 +108,7 @@ class licenselib_test extends advanced_testcase {
         $updatelicense->fullname = 'MIT updated';
         $updatelicense->source = 'https://en.wikipedia.org/wiki/MIT_License';
 
-        license_manager::add($updatelicense);
+        license_manager::save($updatelicense);
         $actual = $DB->get_record('license', ['shortname' => 'mit']);
 
         $this->assertEquals($updatelicense->fullname, $actual->fullname);
@@ -202,24 +181,9 @@ class licenselib_test extends advanced_testcase {
         $license->version = '2020020200';
         $license->custom = license_manager::CUSTOM_LICENSE;
 
-        license_manager::add($license);
+        license_manager::save($license);
 
-        // Create a test file with custom license selected.
-        $fs = get_file_storage();
-        $syscontext = context_system::instance();
-        $filerecord = array(
-            'contextid' => $syscontext->id,
-            'component' => 'tool_metadata',
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => 'test.doc',
-        );
-        $file = $fs->create_file_from_string($filerecord, 'Test file');
-        $file->set_license($license->shortname);
-
-        // Should be able to delete a custom license when not in use by a file.
-        $file->set_license('cc-nc');
+        // Should be able to delete a custom license.
         license_manager::delete($license->shortname);
         $this->assertNull(license_manager::get_license_by_shortname($license->shortname));
     }
@@ -238,7 +202,7 @@ class licenselib_test extends advanced_testcase {
         $license->version = '2020020200';
         $license->custom = license_manager::CUSTOM_LICENSE;
 
-        license_manager::add($license);
+        license_manager::save($license);
 
         // Create a test file with custom license selected.
         $fs = get_file_storage();

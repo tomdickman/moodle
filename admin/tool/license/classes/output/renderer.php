@@ -83,7 +83,7 @@ class renderer extends plugin_renderer_base {
      * @return string HTML.
      */
     public function render_table(\renderable $table) {
-        $licenses = license_manager::get_licenses_in_order();
+        $licenses = license_manager::get_licenses();
 
         // Add the create license button.
         $html = $table->create_license_link();

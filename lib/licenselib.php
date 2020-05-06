@@ -51,7 +51,18 @@ class license_manager {
     const LICENSE_DISABLED = 0;
 
     /**
-     * Adding a new license type
+     * Integer for moving a license up order.
+     */
+    const LICENSE_MOVE_UP = -1;
+
+    /**
+     * Integer for moving a license down order.
+     */
+    const LICENSE_MOVE_DOWN = 1;
+
+    /**
+     * Save a license record.
+     *
      * @param object $license {
      *            shortname => string a shortname of license, will be refered by files table[required]
      *            fullname  => string the fullname of the license [required]
@@ -59,34 +70,119 @@ class license_manager {
      *            enabled => int is it enabled?
      *            version  => int a version number used by moodle [required]
      * }
-     *
-     * @throws \moodle_exception when attempting to amend a core license.
      */
-    static public function add($license) {
+    static public function save($license) {
         global $DB;
         if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
-            // record exists
-            if ($record->custom != self::CORE_LICENSE) {
-                $license->id = $record->id;
-                $DB->update_record('license', $license);
+            // Can only update sortorder for core licenses.
+            if ($record->custom == self::CORE_LICENSE && !empty($license->sortorder)) {
+                $record->sortorder = $license->sortorder;
+                self::update($record);
             } else {
-                throw new moodle_exception('cannotupdatecorelicense', 'error');
+                $license->id = $record->id;
+                self::update($license);
             }
         } else {
-            $licensecount = count(self::get_licenses());
-            $license->sortorder = $licensecount + 1;
-            $DB->insert_record('license', $license);
+            self::create($license);
         }
-        // Add the new license to the end of order for licenses.
-        $licenseorder = self::get_license_order();
-        if (!in_array($license->shortname, $licenseorder)) {
-            $licenseorder[] = $license->shortname;
-            set_config('licenseorder', implode(',', $licenseorder));
-        }
-
-        self::reset_license_cache();
 
         return true;
+    }
+
+    /**
+     * Create a license record.
+     *
+     * @param object $license the license to create record for.
+     */
+    static protected function create($license) {
+        global $DB;
+
+        $licensecount = count(self::get_licenses());
+        $license->sortorder = $licensecount + 1;
+        $DB->insert_record('license', $license);
+        self::reset_license_cache();
+    }
+
+    /**
+     * Read licens record(s) from database.
+     *
+     * @param array $params license parameters to return licenses for.
+     *
+     * @return array $filteredlicenses object[] of licenses.
+     */
+    static public function read(array $params = []) {
+        $licenses = self::get_licenses();
+
+        $filteredlicenses = [];
+
+        foreach ($licenses as $shortname => $license) {
+            $filtermatch = true;
+            foreach ($params as $key => $value) {
+                if ($license->$key != $value) {
+                    $filtermatch = false;
+                }
+            }
+            if ($filtermatch) {
+                $filteredlicenses[$shortname] = $license;
+            }
+        }
+        return $filteredlicenses;
+
+    }
+
+    /**
+     * Update a license record.
+     *
+     * @param object $license the license to update record for.
+     *
+     * @throws \moodle_exception if attempting to update a core license.
+     */
+    static protected function update($license) {
+        global $DB;
+
+        $DB->update_record('license', $license);
+        self::reset_license_cache();
+    }
+
+    /**
+     * Delete a custom license.
+     *
+     * @param string $licenseshortname the shortname of license.
+     *
+     * @throws \moodle_exception when attempting to delete a license you are not allowed to.
+     */
+    static public function delete($licenseshortname) {
+        global $DB;
+
+        $licensetodelete = self::get_license_by_shortname($licenseshortname);
+
+        if (!empty($licensetodelete)) {
+            if ($licensetodelete->custom == self::CUSTOM_LICENSE) {
+                // Check that the license is not in use by any files, if so it cannot be deleted.
+                $countfilesusinglicense = $DB->count_records('files', ['license' => $licenseshortname]);
+                if ($countfilesusinglicense > 0) {
+                    throw new moodle_exception('cannotdeletelicenseinuse', 'license');
+                }
+                $deletedsortorder = $licensetodelete->sortorder;
+                $DB->delete_records('license', ['id' => $licensetodelete->id]);
+
+                // We've deleted a license, so update our list of licenses so we don't save the deleted license again.
+                self::reset_license_cache();
+                $licenses = self::get_licenses();
+
+                foreach ($licenses as $license) {
+                    if ($license->sortorder > $deletedsortorder) {
+                        $license->sortorder = $license->sortorder - 1;
+                        self::save($license);
+                    }
+                }
+
+            } else {
+                throw new moodle_exception('cannotdeletecore', 'license');
+            }
+        } else {
+            throw new moodle_exception('licensenotfoundshortname', 'license');
+        }
     }
 
     /**
@@ -94,7 +190,7 @@ class license_manager {
      * @param mixed $param
      * @return array
      */
-    static public function get_licenses($param = null) {
+    static public function get_licenses() {
         global $DB;
 
         $cache = \cache::make('core', 'license');
@@ -102,7 +198,7 @@ class license_manager {
 
         if (empty($licenses)) {
             $licenses = [];
-            $records = $DB->get_records('license');
+            $records = $DB->get_records_select('license', null, null, 'sortorder ASC');
             foreach ($records as $license) {
                 // Interpret core license strings for internationalisation.
                 if ($license->custom == self::CORE_LICENSE) {
@@ -113,99 +209,39 @@ class license_manager {
             $cache->set('licenses', $licenses);
         }
 
-        // Apply condition here rather than in database query as we cache all licenses.
-        if (!empty($param)) {
-            $filteredlicenses = [];
-
-            foreach ($licenses as $shortname => $license) {
-                $filtermatch = true;
-                foreach ($param as $key => $value) {
-                    if ($license->$key != $value) {
-                        $filtermatch = false;
-                    }
-                }
-                if ($filtermatch) {
-                    $filteredlicenses[$shortname] = $license;
-                }
-            }
-            $licenses = $filteredlicenses;
-        }
-
         return $licenses;
     }
 
     /**
-     * Get an array of license shortnames in order.
+     * Change the sort order of a license (and it's sibling license as a result).
      *
-     * @return array string[] of license shortnames.
+     * @param int $direction value to change sortorder of license by.
+     * @param string $licenseshortname the shortname of license to changes sortorder for.
+     *
+     * @throws \moodle_exception if attempting to use invalid direction value.
      */
-    static public function get_license_order() {
+    static public function change_license_sortorder(int $direction, string $licenseshortname) : void {
 
-        $licenses = self::get_licenses_in_order();
-        $licenseorder = array_keys($licenses);
-
-        return $licenseorder;
-    }
-
-    /**
-     * Set the license order.
-     *
-     * @param array $licenseshortnames string[] of license shortnames.
-     *
-     * @throws \moodle_exception if new order is missing a license.
-     */
-    static public function set_license_order(array $licenseshortnames) {
-        foreach (self::get_licenses() as $license) {
-            if (!in_array($license->shortname, $licenseshortnames)) {
-                throw new moodle_exception('missinglicensesortorder', 'license');
-            }
+        if ($direction != self::LICENSE_MOVE_UP && $direction != self::LICENSE_MOVE_DOWN) {
+            throw new moodle_exception('invalidmovedirection', 'license');
         }
-        set_config('licenseorder', implode(',', $licenseshortnames));
-    }
 
-    /**
-     * Get all installed licenses in order.
-     *
-     * @return array $result of license objects.
-     */
-    static public function get_licenses_in_order() {
-        global $CFG;
-
-        $result = [];
         $licenses = self::get_licenses();
-        $orderupdated = false;
+        $licensetoupdate = $licenses[$licenseshortname];
 
-        if (!empty($CFG->licenseorder)) {
-            $order = explode(',', $CFG->licenseorder);
-            $licenseshortnames = array_keys($licenses);
+        $currentsortorder = $licensetoupdate->sortorder;
+        $targetsortorder = $currentsortorder + $direction;
 
-            // Add ordered licenses first.
-            foreach ($order as $licenseshortname) {
-                if (in_array($licenseshortname, $licenseshortnames)) {
-                    $result[$licenseshortname] = $licenses[$licenseshortname];
+        if ($targetsortorder > 0 && $targetsortorder <= count($licenses) ) {
+            foreach ($licenses as $license) {
+                if ($license->sortorder == $targetsortorder) {
+                    $license->sortorder = $license->sortorder - $direction;
+                    self::update($license);
                 }
             }
-
-            // Add all other licenses in any order.
-            foreach ($licenses as $license) {
-                if (!in_array($license->shortname, array_keys($result))) {
-                    $orderupdated = true;
-                    $result[$license->shortname] = $license;
-                }
-            }
-        } else {
-            // There is no order set so get the licenses in any order.
-            foreach ($licenses as $license) {
-                $orderupdated = true;
-                $result[$license->shortname] = $license;
-            }
+            $licensetoupdate->sortorder = $targetsortorder;
+            self::update($licensetoupdate);
         }
-
-        if ($orderupdated) {
-            set_config('licenseorder', implode(',', array_keys($result)));
-        }
-
-        return $result;
     }
 
     /**
@@ -215,7 +251,7 @@ class license_manager {
      * @return object|null the license or null if no license found.
      */
     static public function get_license_by_shortname(string $name) {
-        $licenses = self::get_licenses(['shortname' => $name]);
+        $licenses = self::read(['shortname' => $name]);
 
         if (!empty($licenses)) {
             $license = reset($licenses);
@@ -232,10 +268,9 @@ class license_manager {
      * @return boolean
      */
     static public function enable($license) {
-        global $DB;
         if ($license = self::get_license_by_shortname($license)) {
             $license->enabled = self::LICENSE_ENABLED;
-            $DB->update_record('license', $license);
+            self::update($license);
         }
         self::set_active_licenses();
 
@@ -248,14 +283,14 @@ class license_manager {
      * @return boolean
      */
     static public function disable($license) {
-        global $DB, $CFG;
+        global $CFG;
         // Site default license cannot be disabled!
         if ($license == $CFG->sitedefaultlicense) {
             print_error('error');
         }
         if ($license = self::get_license_by_shortname($license)) {
             $license->enabled = self::LICENSE_DISABLED;
-            $DB->update_record('license', $license);
+            self::update($license);
         }
         self::set_active_licenses();
 
@@ -263,48 +298,10 @@ class license_manager {
     }
 
     /**
-     * Delete a custom license.
-     *
-     * @param string $licenseshortname the shortname of license.
-     *
-     * @throws \moodle_exception when attempting to delete a license you are not allowed to.
-     */
-    static public function delete($licenseshortname) {
-        global $DB;
-
-        if ($license = self::get_license_by_shortname($licenseshortname)) {
-            if ($license->custom == self::CUSTOM_LICENSE) {
-                // Check that the license is not in use by any files, if so it
-                // cannot be deleted.
-                $countfilesusinglicense = $DB->count_records('files', ['license' => $licenseshortname]);
-                if ($countfilesusinglicense > 0) {
-                    throw new moodle_exception('cantdeletelicenseinuse', 'license');
-                }
-                $DB->delete_records('license', ['id' => $license->id]);
-
-                // Remove the license from license order.
-                $licenseorder = self::get_license_order();
-                if ($index = array_search($licenseshortname, $licenseorder)) {
-                    array_splice($licenseorder, $index, 1);
-                    set_config('licenseorder', implode(',', $licenseorder));
-                }
-
-                self::reset_license_cache();
-
-            } else {
-                throw new moodle_exception('cantdeletecore', 'license');
-            }
-        } else {
-            throw new moodle_exception('licensenotfoundshortname', 'license');
-        }
-    }
-
-    /**
      * Store active licenses in global config.
      */
-    static private function set_active_licenses() {
-        self::reset_license_cache();
-        $licenses = self::get_licenses(array('enabled'=>1));
+    static protected function set_active_licenses() {
+        $licenses = self::read(['enabled' => self::LICENSE_ENABLED]);
         $result = array();
         foreach ($licenses as $l) {
             $result[] = $l->shortname;
@@ -325,7 +322,7 @@ class license_manager {
 
         if (!empty($CFG->licenses)) {
             $activelicenses = explode(',', $CFG->licenses);
-            $licenses = self::get_licenses_in_order();
+            $licenses = self::get_licenses();
             foreach ($licenses as $license) {
                 if (in_array($license->shortname, $activelicenses)) {
                     // Interpret core license strings for internationalisation.
@@ -371,7 +368,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'allrightsreserved';
         $license->fullname = 'All rights reserved';
@@ -380,7 +377,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'public';
         $license->fullname = 'Public domain';
@@ -389,7 +386,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'cc';
         $license->fullname = 'Creative Commons';
@@ -398,7 +395,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'cc-nd';
         $license->fullname = 'Creative Commons - NoDerivs';
@@ -407,7 +404,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'cc-nc-nd';
         $license->fullname = 'Creative Commons - No Commercial NoDerivs';
@@ -416,7 +413,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'cc-nc';
         $license->fullname = 'Creative Commons - No Commercial';
@@ -425,7 +422,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'cc-nc-sa';
         $license->fullname = 'Creative Commons - No Commercial ShareAlike';
@@ -434,7 +431,7 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         $license->shortname = 'cc-sa';
         $license->fullname = 'Creative Commons - ShareAlike';
@@ -443,10 +440,9 @@ class license_manager {
         $license->version = '2010033100';
         $license->custom = self::CORE_LICENSE;
         $activelicenses[] = $license->shortname;
-        self::add($license);
+        self::save($license);
 
         set_config('licenses', implode(',', $activelicenses));
-        set_config('licenseorder', implode(',', $activelicenses));
         set_config('sitedefaultlicense', reset($activelicenses));
     }
 

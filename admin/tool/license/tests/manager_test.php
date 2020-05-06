@@ -52,7 +52,7 @@ class manager_test extends advanced_testcase {
         $testlicense->version = date('Ymd', time()) . '00';
         $testlicense->custom = license_manager::CUSTOM_LICENSE;
 
-        license_manager::add($testlicense);
+        license_manager::save($testlicense);
         license_manager::enable($testlicense->shortname);
 
         $manager = new \tool_license\manager();
@@ -83,17 +83,42 @@ class manager_test extends advanced_testcase {
         $this->assertSame($formdata['fullname'], $actual->fullname);
         $this->assertSame($formdata['source'], $actual->source);
         $this->assertSame(date('Ymd', $formdata['version']) . '00', $actual->version);
+    }
+
+    public function test_edit_license_not_exists() {
+        $manager = new \tool_license\manager();
+
+        // We're testing a private method, so we need to setup reflector magic.
+        $method = new ReflectionMethod('\tool_license\manager', 'edit');
+        $method->setAccessible(true); // Allow accessing of private method.
 
         // Attempt to update a license that doesn't exist.
-        $formdata['shortname'] = 'non-existent';
+        $formdata = [
+            'shortname' => 'new-value',
+            'fullname' => 'New License Name',
+            'source' => 'https://updatedfakeurl.net',
+            'version' => time()
+        ];
         \tool_license\form\edit_license::mock_submit($formdata);
 
         // Should not be able to update a license with a shortname that doesn't exist.
         $this->expectException('moodle_exception');
         $method->invoke($manager, \tool_license\manager::ACTION_UPDATE, $formdata['shortname']);
+    }
+
+    public function test_edit_license_no_shortname() {
+        $manager = new \tool_license\manager();
+
+        // We're testing a private method, so we need to setup reflector magic.
+        $method = new ReflectionMethod('\tool_license\manager', 'edit');
+        $method->setAccessible(true); // Allow accessing of private method.
 
         // Attempt to update a license without passing license shortname.
-        unset($formdata['shortname']);
+        $formdata = [
+            'fullname' => 'New License Name',
+            'source' => 'https://updatedfakeurl.net',
+            'version' => time()
+        ];
         \tool_license\form\edit_license::mock_submit($formdata);
 
         // Should not be able to update empty license shortname.
@@ -148,7 +173,7 @@ class manager_test extends advanced_testcase {
     public function test_change_license_order() {
         $this->resetAfterTest();
 
-        $licenseorder = license_manager::get_license_order();
+        $licenseorder = array_keys(license_manager::get_licenses());
         $initialposition = array_search('cc-nc', $licenseorder);
 
         $manager = new tool_license\manager();
@@ -158,14 +183,14 @@ class manager_test extends advanced_testcase {
         $method->setAccessible(true); // Allow accessing of private method.
         $method->invoke($manager, \tool_license\manager::ACTION_MOVE_UP, 'cc-nc');
 
-        $licenseorder = license_manager::get_license_order();
+        $licenseorder = array_keys(license_manager::get_licenses());
         $newposition = array_search('cc-nc', $licenseorder);
 
         $this->assertLessThan($initialposition, $newposition);
 
         $initialposition = array_search('allrightsreserved', $licenseorder);
         $method->invoke($manager, \tool_license\manager::ACTION_MOVE_DOWN, 'allrightsreserved');
-        $licenseorder = license_manager::get_license_order();
+        $licenseorder = array_keys(license_manager::get_licenses());
         $newposition = array_search('cc-nc', $licenseorder);
 
         $this->assertGreaterThan($initialposition, $newposition);
