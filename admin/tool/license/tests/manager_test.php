@@ -38,14 +38,11 @@ require_once($CFG->libdir . '/licenselib.php');
  */
 class manager_test extends advanced_testcase {
 
-    public function setUp() {
-        $this->resetAfterTest();
-    }
-
     /**
      * Test editing a license.
      */
     public function test_edit_existing_license() {
+        $this->resetAfterTest();
 
         // Create initial custom license to edit.
         $testlicense = new stdClass();
@@ -108,6 +105,8 @@ class manager_test extends advanced_testcase {
      * Test creating a new license.
      */
     public function test_edit_create_license() {
+        $this->resetAfterTest();
+
         $licensecount = count(license_manager::get_licenses());
 
         $manager = new \tool_license\manager();
@@ -148,6 +147,8 @@ class manager_test extends advanced_testcase {
      */
     public function test_change_license_order() {
         global $DB;
+
+        $this->resetAfterTest();
 
         // Reset the license table to known state with all core licenses installed.
         $DB->delete_records('license');

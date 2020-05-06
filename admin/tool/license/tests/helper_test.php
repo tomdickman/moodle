@@ -34,10 +34,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class helper_test extends advanced_testcase {
 
-    public function setUp() {
-        $this->resetAfterTest();
-    }
-
     public function test_convert_version_to_epoch() {
 
         $version = '2020010100';
