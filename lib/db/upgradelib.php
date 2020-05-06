@@ -636,6 +636,7 @@ function upgrade_core_licenses() {
     global $DB;
 
     $corelicenses = [];
+    $sortorder = 1;
 
     $license = new stdClass();
     $license->shortname = 'unknown';
@@ -644,6 +645,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -653,6 +655,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -662,6 +665,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -671,6 +675,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -680,6 +685,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -689,6 +695,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -698,6 +705,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -707,6 +715,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder++;
     $corelicenses[] = $license;
 
     $license = new stdClass();
@@ -716,6 +725,7 @@ function upgrade_core_licenses() {
     $license->enabled = 1;
     $license->version = '2010033100';
     $license->custom = 0;
+    $license->sortorder = $sortorder;
     $corelicenses[] = $license;
 
     foreach ($corelicenses as $updatedlicense) {

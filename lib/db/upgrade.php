@@ -2315,13 +2315,22 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2020042800.01);
     }
 
-    if ($oldversion < 2020050200.01) {
+    if ($oldversion < 2020050200.02) {
 
         // Define field custom to be added to license.
         $table = new xmldb_table('license');
         $field = new xmldb_field('custom', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
 
         // Conditionally launch add field custom.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field sortorder to be added to license.
+        $table = new xmldb_table('license');
+        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '0');
+
+        // Conditionally launch add field sortorder.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -2339,7 +2348,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_core_licenses();
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2020050200.01);
+        upgrade_main_savepoint(true, 2020050200.02);
     }
 
     return true;
