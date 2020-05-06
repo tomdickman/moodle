@@ -67,13 +67,14 @@ class license_manager {
         if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
             // record exists
             if ($record->custom != self::CORE_LICENSE) {
-                $license->enabled = $record->enabled;
                 $license->id = $record->id;
                 $DB->update_record('license', $license);
             } else {
                 throw new moodle_exception('cannotupdatecorelicense', 'error');
             }
         } else {
+            $licensecount = count(self::get_licenses());
+            $license->sortorder = $licensecount + 1;
             $DB->insert_record('license', $license);
         }
         // Add the new license to the end of order for licenses.
