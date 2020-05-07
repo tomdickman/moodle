@@ -432,7 +432,9 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
     ],
-    // Caches contentbank extensions management.    'contentbank_enabled_extensions' => [
+
+    // Caches contentbank extensions management.
+    'contentbank_enabled_extensions' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
