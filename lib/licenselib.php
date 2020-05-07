@@ -95,7 +95,9 @@ class license_manager {
     /**
      * Adding a new license type
      *
-     * @deprecated since Moodle 3.9, use {@link \license_manager::save} instead.
+     * @deprecated Since Moodle 3.9, MDL-45184.
+     * @todo MDL-67344 This will be deleted in Moodle 4.3.
+     * @see licensemanager::save()
      *
      * @param object $license the license record to add.
      *
