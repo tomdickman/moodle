@@ -1,4 +1,4 @@
-@tool @tool_license
+@tool @tool_licensemanager
 Feature: Custom licences
   In order to use custom licences
   As an admin

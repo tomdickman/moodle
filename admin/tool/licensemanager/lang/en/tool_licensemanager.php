@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_license', language 'en'
+ * Strings for component 'tool_licensemanager', language 'en'
  *
- * @package   tool_license
+ * @package   tool_licensemanager
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['pluginname'] = 'License';
+$string['pluginname'] = 'License manager';
 $string['createlicense'] = 'Create custom licence';
 $string['createlicensebuttontext'] = 'Create licence';
 $string['deletelicense'] = 'Delete licence';
@@ -34,7 +34,7 @@ $string['invalidurl'] = 'Invalid source URL';
 $string['license'] = 'Licence';
 $string['licensemanager'] = 'Licence manager';
 $string['licensenotfoundshortname'] = 'Cannot find a licence with the short name \'{$a}\'';
-$string['privacy:metadata'] = 'The tool_license plugin stores no personal data.';
+$string['privacy:metadata'] = 'The tool_licensemanager plugin stores no personal data.';
 $string['shortname'] = 'Licence short name';
 $string['shortnamerequirederror'] = 'You must enter a short name for the licence.';
 $string['source'] = 'Licence source';

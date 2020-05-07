@@ -15,19 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings page.
+ * Version details for component 'tool_licensemanager'.
  *
- * @package   tool_license
- * @copyright 2020 Tom Dickman <tomdickman@catalyst-au.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_licensemanager
+ * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
-    $temp = new admin_externalpage('licensemanager',
-        get_string('licensemanager', 'tool_license'),
-        \tool_license\helper::get_licensemanager_url());
+$plugin->version   = 2020050600;
+$plugin->requires  = 2020050200;         // Requires this Moodle version.
+$plugin->component = 'tool_licensemanager';
 
-    $ADMIN->add('license', $temp);
-}
+$plugin->maturity = MATURITY_STABLE;

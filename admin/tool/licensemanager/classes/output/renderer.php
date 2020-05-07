@@ -15,25 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderer for 'tool_license' component.
+ * Renderer for 'tool_licensemanager' component.
  *
- * @package    tool_license
+ * @package    tool_licensemanager
  * @copyright  Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_license\output;
+namespace tool_licensemanager\output;
 
 defined('MOODLE_INTERNAL') || die();
 
 use license_manager;
 use plugin_renderer_base;
-use tool_license\helper;
+use tool_licensemanager\helper;
 
 /**
- * Renderer class for 'tool_license' component.
+ * Renderer class for 'tool_licensemanager' component.
  *
- * @package    tool_license
+ * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,11 +47,11 @@ class renderer extends plugin_renderer_base {
     public function render_create_licence_headers() : string {
         global $PAGE;
 
-        $PAGE->navbar->add(get_string('createlicense', 'tool_license'),
+        $PAGE->navbar->add(get_string('createlicense', 'tool_licensemanager'),
             helper::get_create_license_url());
 
         $return = $this->header();
-        $return .= $this->heading(get_string('createlicense', 'tool_license'));
+        $return .= $this->heading(get_string('createlicense', 'tool_licensemanager'));
 
         return $return;
     }
@@ -66,11 +66,11 @@ class renderer extends plugin_renderer_base {
     public function render_edit_licence_headers(string $licenseshortname) : string {
         global $PAGE;
 
-        $PAGE->navbar->add(get_string('editlicense', 'tool_license'),
+        $PAGE->navbar->add(get_string('editlicense', 'tool_licensemanager'),
             helper::get_update_license_url($licenseshortname));
 
         $return = $this->header();
-        $return .= $this->heading(get_string('editlicense', 'tool_license'));
+        $return .= $this->heading(get_string('editlicense', 'tool_licensemanager'));
 
         return $return;
     }

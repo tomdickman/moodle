@@ -1,4 +1,4 @@
-@tool @tool_license
+@tool @tool_licensemanager
 Feature: License manager
   In order to manage licenses
   As an admin

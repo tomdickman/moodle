@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_license', language 'en'
+ * Renderable for display of license manager table.
  *
- * @package   tool_license
- * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
+ * @package   tool_licensemanager
+ * @copyright 2020 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_license\output;
+namespace tool_licensemanager\output;
 
 use html_table;
 use html_table_cell;
@@ -31,6 +31,13 @@ use license_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Renderable for display of license manager table.
+ *
+ * @package   tool_licensemanager
+ * @copyright 2020 Tom Dickman <tomdickman@catalyst-au.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class table implements \renderable {
 
     /**
@@ -39,8 +46,8 @@ class table implements \renderable {
      * @return string HTML string.
      */
     public function create_license_link() {
-        $link = html_writer::link(\tool_license\helper::get_create_license_url(),
-            get_string('createlicensebuttontext', 'tool_license'),
+        $link = html_writer::link(\tool_licensemanager\helper::get_create_license_url(),
+            get_string('createlicensebuttontext', 'tool_licensemanager'),
             ['class' => 'btn btn-secondary mb-3']);
 
         return $link;
@@ -57,7 +64,7 @@ class table implements \renderable {
         $table = new html_table();
         $table->head  = [
             get_string('enable'),
-            get_string('license', 'tool_license'),
+            get_string('license', 'tool_licensemanager'),
             get_string('version'),
             get_string('order'),
             get_string('edit'),
@@ -116,10 +123,10 @@ class table implements \renderable {
             $deletelicense = $output->pix_icon('t/locked', get_string('default'));
         } else {
             if ($license->enabled == license_manager::LICENSE_ENABLED) {
-                $hideshow = html_writer::link(\tool_license\helper::get_disable_license_url($license->shortname),
+                $hideshow = html_writer::link(\tool_licensemanager\helper::get_disable_license_url($license->shortname),
                     $output->pix_icon('t/hide', get_string('disable')));
             } else {
-                $hideshow = html_writer::link(\tool_license\helper::get_enable_license_url($license->shortname),
+                $hideshow = html_writer::link(\tool_licensemanager\helper::get_enable_license_url($license->shortname),
                     $output->pix_icon('t/show', get_string('enable')));
             }
 
@@ -137,7 +144,7 @@ class table implements \renderable {
         $hideshowcell->attributes['class'] = 'license-status';
 
         if ($license->custom == license_manager::CUSTOM_LICENSE) {
-            $editlicense = html_writer::link(\tool_license\helper::get_update_license_url($license->shortname),
+            $editlicense = html_writer::link(\tool_licensemanager\helper::get_update_license_url($license->shortname),
                 $output->pix_icon('t/editinline', get_string('edit')),
                 ['class' => 'edit-license']);
         } else {
@@ -149,7 +156,7 @@ class table implements \renderable {
         $spacer = $output->pix_icon('spacer', '', 'moodle', ['class' => 'iconsmall']);
         $updown = '';
         if ($canmoveup) {
-            $updown .= html_writer::link(\tool_license\helper::get_moveup_license_url($license->shortname),
+            $updown .= html_writer::link(\tool_licensemanager\helper::get_moveup_license_url($license->shortname),
                     $output->pix_icon('t/up', get_string('up'), 'moodle', ['class' => 'iconsmall']),
                     ['class' => 'move-up']). '';
         } else {
@@ -157,7 +164,7 @@ class table implements \renderable {
         }
 
         if ($canmovedown) {
-            $updown .= '&nbsp;'.html_writer::link(\tool_license\helper::get_movedown_license_url($license->shortname),
+            $updown .= '&nbsp;'.html_writer::link(\tool_licensemanager\helper::get_movedown_license_url($license->shortname),
                     $output->pix_icon('t/down', get_string('down'), 'moodle', ['class' => 'iconsmall']),
                     ['class' => 'move-down']);
         } else {
@@ -168,7 +175,7 @@ class table implements \renderable {
 
         $row = new html_table_row([$hideshowcell, $summarycell, $versioncell, $updowncell, $editlicensecell, $deletelicense]);
         $row->attributes['data-license'] = $license->shortname;
-        $row->attributes['class'] = strtolower(get_string('license', 'tool_license'));
+        $row->attributes['class'] = strtolower(get_string('license', 'tool_licensemanager'));
 
         return $row;
     }

@@ -15,30 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for tool_license helper class.
+ * Privacy Subsystem implementation for tool_licensemanager implementing null_provider.
  *
- * @package    tool_license
- * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
+ * @package    tool_licensemanager
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace tool_licensemanager\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Tests for tool_license helper class.
+ * Privacy Subsystem implementation for tool_licensemanager implementing null_provider.
  *
- * @package    tool_license
- * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
+ * @package    tool_licensemanager
+ * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group      tool_license
  */
-class helper_test extends advanced_testcase {
+class provider implements \core_privacy\local\metadata\null_provider {
 
-    public function test_convert_version_to_epoch() {
-
-        $version = '2020010100';
-        $expected = strtotime(20200101);
-
-        $this->assertEquals($expected, \tool_license\helper::convert_version_to_epoch($version));
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
     }
 }

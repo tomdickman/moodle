@@ -14,11 +14,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the logic for confirming deletion of a custom license.
+ * Modal for confirming deletion of a custom license.
  *
- * @module     tool_license/delete_license
+ * @module     tool_licensemanager/delete_license
  * @class      delete_license
- * @package    tool_license
+ * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,15 +28,15 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/url', 'core/s
         var trigger = $('.delete-license');
         ModalFactory.create({
             type: ModalFactory.types.SAVE_CANCEL,
-            title: String.get_string('deletelicense', 'tool_license'),
-            body: String.get_string('deletelicenseconfirmmessage', 'tool_license'),
+            title: String.get_string('deletelicense', 'tool_licensemanager'),
+            body: String.get_string('deletelicenseconfirmmessage', 'tool_licensemanager'),
             preShowCallback: function(triggerElement, modal) {
                 triggerElement = $(triggerElement);
                 let params = {
                     'action': 'delete',
                     'license': triggerElement.data('license')
                 };
-                modal.deleteURL = Url.relativeUrl('/admin/tool/license/index.php', params, true);
+                modal.deleteURL = Url.relativeUrl('/admin/tool/licensemanager/index.php', params, true);
             },
             large: true,
         }, trigger)

@@ -17,23 +17,23 @@
 /**
  * License manager.
  *
- * @package    tool_license
+ * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_license;
+namespace tool_licensemanager;
 
-use tool_license\form\edit_license;
+use tool_licensemanager\form\edit_license;
 use license_manager;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * License manager, main controller for tool_license.
+ * License manager, main controller for tool_licensemanager.
  *
- * @package    tool_license
+ * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -152,14 +152,14 @@ class manager {
             if ($action == self::ACTION_CREATE) {
                 // Check that license shortname isn't already in use.
                 if (!empty(license_manager::get_license_by_shortname($data->shortname))) {
-                    print_error('duplicatelicenseshortname', 'tool_license',
+                    print_error('duplicatelicenseshortname', 'tool_licensemanager',
                         helper::get_licensemanager_url(),
                         $data->shortname);
                 }
                 $license->shortname = $data->shortname;
             } else {
                 if (empty(license_manager::get_license_by_shortname($licenseshortname))) {
-                    print_error('licensenotfoundshortname', 'tool_license',
+                    print_error('licensenotfoundshortname', 'tool_licensemanager',
                         helper::get_licensemanager_url(),
                         $licenseshortname);
                 }
@@ -202,12 +202,12 @@ class manager {
      *
      * @param string $action
      * @param string $licenseshortname the shortname of the license to create/edit.
-     * @param \tool_license\form\edit_license $form the form for submitting edit data.
+     * @param \tool_licensemanager\form\edit_license $form the form for submitting edit data.
      */
     private function view_license_editor(string $action, string $licenseshortname, edit_license $form) : void {
         global $PAGE;
 
-        $renderer = $PAGE->get_renderer('tool_license');
+        $renderer = $PAGE->get_renderer('tool_licensemanager');
 
         if ($action == self::ACTION_UPDATE && $license = license_manager::get_license_by_shortname($licenseshortname)) {
             $return = $renderer->render_edit_licence_headers($licenseshortname);
@@ -229,13 +229,13 @@ class manager {
     private function view_license_manager() {
         global $PAGE;
 
-        $PAGE->requires->js_call_amd('tool_license/delete_license');
+        $PAGE->requires->js_call_amd('tool_licensemanager/delete_license');
 
-        $renderer = $PAGE->get_renderer('tool_license');
+        $renderer = $PAGE->get_renderer('tool_licensemanager');
         $html = $renderer->header();
-        $html .= $renderer->heading(get_string('licensemanager', 'tool_license'));
+        $html .= $renderer->heading(get_string('licensemanager', 'tool_licensemanager'));
 
-        $table = new \tool_license\output\table();
+        $table = new \tool_licensemanager\output\table();
         $html .= $renderer->render($table);
         $html .= $renderer->footer();
 

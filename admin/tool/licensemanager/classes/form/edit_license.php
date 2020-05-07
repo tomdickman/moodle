@@ -17,16 +17,16 @@
 /**
  * Form for creating/updating a custom license.
  *
- * @package    tool_license
+ * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_license\form;
+namespace tool_licensemanager\form;
 
 use moodleform;
-use tool_license\helper;
-use tool_license\manager;
+use tool_licensemanager\helper;
+use tool_licensemanager\manager;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * Form for creating/updating a custom license.
  *
- * @package    tool_license
+ * @package    tool_licensemanager
  * @copyright  2019 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -76,26 +76,26 @@ class edit_license extends moodleform {
 
         $mform = $this->_form;
 
-        $mform->addElement('text', 'shortname', get_string('shortname', 'tool_license'));
+        $mform->addElement('text', 'shortname', get_string('shortname', 'tool_licensemanager'));
         $mform->setType('shortname', PARAM_ALPHANUMEXT);
         // Shortname is only editable when user is creating a license.
         if ($this->action != manager::ACTION_CREATE) {
             $mform->freeze('shortname');
         } else {
-            $mform->addRule('shortname', get_string('shortnamerequirederror', 'tool_license'), 'required');
+            $mform->addRule('shortname', get_string('shortnamerequirederror', 'tool_licensemanager'), 'required');
         }
 
-        $mform->addElement('text', 'fullname', get_string('fullname', 'tool_license'));
+        $mform->addElement('text', 'fullname', get_string('fullname', 'tool_licensemanager'));
         $mform->setType('fullname', PARAM_TEXT);
-        $mform->addRule('fullname', get_string('fullnamerequirederror', 'tool_license'), 'required');
+        $mform->addRule('fullname', get_string('fullnamerequirederror', 'tool_licensemanager'), 'required');
 
-        $mform->addElement('text', 'source', get_string('source', 'tool_license'));
+        $mform->addElement('text', 'source', get_string('source', 'tool_licensemanager'));
         $mform->setType('source', PARAM_URL);
-        $mform->addHelpButton('source', 'source', 'tool_license');
-        $mform->addRule('source', get_string('sourcerequirederror', 'tool_license'), 'required');
+        $mform->addHelpButton('source', 'source', 'tool_licensemanager');
+        $mform->addRule('source', get_string('sourcerequirederror', 'tool_licensemanager'), 'required');
 
-        $mform->addElement('date_selector', 'version', get_string('version', 'tool_license'), get_string('from'));
-        $mform->addHelpButton('version', 'version', 'tool_license');
+        $mform->addElement('date_selector', 'version', get_string('version', 'tool_licensemanager'), get_string('from'));
+        $mform->addHelpButton('version', 'version', 'tool_licensemanager');
 
         $this->add_action_buttons();
     }
@@ -112,11 +112,11 @@ class edit_license extends moodleform {
         $errors = parent::validation($data, $files);
 
         if (array_key_exists('source', $data)  && !filter_var($data['source'], FILTER_VALIDATE_URL)) {
-            $errors['source'] = get_string('invalidurl', 'tool_license');
+            $errors['source'] = get_string('invalidurl', 'tool_licensemanager');
         }
 
         if (array_key_exists('version', $data) && $data['version'] > time()) {
-            $errors['version'] = get_string('versioncannotbefuture', 'tool_license');
+            $errors['version'] = get_string('versioncannotbefuture', 'tool_licensemanager');
         }
 
         return $errors;

@@ -1,4 +1,4 @@
-@tool @tool_license
+@tool @tool_licensemanager
 Feature: Delete custom licenses
   In order to manage custom licenses
   As an admin

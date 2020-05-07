@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manager page.
+ * License manager page.
  *
- * @package   tool_license
+ * @package   tool_licensemanager
  * @copyright 2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,21 +28,19 @@ require_once($CFG->libdir . '/licenselib.php');
 
 require_admin();
 
-$returnurl = \tool_license\helper::get_licensemanager_url();
+$returnurl = \tool_licensemanager\helper::get_licensemanager_url();
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $license = optional_param('license', '', PARAM_SAFEDIR);
-
-////////////////////////////////////////////////////////////////////////////////
-// process actions
 
 if (!confirm_sesskey()) {
     redirect($returnurl);
 }
 
-$licensemanager = new \tool_license\manager();
+// Route via the manager.
+$licensemanager = new \tool_licensemanager\manager();
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url(\tool_license\helper::get_licensemanager_url());
-$PAGE->set_title(get_string('licensemanager', 'tool_license'));
+$PAGE->set_url(\tool_licensemanager\helper::get_licensemanager_url());
+$PAGE->set_title(get_string('licensemanager', 'tool_licensemanager'));
 
 $licensemanager->execute($action, $license);
