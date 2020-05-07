@@ -139,5 +139,4 @@ europe/belfast,core_timezones
 pacific/ponape,core_timezones
 pacific/truk,core_timezones
 pacific/yap,core_timezones
-// Deprecated since Moodle 3.9
 availablelicenses,core_admin
