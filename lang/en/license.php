@@ -23,7 +23,7 @@
  */
 
 // Settings.
-$string['settings'] = 'License settings';
+$string['settings'] = 'Licence settings';
 
 // Core licenses.
 $string['allrightsreserved'] = 'All rights reserved';
@@ -40,4 +40,4 @@ $string['unknown'] = 'Licence not specified';
 $string['cannotdeletecore'] = 'Cannot delete a standard licence';
 $string['cannotdeletelicenseinuse'] = 'Cannot delete a licence which is currently assigned to one or more files';
 $string['invalidmovedirection'] = 'Must use a valid licence API move direction constant (LICENSE_MOVE_UP or LICENSE_MOVE_DOWN)';
-$string['missinglicensesortorder'] = 'Cannot set license order, one or more installed licenses is missing from new order';
+$string['missinglicensesortorder'] = 'Cannot set licence order, one or more installed licences is missing from new order';

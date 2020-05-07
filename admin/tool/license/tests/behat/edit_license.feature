@@ -4,9 +4,9 @@ Feature: Custom licences
   As an admin
   I need to be able to add custom licences
 
-  Scenario: Add custom licence
+  Scenario: I am able to create custom licences
     Given I log in as "admin"
-    And I navigate to "Licences > Manage licences" in site administration
+    And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
@@ -16,14 +16,14 @@ Feature: Custom licences
       | version[month] | January                             |
       | version[year]  | 2020                                |
     And I press "Save changes"
-    Then I should see "Manage licences"
+    Then I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
     And I should see "https://opensource.org/licenses/MIT" in the "MIT" "table_row"
     And I log out
 
-  Scenario: Custom license source must be a valid url including scheme.
+  Scenario: I am only be able to make custom license with a valid url source (including scheme).
     Given I log in as "admin"
-    And I navigate to "Licences > Manage licences" in site administration
+    And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
@@ -41,14 +41,14 @@ Feature: Custom licences
     And I set the following fields to these values:
       | source         | https://opensource.org/licenses/MIT |
     And I press "Save changes"
-    Then I should see "Manage licences"
+    Then I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
     And I should see "https://opensource.org/licenses/MIT" in the "MIT" "table_row"
     And I log out
 
   Scenario: Custom license version format must be YYYYMMDD00
     Given I log in as "admin"
-    And I navigate to "Licences > Manage licences" in site administration
+    And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
@@ -58,14 +58,14 @@ Feature: Custom licences
       | version[month] | March                               |
       | version[year]  | 2019                                |
     And I press "Save changes"
-    Then I should see "Manage licences"
+    Then I should see "Licence manager"
     And I should see "2019030100" in the "MIT" "table_row"
     And I log out
 
   @javascript
-  Scenario: Custom license short name should not be editable
+  Scenario: Custom license short name should not be editable after first creation
     Given I log in as "admin"
-    And I navigate to "Licences > Manage licences" in site administration
+    And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
       | shortname      | MIT                                 |
@@ -75,7 +75,7 @@ Feature: Custom licences
       | version[month] | March                               |
       | version[year]  | 2019                                |
     And I press "Save changes"
-    And I should see "Manage licences"
+    And I should see "Licence manager"
     And I should see "MIT Licence" in the "MIT" "table_row"
     And I click on "Edit" "icon" in the "MIT" "table_row"
     Then I should see "Edit licence"

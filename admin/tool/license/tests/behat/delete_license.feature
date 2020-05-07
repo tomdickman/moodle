@@ -7,7 +7,7 @@ Feature: Delete custom licenses
   @javascript
   Scenario: I can delete a custom license
     Given I log in as "admin"
-    And I navigate to "Licences > Manage licences" in site administration
+    And I navigate to "Licence > Licence manager" in site administration
     And I click on "Create licence" "link"
     And I set the following fields to these values:
     | shortname      | MIT                                 |
@@ -24,6 +24,6 @@ Feature: Delete custom licenses
 
   Scenario: I cannot delete a standard Moodle license
     Given I log in as "admin"
-    And I navigate to "Licences > Manage licences" in site administration
+    And I navigate to "Licence > Licence manager" in site administration
     Then I should see "Licence not specified" in the "unknown" "table_row"
     And I should not see "Delete" in the "unknown" "table_row"
