@@ -743,7 +743,9 @@ function upgrade_core_licenses() {
     // Set the license config values, used by file repository for rendering licenses at front end.
     $activelicenses = $DB->get_records_menu('license', ['enabled' => 1], 'id', 'id, shortname');
     set_config('licenses', implode(',', $activelicenses));
-    if (!get_config('', 'sitedefaultlicense')) {
+
+    $sitedefaultlicense = get_config('', 'sitedefaultlicense');
+    if (empty($sitedefaultlicense) || !in_array($sitedefaultlicense, $activelicenses)) {
         set_config('sitedefaultlicense', reset($activelicenses));
     }
 }
