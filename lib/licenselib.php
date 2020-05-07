@@ -72,21 +72,37 @@ class license_manager {
      * }
      */
     static public function save($license) {
-        global $DB;
-        if ($record = $DB->get_record('license', array('shortname'=>$license->shortname))) {
-            // Can only update sortorder for core licenses.
-            if ($record->custom == self::CORE_LICENSE && !empty($license->sortorder)) {
-                $record->sortorder = $license->sortorder;
-                self::update($record);
-            } else {
-                $license->id = $record->id;
-                self::update($license);
+
+        $existinglicense = self::get_license_by_shortname($license->shortname);
+
+        if (!empty($existinglicense)) {
+            $id = $existinglicense->id;
+            if ($existinglicense->custom == self::CORE_LICENSE) {
+                // Can only update the enabled status and sortorder for core licenses.
+                $existinglicense->enabled = $license->enabled;
+                $existinglicense->sortorder = $license->sortorder;
+                $license = $existinglicense;
             }
+            $license->id = $id;
+            self::update($license);
         } else {
             self::create($license);
         }
 
         return true;
+    }
+
+    /**
+     * Adding a new license type
+     *
+     * @deprecated since Moodle 3.9, use {@link \license_manager::save} instead.
+     *
+     * @param object $license the license record to add.
+     *
+     * @return bool true on success.
+     */
+    public function add($license) : bool {
+        return self::save($license);
     }
 
     /**
@@ -99,6 +115,12 @@ class license_manager {
 
         $licensecount = count(self::get_licenses());
         $license->sortorder = $licensecount + 1;
+        // Enable all created license by default.
+        $license->enabled = self::LICENSE_ENABLED;
+        // API can only create custom licenses, core licenses
+        // are directly created at install or upgrade.
+        $license->custom = self::CUSTOM_LICENSE;
+
         $DB->insert_record('license', $license);
         self::reset_license_cache();
     }
