@@ -34,7 +34,7 @@ if ($hassiteconfig) {
 
     $temp->add(new admin_setting_configselect('sitedefaultlicense',
         new lang_string('configsitedefaultlicense', 'admin'),
-        new lang_string('configsitedefaultlicense_help', 'admin'),
+        new lang_string('configsitedefaultlicensehelp', 'admin'),
         'unknown',
         $licenses));
     $temp->add(new admin_setting_configcheckbox('rememberuserlicensepref',
