@@ -226,7 +226,10 @@ class manager {
         echo $return;
     }
 
-    private function view_license_manager() {
+    /**
+     * View the license manager.
+     */
+    private function view_license_manager() : void {
         global $PAGE;
 
         $PAGE->requires->js_call_amd('tool_licensemanager/delete_license');

@@ -735,7 +735,7 @@ function upgrade_core_licenses() {
     // Add sortorder to all licenses.
     $licenses = $DB->get_records('license');
     $sortorder = 1;
-    foreach($licenses as $license) {
+    foreach ($licenses as $license) {
         $license->sortorder = $sortorder++;
         $DB->update_record('license', $license);
     }

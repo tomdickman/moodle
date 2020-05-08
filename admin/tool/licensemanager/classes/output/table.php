@@ -54,11 +54,12 @@ class table implements \renderable {
     }
 
     /**
+     * Create the HTML table for license management.
+     *
      * @param array $licenses
      * @param \renderer_base $output
      *
-     * @return string
-     * @throws \coding_exception
+     * @return string HTML for license manager table.
      */
     public function create_license_manager_table(array $licenses, \renderer_base $output) {
         $table = new html_table();
