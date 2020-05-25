@@ -120,22 +120,22 @@ class table implements \renderable {
         $versioncell->attributes['class'] = 'license-version';
 
         if ($license->shortname == $CFG->sitedefaultlicense) {
-            $hideshow = $output->pix_icon('t/locked', get_string('default'));
-            $deletelicense = $output->pix_icon('t/locked', get_string('default'));
+            $hideshow = $output->pix_icon('t/locked', get_string('sitedefaultlicenselock', 'tool_licensemanager'));
+            $deletelicense = $output->pix_icon('t/locked', get_string('sitedefaultlicenselock', 'tool_licensemanager'));
         } else {
             if ($license->enabled == license_manager::LICENSE_ENABLED) {
                 $hideshow = html_writer::link(\tool_licensemanager\helper::get_disable_license_url($license->shortname),
-                    $output->pix_icon('t/hide', get_string('disable')));
+                    $output->pix_icon('t/hide', get_string('disablelicensename', 'tool_licensemanager', $license->fullname)));
             } else {
                 $hideshow = html_writer::link(\tool_licensemanager\helper::get_enable_license_url($license->shortname),
-                    $output->pix_icon('t/show', get_string('enable')));
+                    $output->pix_icon('t/show', get_string('enablelicensename', 'tool_licensemanager', $license->fullname)));
             }
 
             if ($license->custom == license_manager::CUSTOM_LICENSE) {
                 // Link url is added by the JS `delete_license` modal used for confirmation of deletion, to avoid
                 // link being usable before JavaScript loads on page.
-                $deletelicense = html_writer::link('#',
-                    $output->pix_icon('i/trash', get_string('delete')),
+                $deletelicense = html_writer::link('#', $output->pix_icon('i/trash',
+                    get_string('deletelicensename', 'tool_licensemanager', $license->fullname)),
                     ['class' => 'delete-license', 'data-license' => $license->shortname]);
             } else {
                 $deletelicense = '';
@@ -146,7 +146,7 @@ class table implements \renderable {
 
         if ($license->custom == license_manager::CUSTOM_LICENSE) {
             $editlicense = html_writer::link(\tool_licensemanager\helper::get_update_license_url($license->shortname),
-                $output->pix_icon('t/editinline', get_string('edit')),
+                $output->pix_icon('t/editinline', get_string('editlicensename', 'tool_licensemanager', $license->fullname)),
                 ['class' => 'edit-license']);
         } else {
             $editlicense = '';
@@ -158,15 +158,17 @@ class table implements \renderable {
         $updown = '';
         if ($canmoveup) {
             $updown .= html_writer::link(\tool_licensemanager\helper::get_moveup_license_url($license->shortname),
-                    $output->pix_icon('t/up', get_string('up'), 'moodle', ['class' => 'iconsmall']),
-                    ['class' => 'move-up']). '';
+                    $output->pix_icon('t/up', get_string('movelicenseupname', 'tool_licensemanager', $license->fullname),
+                        'moodle', ['class' => 'iconsmall']),
+                    ['class' => 'move-up']) . '';
         } else {
             $updown .= $spacer;
         }
 
         if ($canmovedown) {
             $updown .= '&nbsp;'.html_writer::link(\tool_licensemanager\helper::get_movedown_license_url($license->shortname),
-                    $output->pix_icon('t/down', get_string('down'), 'moodle', ['class' => 'iconsmall']),
+                    $output->pix_icon('t/down', get_string('movelicensedownname', 'tool_licensemanager', $license->fullname),
+                        'moodle', ['class' => 'iconsmall']),
                     ['class' => 'move-down']);
         } else {
             $updown .= $spacer;
