@@ -97,13 +97,15 @@ class license_manager {
      *
      * @deprecated Since Moodle 3.9, MDL-45184.
      * @todo MDL-67344 This will be deleted in Moodle 4.3.
-     * @see licensemanager::save()
+     * @see license_manager::save()
      *
      * @param object $license the license record to add.
      *
      * @return bool true on success.
      */
     public function add($license) : bool {
+        debugging('add() is deprecated. Please use license_manager::save() instead.', DEBUG_DEVELOPER);
+
         return self::save($license);
     }
 
