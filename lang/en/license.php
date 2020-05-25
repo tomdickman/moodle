@@ -22,9 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Settings.
-$string['settings'] = 'Licence settings';
-
 // Core licenses.
 $string['allrightsreserved'] = 'All rights reserved';
 $string['cc'] = 'Creative Commons';

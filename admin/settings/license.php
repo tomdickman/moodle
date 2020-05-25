@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/licenselib.php');
 
 if ($hassiteconfig) {
 
-    $temp = new admin_settingpage('licensesettings', new lang_string('settings', 'license'));
+    $temp = new admin_settingpage('licensesettings', new lang_string('licensesettings', 'admin'));
 
     $licenses = license_manager::get_active_licenses_as_array();
 

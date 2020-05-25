@@ -81,7 +81,6 @@ $string['autolang'] = 'Language autodetect';
 $string['autologinguests'] = 'Auto-login guests';
 $string['searchareas'] = 'Search areas';
 $string['availableto'] = 'Available to';
-$string['availablelicenses'] = 'Available licences';
 $string['backgroundcolour'] = 'Transparent colour';
 $string['backups'] = 'Backups';
 $string['backup_shortname'] = 'Use course name in backup filename';
@@ -759,7 +758,6 @@ $string['managecustomfields'] = 'Manage custom field types';
 $string['manageformats'] = 'Manage course formats';
 $string['manageformatsgotosettings'] = 'Default format can be changed in {$a}';
 $string['managelang'] = 'Manage';
-$string['managelicenses'] = 'Manage licences';
 $string['manageqbehaviours'] = 'Manage question behaviours';
 $string['manageqtypes'] = 'Manage question types';
 $string['maturity50'] = 'Alpha';
@@ -1458,3 +1456,7 @@ $string['registermoodleorgli2'] = 'Statistics about your site will be added to t
 $string['registerwithmoodleorg'] = 'Register your site';
 $string['configrequestcategoryselection'] = 'Allow the selection of a category when requesting a course.';
 $string['requestcategoryselection'] = 'Enable category selection';
+
+// Deprecated since Moodle 3.9
+$string['availablelicenses'] = 'Available licences';
+$string['managelicenses'] = 'Manage licences';
