@@ -36,5 +36,5 @@ $string['unknown'] = 'Licence not specified';
 // Error messages.
 $string['cannotdeletecore'] = 'Cannot delete a standard licence';
 $string['cannotdeletelicenseinuse'] = 'Cannot delete a licence which is currently assigned to one or more files';
-$string['invalidmovedirection'] = 'Must use a valid licence API move direction constant (LICENSE_MOVE_UP or LICENSE_MOVE_DOWN)';
+$string['licensenotfoundshortname'] = 'Cannot find a licence with the short name \'{$a}\'';
 $string['missinglicensesortorder'] = 'Cannot set licence order, one or more installed licences is missing from new order';

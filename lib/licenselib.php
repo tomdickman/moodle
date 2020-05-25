@@ -205,14 +205,14 @@ class license_manager {
                 throw new moodle_exception('cannotdeletecore', 'license');
             }
         } else {
-            throw new moodle_exception('licensenotfoundshortname', 'license');
+            throw new moodle_exception('licensenotfoundshortname', 'license', $licenseshortname);
         }
     }
 
     /**
-     * Get license records
-     * @param mixed $param
-     * @return array
+     * Get license records.
+     *
+     * @return array|false object[] of license records of false if none.
      */
     static public function get_licenses() {
         global $DB;
@@ -247,7 +247,7 @@ class license_manager {
     static public function change_license_sortorder(int $direction, string $licenseshortname) : void {
 
         if ($direction != self::LICENSE_MOVE_UP && $direction != self::LICENSE_MOVE_DOWN) {
-            throw new moodle_exception('invalidmovedirection', 'license');
+            throw new coding_exception('Must use a valid licence API move direction constant (LICENSE_MOVE_UP or LICENSE_MOVE_DOWN)');
         }
 
         $licenses = self::get_licenses();

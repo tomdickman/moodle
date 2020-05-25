@@ -33,7 +33,6 @@ $string['fullnamerequirederror'] = 'You must enter a full name for the licence.'
 $string['invalidurl'] = 'Invalid source URL';
 $string['license'] = 'Licence';
 $string['licensemanager'] = 'Licence manager';
-$string['licensenotfoundshortname'] = 'Cannot find a licence with the short name \'{$a}\'';
 $string['privacy:metadata'] = 'The tool_licensemanager plugin stores no personal data.';
 $string['shortname'] = 'Licence short name';
 $string['shortnamerequirederror'] = 'You must enter a short name for the licence.';
