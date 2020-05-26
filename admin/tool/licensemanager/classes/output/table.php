@@ -111,9 +111,11 @@ class table implements \renderable {
     protected function get_license_table_row_data($license, bool $canmoveup, bool $canmovedown, \renderer_base $output) {
         global $CFG;
 
-        $source = html_writer::link($license->source, $license->source, ['target' => '_blank']);
-
-        $summary = $license->fullname . ' ('. $license->shortname . ')<br>' . $source;
+        $summary = $license->fullname . ' ('. $license->shortname . ')';
+        if (!empty($license->source)) {
+            $summary .= html_writer::empty_tag('br');
+            $summary .= html_writer::link($license->source, $license->source, ['target' => '_blank']);
+        }
         $summarycell = new html_table_cell($summary);
         $summarycell->attributes['class'] = 'license-summary';
         $versioncell = new html_table_cell($license->version);
