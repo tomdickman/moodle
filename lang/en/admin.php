@@ -1457,6 +1457,6 @@ $string['registerwithmoodleorg'] = 'Register your site';
 $string['configrequestcategoryselection'] = 'Allow the selection of a category when requesting a course.';
 $string['requestcategoryselection'] = 'Enable category selection';
 
-// Deprecated since Moodle 3.9
+// Deprecated since Moodle 3.9.
 $string['availablelicenses'] = 'Available licences';
 $string['managelicenses'] = 'Manage licences';

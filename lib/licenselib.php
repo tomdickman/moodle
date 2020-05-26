@@ -249,7 +249,8 @@ class license_manager {
     static public function change_license_sortorder(int $direction, string $licenseshortname) : void {
 
         if ($direction != self::LICENSE_MOVE_UP && $direction != self::LICENSE_MOVE_DOWN) {
-            throw new coding_exception('Must use a valid licence API move direction constant (LICENSE_MOVE_UP or LICENSE_MOVE_DOWN)');
+            throw new coding_exception(
+                'Must use a valid licence API move direction constant (LICENSE_MOVE_UP or LICENSE_MOVE_DOWN)');
         }
 
         $licenses = self::get_licenses();
