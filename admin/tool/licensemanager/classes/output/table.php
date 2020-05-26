@@ -121,7 +121,6 @@ class table implements \renderable {
 
         if ($license->shortname == $CFG->sitedefaultlicense) {
             $hideshow = $output->pix_icon('t/locked', get_string('sitedefaultlicenselock', 'tool_licensemanager'));
-            $deletelicense = $output->pix_icon('t/locked', get_string('sitedefaultlicenselock', 'tool_licensemanager'));
         } else {
             if ($license->enabled == license_manager::LICENSE_ENABLED) {
                 $hideshow = html_writer::link(\tool_licensemanager\helper::get_disable_license_url($license->shortname),
