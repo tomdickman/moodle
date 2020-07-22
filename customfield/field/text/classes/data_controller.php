@@ -53,9 +53,24 @@ class data_controller extends \core_customfield\data_controller {
     public function instance_form_definition(\MoodleQuickForm $mform) {
         $field = $this->get_field();
         $config = $field->get('configdata');
-        $type = $config['ispassword'] ? 'password' : 'text';
+
+        $attributes = [];
+
+        if (!empty($config['ispassword'])) {
+            $type = 'password';
+            $attributes['size'] = (int) $config['displaysize'];
+        } else if (!empty($config['istextarea'])) {
+            $type = 'textarea';
+            $attributes['cols'] = (int) $config['displaysize'];
+            $attributes['rows'] = (int) $config['displayrows'];
+        } else {
+            $type = 'text';
+            $attributes['size'] = (int) $config['displaysize'];
+        }
+
         $elementname = $this->get_form_element_name();
-        $mform->addElement($type, $elementname, $this->get_field()->get_formatted_name(), 'size=' . (int)$config['displaysize']);
+
+        $mform->addElement($type, $elementname, $this->get_field()->get_formatted_name(), $attributes);
         $mform->setType($elementname, PARAM_TEXT);
         if (!empty($config['defaultvalue'])) {
             $mform->setDefault($elementname, $config['defaultvalue']);

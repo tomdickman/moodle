@@ -65,6 +65,9 @@ class customfield_text_plugin_testcase extends advanced_testcase {
         $this->cfields[4] = $this->get_generator()->create_field(
             ['categoryid' => $this->cfcat->get('id'), 'shortname' => 'myfield4', 'type' => 'text',
                 'configdata' => ['link' => 'https://twitter.com/$$', 'maxlength' => 30, 'displaysize' => 50]]);
+        $this->cfields[5] = $this->get_generator()->create_field(
+            ['categoryid' => $this->cfcat->get('id'), 'shortname' => 'myfield5', 'type' => 'text',
+                'configdata' => ['istextarea' => 1, 'maxlength' => 30, 'displaysize' => 50, 'displayrows' => 5]]);
 
         $this->courses[1] = $this->getDataGenerator()->create_course();
         $this->courses[2] = $this->getDataGenerator()->create_course();
@@ -74,6 +77,8 @@ class customfield_text_plugin_testcase extends advanced_testcase {
             'Value1');
         $this->cfdata[2] = $this->get_generator()->add_instance_data($this->cfields[1], $this->courses[2]->id,
             'Value2');
+        $this->cfdata[5] = $this->get_generator()->add_instance_data($this->cfields[5], $this->courses[1]->id,
+            'Value5');
 
         $this->setUser($this->getDataGenerator()->create_user());
     }
@@ -143,9 +148,19 @@ class customfield_text_plugin_testcase extends advanced_testcase {
             ['handler' => $handler, 'instance' => $this->courses[1]]);
         $this->assertTrue($form->is_validated());
 
+        // Now with textarea field.
+        $submitdata['customfield_myfield5'] = 'Some text';
+        core_customfield_test_instance_form::mock_submit($submitdata, []);
+        $form = new core_customfield_test_instance_form('POST',
+            ['handler' => $handler, 'instance' => $this->courses[1]]);
+        $element = $form->get_element('customfield_myfield5');
+        $this->assertEquals('textarea', $element->getType());
+        $this->assertTrue($form->is_validated());
+
         $data = $form->get_data();
         $this->assertNotEmpty($data->customfield_myfield1);
         $this->assertNotEmpty($data->customfield_myfield2);
+        $this->assertNotEmpty($data->customfield_myfield5);
         $handler->instance_form_save($data);
     }
 
@@ -165,6 +180,10 @@ class customfield_text_plugin_testcase extends advanced_testcase {
         $d = $this->get_generator()->add_instance_data($this->cfields[4], $this->courses[1]->id, 'mynickname');
         $this->assertEquals('mynickname', $d->get_value());
         $this->assertEquals('<a href="https://twitter.com/mynickname">mynickname</a>', $d->export_value());
+
+        // Textarea field.
+        $this->assertEquals('Value5', $this->cfdata[5]->get_value());
+        $this->assertEquals('Value5', $this->cfdata[5]->export_value());
     }
 
     /**

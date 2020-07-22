@@ -53,10 +53,23 @@ class field_controller extends \core_customfield\field_controller {
             ['size' => 50]);
         $mform->setType('configdata[defaultvalue]', PARAM_TEXT);
 
+        $mform->addElement('selectyesno', 'configdata[istextarea]', get_string('istextarea', 'customfield_text'));
+        $mform->setType('configdata[istextarea]', PARAM_INT);
+        $mform->addHelpButton('configdata[istextarea]', 'istextarea', 'customfield_text');
+        $mform->disabledIf('configdata[istextarea]', 'configdata[ispassword]', 'eq', 1);
+
         $mform->addElement('text', 'configdata[displaysize]', get_string('displaysize', 'customfield_text'), ['size' => 6]);
         $mform->setType('configdata[displaysize]', PARAM_INT);
         $mform->setDefault('configdata[displaysize]', 50);
+        $mform->addHelpButton('configdata[displaysize]', 'displaysize', 'customfield_text');
         $mform->addRule('configdata[displaysize]', null, 'numeric', null, 'client');
+
+        $mform->addElement('text', 'configdata[displayrows]', get_string('displayrows', 'customfield_text'), ['size' => 6]);
+        $mform->setType('configdata[displayrows]', PARAM_INT);
+        $mform->setDefault('configdata[displayrows]', 2);
+        $mform->addRule('configdata[displayrows]', null, 'numeric', null, 'client');
+        $mform->addHelpButton('configdata[displayrows]', 'displayrows', 'customfield_text');
+        $mform->disabledIf('configdata[displayrows]', 'configdata[istextarea]', 'eq', 0);
 
         $mform->addElement('text', 'configdata[maxlength]', get_string('maxlength', 'customfield_text'), ['size' => 6]);
         $mform->setType('configdata[maxlength]', PARAM_INT);
@@ -65,12 +78,14 @@ class field_controller extends \core_customfield\field_controller {
 
         $mform->addElement('selectyesno', 'configdata[ispassword]', get_string('ispassword', 'customfield_text'));
         $mform->setType('configdata[ispassword]', PARAM_INT);
+        $mform->disabledIf('configdata[ispassword]', 'configdata[istextarea]', 'eq', 1);
 
         $mform->addElement('text', 'configdata[link]', get_string('islink', 'customfield_text'), ['size' => 50]);
         $mform->setType('configdata[link]', PARAM_RAW_TRIMMED);
         $mform->addHelpButton('configdata[link]', 'islink', 'customfield_text');
 
         $mform->disabledIf('configdata[link]', 'configdata[ispassword]', 'eq', 1);
+        $mform->disabledIf('configdata[link]', 'configdata[istextarea]', 'eq', 1);
 
         $linkstargetoptions = array(
             ''       => get_string('none', 'customfield_text'),
@@ -100,6 +115,11 @@ class field_controller extends \core_customfield\field_controller {
             $errors['configdata[maxlength]'] = get_string('errorconfigmaxlen', 'customfield_text');
         }
 
+        $displayrows = (int)$data['configdata']['displayrows'];
+        if ($displayrows < 1 || $displayrows > 10) {
+            $errors['configdata[displayrows]'] = get_string('errorconfigdisplayrows', 'customfield_text');
+        }
+
         $displaysize = (int)$data['configdata']['displaysize'];
         if ($displaysize < 1 || $displaysize > 200) {
             $errors['configdata[displaysize]'] = get_string('errorconfigdisplaysize', 'customfield_text');
@@ -116,6 +136,10 @@ class field_controller extends \core_customfield\field_controller {
                     $errors['configdata[link]'] = get_string('errorconfigdisplaysize', 'customfield_text');
                 }
             }
+        }
+
+        if (!empty($data['configdata']['ispassword']) && !empty($data['configdata']['ispassword'])) {
+            $errors['configdata[istextarea]'] = get_string('errortextareapasswordconflict', 'customfield_text');
         }
 
         return $errors;

@@ -24,15 +24,22 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['displayrows'] = 'Form input height';
+$string['displayrows_help'] = 'The height of the textarea in rows, this is only utilised if form input is a textarea';
 $string['displaysize'] = 'Form input size';
+$string['displaysize_help'] = 'The width of the input in characters (for a textarea input this is the number of columns displayed)';
+$string['errorconfigdisplayrows'] = 'The form input height must be between 1 and 10 rows.';
 $string['errorconfigdisplaysize'] = 'The form input size must be between 1 and 200 characters.';
 $string['errorconfiglinkplaceholder'] = 'The link must contain a placeholder $$.';
 $string['errorconfiglinksyntax'] = 'The link must be a valid URL starting with either http:// or https://.';
 $string['errorconfigmaxlen'] = 'The maximum number of characters allowed must be between 1 and 1333.';
 $string['errormaxlength'] = 'The maximum number of characters allowed in this field is {$a}.';
+$string['errortextareapasswordconflict'] = 'Text area fields cannot be password fields.';
 $string['islink'] = 'Link field';
 $string['islink_help'] = 'To transform the text into a link, enter a URL containing $$ as a placeholder, where $$ will be replaced with the text. For example, to transform a Twitter ID to a link, enter https://twitter.com/$$.';
 $string['ispassword'] = 'Password field';
+$string['istextarea'] = 'Use textarea';
+$string['istextarea_help'] = 'Select to display a larger, multi-line textarea input type for this field when used in forms, rather than a single line text input type. This is good for fields which are expected to contain longer values spanning multiple lines and/or paragraphs.';
 $string['linktarget'] = 'Link target';
 $string['maxlength'] = 'Maximum number of characters';
 $string['newwindow'] = 'New window';

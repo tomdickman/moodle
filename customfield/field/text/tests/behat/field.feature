@@ -139,3 +139,36 @@ Feature: Managers can manage course custom fields text
     And I press "Save and display"
     And I am on site homepage
     And I should not see "Test field"
+
+  @javascript
+  Scenario: I can only select a form input height if field is a textarea
+    When I click on "Add a new custom field" "link"
+    And I click on "Short text" "link"
+    And I set the following fields to these values:
+      | Use textarea  | Yes         |
+    Then the "Form input height" "field" should be enabled
+    When I set the following fields to these values:
+      | Use textarea  | No         |
+    Then the "Form input height" "field" should be disabled
+
+  @javascript
+  Scenario: I can only make field a password field if it is not a textarea field
+    When I click on "Add a new custom field" "link"
+    And I click on "Short text" "link"
+    And I set the following fields to these values:
+      | Use textarea  | Yes         |
+    Then the "Password field" "field" should be disabled
+    When I set the following fields to these values:
+      | Use textarea  | No         |
+    Then the "Password field" "field" should be enabled
+
+  @javascript
+  Scenario: I can only make field a textarea field if it is not a password field
+    When I click on "Add a new custom field" "link"
+    And I click on "Short text" "link"
+    And I set the following fields to these values:
+      | Password field  | Yes         |
+    Then the "Use textarea" "field" should be disabled
+    When I set the following fields to these values:
+      | Password field  | No         |
+    Then the "Use textarea" "field" should be enabled

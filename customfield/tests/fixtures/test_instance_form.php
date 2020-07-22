@@ -76,4 +76,14 @@ class core_customfield_test_instance_form extends moodleform {
     public function validation($data, $files) {
         return $this->handler->instance_form_validation($data, $files);
     }
+
+    /**
+     * Get form element by name.
+     *
+     * @param string $element Element name
+     * @return object reference to element
+     */
+    public function get_element($element) {
+        return $this->_form->getElement($element);
+    }
 }
