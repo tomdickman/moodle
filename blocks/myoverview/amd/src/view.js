@@ -612,7 +612,7 @@ function(
                         };
 
                         // Set up the next page
-                        var remainingCourses = nextPageStart ? courses.slice(nextPageStart, courses.length) : [];
+                        var remainingCourses = courses.slice(nextPageStart, courses.length);
                         if (remainingCourses.length) {
                             loadedPages[currentPage + 1] = {
                                 courses: remainingCourses
