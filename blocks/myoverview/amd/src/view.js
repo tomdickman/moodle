@@ -544,7 +544,7 @@ function(
         // Filter out all pagination options which are too large for the amount of courses user is enrolled in.
         var totalCourseCount = parseInt(root.find(Selectors.courseView.region).attr('data-totalcoursecount'), 10);
         itemsPerPage = itemsPerPage.filter(function(pagingOption) {
-            return pagingOption.value < totalCourseCount;
+            return pagingOption.value < totalCourseCount || pagingOption.value === 0;
         });
 
         var filters = getFilterValues(root);
