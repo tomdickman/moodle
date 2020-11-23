@@ -32,7 +32,18 @@ Feature: My overview block pagination
       | Course 23 | C23        | 0        |
       | Course 24 | C24        | 0        |
       | Course 25 | C25        | 0        |
-    And the following "course enrolments" exist:
+
+  Scenario: The pagination controls should be hidden if I am not enrolled in any courses
+    Given I log in as "student1"
+    Then I should see "No courses" in the "Course overview" "block"
+    And I should not see "Show" in the "Course overview" "block"
+    And ".block_myoverview .dropdown-menu.show" "css_element" should not be visible
+    And ".block_myoverview [data-control='next']" "css_element" should not be visible
+    And ".block_myoverview [data-control='previous']" "css_element" should not be visible
+    And I log out
+
+  Scenario: The pagination controls should be hidden if I am enrolled in 12 courses or less
+    Given the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
       | student1 | C2 | student |
@@ -46,48 +57,98 @@ Feature: My overview block pagination
       | student1 | C10 | student |
       | student1 | C11 | student |
       | student1 | C12 | student |
-
-  Scenario: I should see no pagination controls if I am enrolled in 12 courses or less
-    Given I log in as "student1"
+    And I log in as "student1"
     Then I should not see "Show" in the "Course overview" "block"
-    And ".dropdown-menu.show" "css_element" should not exist
-    And "[data-control='next']" "css_element" should not exist
-    And "[data-control='previous']" "css_element" should not exist
+    And ".block_myoverview .dropdown-menu.show" "css_element" should not be visible
+    And ".block_myoverview [data-control='next']" "css_element" should not be visible
+    And ".block_myoverview [data-control='previous']" "css_element" should not be visible
+    And I log out
+
+  Scenario: The default pagination should be 12 courses
+    Given the following "course enrolments" exist:
+      | user | course | role |
+      | student1 | C1 | student |
+      | student1 | C2 | student |
+      | student1 | C3 | student |
+      | student1 | C4 | student |
+      | student1 | C5 | student |
+      | student1 | C6 | student |
+      | student1 | C7 | student |
+      | student1 | C8 | student |
+      | student1 | C9 | student |
+      | student1 | C10 | student |
+      | student1 | C11 | student |
+      | student1 | C12 | student |
+      | student1 | C13 | student |
+    And I log in as "student1"
+    Then I should see "12" in the "[data-action='limit-toggle']" "css_element"
     And I log out
 
   Scenario: I should only see pagination limit options less than total number of enrolled courses
     Given the following "course enrolments" exist:
       | user | course | role |
+      | student1 | C1 | student |
+      | student1 | C2 | student |
+      | student1 | C3 | student |
+      | student1 | C4 | student |
+      | student1 | C5 | student |
+      | student1 | C6 | student |
+      | student1 | C7 | student |
+      | student1 | C8 | student |
+      | student1 | C9 | student |
+      | student1 | C10 | student |
+      | student1 | C11 | student |
+      | student1 | C12 | student |
       | student1 | C13 | student |
     And I log in as "student1"
     Then I should see "Show" in the "Course overview" "block"
     When I click on "[data-action='limit-toggle']" "css_element" in the "Course overview" "block"
     Then I should see "All" in the ".dropdown-menu.show" "css_element"
     And I should see "12" in the ".dropdown-menu.show" "css_element"
-    And "[data-control='next']" "css_element" should exist
-    And "[data-control='previous']" "css_element" should exist
-    But I should not see "24" in the ".dropdown-menu.show" "css_element"
+    And ".block_myoverview [data-control='next']" "css_element" should be visible
+    And ".block_myoverview [data-control='previous']" "css_element" should be visible
+    But I should not see "24" in the ".block_myoverview .dropdown-menu.show" "css_element"
     And I log out
 
-    Scenario: Previous page element should be disabled when on the first page of courses
+    Scenario: Previous page button should be disabled when on the first page of courses
       Given the following "course enrolments" exist:
         | user | course | role |
+        | student1 | C1 | student |
+        | student1 | C2 | student |
+        | student1 | C3 | student |
+        | student1 | C4 | student |
+        | student1 | C5 | student |
+        | student1 | C6 | student |
+        | student1 | C7 | student |
+        | student1 | C8 | student |
+        | student1 | C9 | student |
+        | student1 | C10 | student |
+        | student1 | C11 | student |
+        | student1 | C12 | student |
         | student1 | C13 | student |
       And I log in as "student1"
-      When I click on "[data-action='limit-toggle']" "css_element" in the "Course overview" "block"
-      And I click on "12" "link" in the ".dropdown-menu.show" "css_element"
       Then the "class" attribute of ".block_myoverview [data-control='previous']" "css_element" should contain "disabled"
       And I log out
 
-  Scenario: Next page element should be disabled when on the last page of courses
+  Scenario: Next page button should be disabled when on the last page of courses
       Given the following "course enrolments" exist:
         | user | course | role |
+        | student1 | C1 | student |
+        | student1 | C2 | student |
+        | student1 | C3 | student |
+        | student1 | C4 | student |
+        | student1 | C5 | student |
+        | student1 | C6 | student |
+        | student1 | C7 | student |
+        | student1 | C8 | student |
+        | student1 | C9 | student |
+        | student1 | C10 | student |
+        | student1 | C11 | student |
+        | student1 | C12 | student |
         | student1 | C13 | student |
       And I log in as "student1"
-      And I click on "[data-action='limit-toggle']" "css_element" in the "Course overview" "block"
-      And I click on "12" "link" in the ".dropdown-menu.show" "css_element"
       Then the "class" attribute of ".block_myoverview [data-control='previous']" "css_element" should contain "disabled"
-      When I click on ".block_myoverview [data-control='next']" "css_element"
+      When I click on "[data-control='next']" "css_element" in the "Course overview" "block"
       And I wait until ".block_myoverview [data-control='next']" "css_element" exists
       Then the "class" attribute of ".block_myoverview [data-control='next']" "css_element" should contain "disabled"
       And I log out
