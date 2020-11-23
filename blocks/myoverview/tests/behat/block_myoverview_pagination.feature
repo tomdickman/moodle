@@ -110,25 +110,25 @@ Feature: My overview block pagination
     But I should not see "24" in the ".block_myoverview .dropdown-menu.show" "css_element"
     And I log out
 
-    Scenario: Previous page button should be disabled when on the first page of courses
-      Given the following "course enrolments" exist:
-        | user | course | role |
-        | student1 | C1 | student |
-        | student1 | C2 | student |
-        | student1 | C3 | student |
-        | student1 | C4 | student |
-        | student1 | C5 | student |
-        | student1 | C6 | student |
-        | student1 | C7 | student |
-        | student1 | C8 | student |
-        | student1 | C9 | student |
-        | student1 | C10 | student |
-        | student1 | C11 | student |
-        | student1 | C12 | student |
-        | student1 | C13 | student |
-      And I log in as "student1"
-      Then the "class" attribute of ".block_myoverview [data-control='previous']" "css_element" should contain "disabled"
-      And I log out
+  Scenario: Previous page button should be disabled when on the first page of courses
+    Given the following "course enrolments" exist:
+      | user | course | role |
+      | student1 | C1 | student |
+      | student1 | C2 | student |
+      | student1 | C3 | student |
+      | student1 | C4 | student |
+      | student1 | C5 | student |
+      | student1 | C6 | student |
+      | student1 | C7 | student |
+      | student1 | C8 | student |
+      | student1 | C9 | student |
+      | student1 | C10 | student |
+      | student1 | C11 | student |
+      | student1 | C12 | student |
+      | student1 | C13 | student |
+    And I log in as "student1"
+    Then the "class" attribute of ".block_myoverview [data-control='previous']" "css_element" should contain "disabled"
+    And I log out
 
   Scenario: Next page button should be disabled when on the last page of courses
       Given the following "course enrolments" exist:
