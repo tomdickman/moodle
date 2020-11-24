@@ -610,7 +610,7 @@ function(
                             courses: pageCourses
                         };
 
-                        // Set up the next page (if there more than one page).
+                        // Set up the next page (if there is more than one page).
                         var remainingCourses = nextPageStart !== false ? courses.slice(nextPageStart, courses.length) : [];
                         if (remainingCourses.length) {
                             loadedPages[currentPage + 1] = {
